@@ -16,7 +16,7 @@ class MyHomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextButton(
-              child: Text('Go to Second Page'),
+              child: Text('Go to Second Page2'),
               onPressed: () {},
             ),
           ],
