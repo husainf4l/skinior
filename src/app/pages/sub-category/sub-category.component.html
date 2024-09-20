@@ -1,0 +1,24 @@
+<div>
+    <div class="mx-auto max-w-2xl px-4 py-3 sm:px-6 sm:py-3 lg:max-w-7xl lg:px-8">
+        <img src="assets/images/image1.webp" alt="banner" />
+        <h2 class="mt-6 text-2xl"> منتجات توبيك لاخفاء فراغات الشعر ب ٣٠ ثانية</h2>
+
+        <div class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+            <div *ngFor="let product of subProducts">
+                <a [routerLink]="['/shop/', product.id]" class="group">
+                    <div class="w-full overflow-hidden rounded-lg bg-gray-200" style="aspect-ratio: 3 / 4;">
+                        <img src={{product.imgUrl}} alt={{product.description}}
+                            class="h-full w-full object-cover object-center group-hover:opacity-75">
+                    </div>
+                    <h3 class="mt-4 text-lg text-gray-700">{{product.name}}</h3>
+
+                    <div class="flex items-center space-x-4">
+                        <!-- Sale Price -->
+                        <span class="text-xl font-bold text-red-600">{{product.price}}JD </span>
+                    </div>
+
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

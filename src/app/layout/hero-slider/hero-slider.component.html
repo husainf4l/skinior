@@ -1,0 +1,40 @@
+<div class="hero-slider">
+    <div class="slide" *ngFor="let slide of slides; let i = index" [ngClass]="{'active': i === currentSlide}">
+        <img [src]="slide" alt="Hero Image {{ i + 1 }}">
+    </div>
+
+    <!-- Navigation Buttons -->
+    <button class="next" (click)="prevSlide()">&#10094;</button>
+    <button class="prev" (click)="nextSlide()">&#10095;</button>
+</div>
+
+
+
+<section>
+    <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
+        <h1 class="mb-4 text-4xl font-medium tracking-tight leading-none text-gray-900 md:text-4xl lg:text-5xl">
+            شعر أكثر كثافة في لحظات - الياف بناء الشعر من توبيك
+        </h1>
+        <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48">
+            حول شعرك في 30 ثانية فقط باستخدام الياف بناء الشعر - السر وراء شعر أكثر كثافة بمظهر طبيعي يعزز ثقتك بنفسك
+            على الفور اكتشف قوة النتائج
+            الحقيقية في اللحظة التي تحتاجها
+        </p>
+        <div class="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0">
+            <a [href]="'https://wa.me/962798055229?text=' + ('مرحباً، أرغب في معرفة المزيد عن منتج توبيك.')"
+                class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-gray-600 hover:bg-gray-800 focus:ring-4 focus:ring-blue-300">
+                Whatsapp
+            </a>
+            <a [routerLink]="['/shop']"
+                class="py-3 px-5 sm:ms-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-700 focus:z-10 focus:ring-4 focus:ring-gray-100">
+                Shop Now
+            </a>
+        </div>
+        <div class="grid grid-cols-2 gap-4 mt-8">
+            <img class="w-full rounded-lg" src="https://www.toppik.ca/images/jonathan_before.png"
+                alt="Toppik Hair Fibers">
+            <img class="mt-4 w-full lg:mt-10 rounded-lg" src="https://www.toppik.ca/images/jonathan_after.jpg"
+                alt="Toppik Hair Transformation">
+        </div>
+    </div>
+</section>

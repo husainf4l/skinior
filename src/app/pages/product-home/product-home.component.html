@@ -1,0 +1,64 @@
+<div>
+  <app-hero-slider></app-hero-slider>
+  <div>
+
+    <div class="mx-auto max-w-2xl px-4 py-3 sm:px-6 sm:py-3 lg:max-w-7xl lg:px-8 ">
+      <h2 class="mb-8 text-2xl font-medium tracking-tight leading-none text-gray-900 md:text-3xl lg:text-4xl">منتجات
+        توبيك </h2>
+      <div class="grid grid-cols-3 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-8">
+
+        <div *ngFor="let product of products">
+          <a [routerLink]="['/shop/', product.id]" class="group">
+            <div
+              class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
+              <img src={{product.imgUrl}} alt={{product.description}}
+                class="h-full w-full object-cover object-center group-hover:opacity-75">
+            </div>
+            <h3 class="mt-4 text-lg text-gray-700">{{product.name}}</h3>
+
+            <div class="flex items-center space-x-4">
+              <!-- Sale Price -->
+              <span class="text-xl font-bold text-gray-600">{{product.price}}JD </span>
+            </div>
+
+          </a>
+        </div>
+
+        <!-- More products... -->
+      </div>
+
+
+
+
+    </div>
+  </div>
+
+
+
+
+
+
+  <app-available-at></app-available-at>
+
+  <section class="bg-white ">
+    <div class="max-w-screen-xl px-4 py-8 mx-auto text-center lg:py-16 lg:px-6">
+      <dl class="grid max-w-screen-md gap-8 mx-auto text-gray-900 grid-cols-3 ">
+        <div class="flex flex-col items-center justify-center">
+          <dt class="mb-2 text-3xl md:text-4xl font-extrabold">6K+</dt>
+          <dd class="font-light text-gray-500 ">عميل في الاردن</dd>
+        </div>
+        <div class="flex flex-col items-center justify-center">
+          <dt class="mb-2 text-3xl md:text-4xl font-extrabold">150</dt>
+          <dd class="font-light text-gray-500 ">نقطة بيع</dd>
+        </div>
+        <div class="flex flex-col items-center justify-center">
+          <dt class="mb-2 text-3xl md:text-4xl font-extrabold">72%</dt>
+          <dd class="font-light text-gray-500 ">شراء مجدد</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <app-newsletter></app-newsletter>
+
+</div>

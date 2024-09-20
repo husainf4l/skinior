@@ -1,0 +1,91 @@
+<!-- Navbar -->
+<nav class="bg-white shadow-md">
+    <div class="container mx-auto flex items-center justify-between py-4 px-4 md:px-6">
+
+        <!-- Logo on the Left -->
+        <a routerLink="/" class="flex-shrink-0">
+            <img class="h-10 md:h-14" src="assets/logo/logoblack.png" alt="Toppik Logo">
+        </a>
+
+        <!-- Centered Navbar Links -->
+        <div class="hidden md:flex justify-center flex-1">
+            <ul class="flex space-x-reverse space-x-8 text-center">
+                <li class="nav-item">
+                    <a class="nav-link text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
+                        lang="ar" routerLink="/">الرئيسية</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
+                        lang="ar" routerLink="/shop">تسوق الان</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
+                        lang="ar" routerLink="/authorized">نقاط البيع المعتمدة</a>
+                </li>
+                <li class="nav-item">
+                    <a [href]="'https://wa.me/962798055229?text=' + ('مرحباً، أرغب في معرفة المزيد عن منتج توبيك.')"
+                        class="nav-link text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out">
+                        تواصل معنا
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Right-aligned Menu Icon and User/Cart Icons -->
+        <div class="flex items-center space-x-4 md:space-x-6">
+            <div class="relative hidden md:block">
+                <div class="bx bx-cart bx-sm cursor-pointer text-gray-800 hover:text-blue-600" routerLink="/cart">
+                    <!-- <span *ngIf="cartItemCount$() > 0"
+                        class="absolute -top-2 -right-2 text-xs bg-red-600 rounded-full w-5 h-5 flex items-center justify-center text-white">
+                        {{ cartItemCount$() }}
+                    </span> -->
+                </div>
+            </div>
+            <div class="hidden md:block">
+                <div class="bx bx-user bx-sm cursor-pointer text-gray-800 hover:text-blue-600" routerLink="/user"></div>
+            </div>
+            <div class="md:hidden flex items-center">
+                <div class="bx bx-menu bx-sm cursor-pointer text-gray-800 hover:text-blue-600" (click)="toggleMenu()">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dropdown menu for small devices -->
+    <div [ngClass]="{ 'hidden': !isMenuOpen }" class="md:hidden bg-white shadow-lg">
+        <ul class="flex flex-col text-center divide-y divide-gray-200">
+            <li class="nav-item">
+                <a class="nav-link text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
+                    lang="ar" routerLink="/">الرئيسية</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
+                    lang="ar" routerLink="/shop">تسوق الان</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
+                    lang="ar" routerLink="/authorized">نقاط البيع المعتمدة</a>
+            </li>
+            <li class="nav-item">
+                <a [href]="'https://wa.me/962798055229?text=' + ('مرحباً، أرغب في معرفة المزيد عن منتج توبيك.')"
+                    class="nav-link text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out">
+                    تواصل معنا
+                </a>
+            </li>
+            <li class="nav-item flex justify-center items-center space-x-4 mt-4">
+                <div class="relative">
+                    <div class="bx bx-cart bx-sm cursor-pointer text-gray-800 hover:text-blue-600" routerLink="/cart">
+                    </div>
+                    <!-- <span *ngIf="cartItemCount$() > 0"
+                        class="absolute -top-2 -right-2 text-xs bg-red-600 rounded-full w-5 h-5 flex items-center justify-center text-white">
+                        {{ cartItemCount$() }}
+                    </span> -->
+                </div>
+                <div>
+                    <div class="bx bx-user bx-sm cursor-pointer text-gray-800 hover:text-blue-600" routerLink="/user">
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>

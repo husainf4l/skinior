@@ -1,0 +1,92 @@
+<section class="py-12">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <h2 class="text-4xl font-extrabold text-gray-900 mb-12">نقاط البيع المعتمدة</h2>
+
+        <!-- Introduction Section -->
+        <div class="mb-12  text-lg text-gray-700">
+            <p class="mb-4">
+                نحن في Toppik ملتزمون بتقديم منتجات أصلية ذات جودة عالية. لضمان أنكم تحصلون على المنتجات الأصلية فقط،
+                يسرنا أن نعلن عن صفحة "نقاط البيع المعتمدة" التي ستتضمن قائمة بالباعة والموزعين المعتمدين لمنتجات
+                Toppik.
+            </p>
+            <p>
+                مع انتشار المنتجات المقلدة في السوق، أصبح من الضروري أن نقدم لكم قائمة موثوقة من البائعين الذين يمكنكم
+                الاعتماد عليهم للحصول على منتجات Toppik الأصلية.
+            </p>
+        </div>
+
+        <!-- Search Input -->
+        <div class="flex justify-center mb-12 gap-8">
+            <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()"
+                placeholder="ابحث عن اسم، موقع أو وصف"
+                class="w-full md:w-1/2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+            <button (click)="onSearch()"
+                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                بحث
+            </button>
+        </div>
+
+        <!-- Sellers Listing -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div *ngFor="let place of places"
+                class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl hover:bg-gray-50 transition">
+                <img [src]="place.logo" [alt]="place.name" class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">{{ place.name }}</h3>
+                    <p class="text-gray-600 mb-4">{{ place.description }}</p>
+                    <div class="text-sm text-gray-500 mb-4">
+                        <span>{{ place.category }}</span>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <svg class="w-5 h-5 text-gray-500 mr-2" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M5.05 6.05a7 7 0 1112.9 0 7 7 0 01-12.9 0zm7-3.25a5.25 5.25 0 100 10.5 5.25 5.25 0 000-10.5zM10 11.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm0-2.25a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="text-gray-600">{{ place.location }}</span>
+                    </div>
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-gray-500 mr-2" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v2h2v-2zm0-8H9v6h2V5z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="text-gray-600">{{ place.branches }} فرع</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="flex justify-center mt-12 gap-8">
+            <button (click)="previousPage()" [disabled]="currentPage === 1"
+                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                السابق
+            </button>
+            <button (click)="nextPage()" [disabled]="currentPage * itemsPerPage >= totalItems"
+                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                التالي
+            </button>
+        </div>
+        <!-- Contact Information -->
+        <div class="mt-12  text-lg text-gray-700">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">كيفية التأكد من الأصالة؟</h3>
+            <p class="mb-4">
+                إذا كان لديكم أي شكوك حول أصالة منتج يدعي أنه من Toppik، نرجو منكم التواصل معنا مباشرة عبر WhatsApp على
+                الرقم
+                <a href="tel:+962798055229" class="text-blue-600 hover:underline">+962 7 9805 5229</a>
+                أو عبر Facebook أو Instagram. فريقنا سيقوم بمساعدتكم على الفور في التأكد من أن المنتج أصلي.
+            </p>
+        </div>
+
+        <!-- Reassurance Statement -->
+        <div class="mt-8 text-lg text-gray-700">
+            <p>نحن ملتزمون بضمان حصولكم على منتجات Toppik الأصلية فقط، ونسعى دائمًا لتقديم تجربة استخدام مميزة لعملائنا.
+                ثقتكم في منتجاتنا هي محور اهتمامنا.</p>
+            <p>شكراً لاختياركم Toppik.</p>
+        </div>
+
+
+    </div>
+</section>

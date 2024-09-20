@@ -1,0 +1,26 @@
+<section class="bg-white py-8 antialiased md:py-16">
+    <div class="mx-auto max-w-screen-md px-4">
+        <h2 class="text-2xl font-semibold text-gray-900">تفاصيل الشحن</h2>
+        <form (ngSubmit)="submitShippingAddress()" class="mt-6 space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">الاسم</label>
+                <input [(ngModel)]="name" name="name" required
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">العنوان</label>
+                <input [(ngModel)]="address" name="address" required
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">رقم الهاتف</label>
+                <input [(ngModel)]="mobile" name="mobile" required
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+            </div>
+            <button type="submit"
+                class="mt-4 w-full bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                تأكيد الطلب
+            </button>
+        </form>
+    </div>
+</section>
