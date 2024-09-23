@@ -4,7 +4,7 @@ import { HeroSliderComponent } from "../../layout/hero-slider/hero-slider.compon
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeroSliderComponent],
+  imports: [HeroSliderComponent,],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

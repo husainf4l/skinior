@@ -1,0 +1,29 @@
+<div class="max-w-2xl mx-auto py-8">
+    <h2 class="text-2xl font-bold mb-6">Add New Product</h2>
+
+    <form (submit)="addProduct()">
+        <!-- Product Name -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Name</label>
+            <input [(ngModel)]="product.name" type="text" class="w-full px-4 py-2 border rounded" />
+        </div>
+
+        <!-- Product Description -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea [(ngModel)]="product.description" class="w-full px-4 py-2 border rounded"></textarea>
+        </div>
+
+        <!-- Product Price -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Price</label>
+            <input [(ngModel)]="product.price" type="number" class="w-full px-4 py-2 border rounded" />
+        </div>
+
+        <!-- Product Stock -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Stock</label>
+            <input [(ngModel)]="product.stock" type="number" class="w-full px-4 py-2 border rounded" />
+        </div>
+
+        <!-- Product Categories -->

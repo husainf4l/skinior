@@ -1,0 +1,16 @@
+<div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <ul>
+            <li><a routerLink="/admin/products">Products</a></li>
+            <li><a routerLink="/admin/products/bulk-edit">Bulk Edit</a></li>
+            <li><a routerLink="/admin/products/add-product">add product</a></li>
+            <li><a routerLink="/admin/dashboard">Dashboard</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+        <router-outlet></router-outlet>
+    </div>
+</div>
