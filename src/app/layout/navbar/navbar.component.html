@@ -35,18 +35,30 @@
         <div class="flex items-center space-x-4 md:space-x-6">
             <div class="relative hidden md:block">
                 <div class="bx bx-cart bx-sm cursor-pointer text-gray-800 hover:text-blue-600" routerLink="/cart">
-                    <!-- <span *ngIf="cartItemCount$() > 0"
-                        class="absolute -top-2 -right-2 text-xs bg-red-600 rounded-full w-5 h-5 flex items-center justify-center text-white">
-                        {{ cartItemCount$() }}
-                    </span> -->
                 </div>
             </div>
-            <div class="hidden md:block">
-                <div class="bx bx-user bx-sm cursor-pointer text-gray-800 hover:text-blue-600" routerLink="/user"></div>
+
+            <!-- Conditionally show Login/Logout based on user status -->
+            <div *ngIf="!authService.isLoggedIn(); else loggedIn" class="hidden md:block">
+                <div class="bx bx-log-out bx-sm cursor-pointer text-gray-800 hover:text-blue-600" routerLink="/login">
+                </div>
             </div>
+            <ng-template #loggedIn>
+                <div class="hidden md:block">
+                    <div class="bx bx-log-out-circle text-red-600 bx-sm cursor-pointer  hover:text-blue-600"
+                        (click)="logout()" routerLink="/login"></div>
+                </div>
+            </ng-template>
+
             <div class="md:hidden flex items-center">
-                <div class="bx bx-menu bx-sm cursor-pointer text-gray-800 hover:text-blue-600" (click)="toggleMenu()">
-                </div>
+                <li class="nav-item flex  space-x-4 ">
+                    <div class="relative">
+                        <div class="bx bx-cart bx-sm cursor-pointer text-gray-800 hover:text-blue-600"
+                            routerLink="/cart"></div>
+                    </div>
+                    <div class="bx bx-menu bx-sm cursor-pointer text-gray-800 hover:text-blue-600"
+                        (click)="toggleMenu()"></div>
+                </li>
             </div>
         </div>
     </div>
@@ -72,19 +84,17 @@
                     تواصل معنا
                 </a>
             </li>
-            <li class="nav-item flex justify-center items-center space-x-4 mt-4">
-                <div class="relative">
-                    <div class="bx bx-cart bx-sm cursor-pointer text-gray-800 hover:text-blue-600" routerLink="/cart">
-                    </div>
-                    <!-- <span *ngIf="cartItemCount$() > 0"
-                        class="absolute -top-2 -right-2 text-xs bg-red-600 rounded-full w-5 h-5 flex items-center justify-center text-white">
-                        {{ cartItemCount$() }}
-                    </span> -->
+
+            <li class="nav-item">
+                <div *ngIf="!authService.isLoggedIn(); else loggedInMobile">
+                    <a class="nav-link text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
+                        routerLink="/login">تسجيل دخول</a>
                 </div>
-                <div>
-                    <div class="bx bx-user bx-sm cursor-pointer text-gray-800 hover:text-blue-600" routerLink="/user">
-                    </div>
-                </div>
+                <ng-template #loggedInMobile>
+                    <a class="nav-link text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
+                        (click)="logout()">تسجيل خروج</a>
+
+                </ng-template>
             </li>
         </ul>
     </div>

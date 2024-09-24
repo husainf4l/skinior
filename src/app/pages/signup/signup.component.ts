@@ -21,7 +21,8 @@ export class SignupComponent {
     private router: Router
   ) {
     this.signupForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
+      firstName: ['', [Validators.required, Validators.minLength(3)]],
+      lastName: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
@@ -29,15 +30,15 @@ export class SignupComponent {
   }
 
   onSubmit(): void {
-    // if (this.signupForm.valid) {
-    //   const { email, password, name } = this.signupForm.value;
-    //   // Call your auth service to register the user
-    //   this.authService.signup(email, password, name).subscribe({
-    //     next: () => this.router.navigate(['/login']),
-    //     error: (err) => {
-    //       this.error = 'حدث خطأ أثناء إنشاء الحساب';
-    //     }
-    //   });
-    // }
+    if (this.signupForm.valid) {
+      const { email, password, firstName, lastName } = this.signupForm.value;
+      // Call your auth service to register the user
+      this.authService.signup(email, password, firstName, lastName).subscribe({
+        next: () => this.router.navigate(['/admin/dashboard']),
+        error: (err) => {
+          this.error = 'حدث خطأ أثناء إنشاء الحساب';
+        }
+      });
+    }
   }
 }

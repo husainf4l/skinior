@@ -10,7 +10,7 @@ export class ProductService {
   private apiUrl = 'http://localhost:3000/products'; // Your backend API URL
   private categoryApiUrl = 'http://localhost:3000/products/categories'; // Categories API URL
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Add new product with images
   addProduct(productData: Product): Observable<Product> {
@@ -40,5 +40,8 @@ export class ProductService {
   // Delete product
   deleteProduct(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+  getProductsByCategoryId(categoryId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/category/${categoryId}`);
   }
 }

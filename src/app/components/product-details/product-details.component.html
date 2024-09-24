@@ -1,0 +1,18 @@
+<div class="container mx-auto p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Product Image -->
+        <div>
+            <img [src]="product.images[0]?.url" alt="{{ product.name }}" class="w-full h-auto rounded-lg" />
+        </div>
+
+        <!-- Product Details -->
+        <div class="text-right">
+            <h1 class="text-3xl font-bold mb-4">{{ product.name }}</h1>
+
+            <!-- Render the HTML description -->
+            <div class="text-lg text-gray-700 mb-4" [innerHTML]="product.description"></div>
+
+            <p class="text-lg font-bold text-indigo-600">{{ product.price | currency:'USD' }}</p>
+        </div>
+    </div>
+</div>

@@ -1,7 +1,8 @@
 <!-- Main Container for Signup -->
 <div class="min-h-screen flex flex-row-reverse">
     <!-- Right side with marketing content (similar to login) -->
-    <div class="hidden lg:flex w-1/2 bg-gradient-to-br from-white to-gray-200 text-gray-800 p-12 items-center justify-center">
+    <div
+        class="hidden lg:flex w-1/2 bg-gradient-to-br from-white to-gray-200 text-gray-800 p-12 items-center justify-center">
         <div class="max-w-lg space-y-8 text-right">
             <h1 class="text-5xl font-bold leading-snug text-gray-900">
                 انضم إلى <span class="text-blue-600">سكينيور</span>
@@ -11,19 +12,22 @@
             </p>
             <ul class="space-y-2">
                 <li class="flex items-center  space-x-reverse space-x-2">
-                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
                     </svg>
                     <span>منتجات الجمال الحصرية</span>
                 </li>
                 <li class="flex items-center  space-x-reverse space-x-2">
-                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
                     </svg>
                     <span>حلول العناية بالبشرة المخصصة</span>
                 </li>
                 <li class="flex items-center  space-x-reverse space-x-2">
-                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
                     </svg>
                     <span>تجربة تسوق سلسة</span>
@@ -38,14 +42,20 @@
             <h2 class="text-4xl font-bold text-gray-900 mb-6">إنشاء حساب جديد</h2>
             <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="space-y-6">
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700">الاسم الكامل</label>
-                    <input id="name" formControlName="name" type="text" 
+                    <label for="firstName" class="block text-sm font-medium text-gray-700">الاسم الكامل</label>
+                    <input id="firstName" formControlName="firstName" type="text"
                         class="block w-full px-5 py-3 border border-gray-300 rounded-lg shadow-sm text-gray-900 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition duration-300 ease-in-out"
-                        placeholder="أدخل اسمك الكامل">
+                        placeholder="أدخل اسمك الاول">
+                </div>
+                <div>
+                    <label for="lastName" class="block text-sm font-medium text-gray-700">الاسم الكامل</label>
+                    <input id="lastName" formControlName="lastName" type="text"
+                        class="block w-full px-5 py-3 border border-gray-300 rounded-lg shadow-sm text-gray-900 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition duration-300 ease-in-out"
+                        placeholder="أدخل اسم العائلة">
                 </div>
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700">البريد الإلكتروني</label>
-                    <input id="email" formControlName="email" type="email" 
+                    <input id="email" formControlName="email" type="email"
                         class="block w-full px-5 py-3 border border-gray-300 rounded-lg shadow-sm text-gray-900 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition duration-300 ease-in-out"
                         placeholder="أدخل بريدك الإلكتروني">
                 </div>
@@ -56,7 +66,8 @@
                         placeholder="أدخل كلمة المرور">
                 </div>
                 <div>
-                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700">تأكيد كلمة المرور</label>
+                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700">تأكيد كلمة
+                        المرور</label>
                     <input id="confirmPassword" formControlName="confirmPassword" type="password"
                         class="block w-full px-5 py-3 border border-gray-300 rounded-lg shadow-sm text-gray-900 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition duration-300 ease-in-out"
                         placeholder="أعد إدخال كلمة المرور">

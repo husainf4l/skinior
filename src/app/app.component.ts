@@ -7,9 +7,6 @@ import { NavbarComponent } from "./layout/navbar/navbar.component";
 import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 
-function isNavigationEnd(event: RouterEvent): event is NavigationEnd {
-  return event instanceof NavigationEnd;
-}
 
 
 @Component({
@@ -20,16 +17,5 @@ function isNavigationEnd(event: RouterEvent): event is NavigationEnd {
   styleUrls: ['./app.component.css'] // Corrected property name
 })
 export class AppComponent {
-  title = 'skinior';
-  showUserLayout = true;
 
-  constructor(private router: Router) {
-    this.router.events
-      .pipe(
-        filter(isNavigationEnd) 
-      )
-      .subscribe((event: NavigationEnd) => {
-        this.showUserLayout = !event.url.startsWith('/admin');
-      });
-  }
 }

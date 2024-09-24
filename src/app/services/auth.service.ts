@@ -10,16 +10,12 @@ import { AuthResponse } from './models/auth.model';
 export class AuthService {
   private apiUrl = 'http://localhost:3000/auth'; // Replace with your actual backend URL
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  login1(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password }).pipe(
-      tap(response => this.setToken(response.access_token))
-    );
-  }
+
 
   login(email: string, password: string): Observable<AuthResponse> {
-    const body = { email, password }; 
+    const body = { email, password };
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, body).pipe(
       tap(response => this.setToken(response.access_token))  // Store token on successful response
     );
@@ -33,13 +29,18 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  isAuthenticated(): boolean {
+  isLoggedIn(): boolean {
     return !!this.getToken();
   }
 
   logout(): void {
     localStorage.removeItem('token');
   }
+  signup(email: string, password: string, firstName: string, lastName: string): Observable<AuthResponse> {
+    const body = { firstName, lastName, email, password };
+    return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, body).pipe(
+      tap(response => this.setToken(response.access_token))
+    )
+  }
 
-  
 }
