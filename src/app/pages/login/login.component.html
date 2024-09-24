@@ -1,0 +1,74 @@
+<!-- Main Container -->
+<div class="min-h-screen flex flex-row-reverse">
+    <!-- Right side with marketing content and subtle background color (will appear on the right due to RTL) -->
+    <div class="hidden lg:flex w-1/2 bg-gradient-to-br from-white to-gray-200 text-gray-800 p-12 items-center justify-center">
+        <div class="max-w-lg space-y-8 ">
+            <h1 class="text-5xl font-bold leading-snug text-gray-900">
+                مرحبًا بك في <span class="text-blue-600">سكينيور</span>
+            </h1>
+            <p class="text-lg leading-relaxed text-gray-600">
+                اكتشف مستقبل الجمال مع منتجات متقدمة وتجربة تسوق سلسة.
+            </p>
+            <ul class="space-y-2">
+                <li class="flex items-center  space-x-reverse space-x-2">
+                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span>منتجات الجمال الحصرية</span>
+                </li>
+                <li class="flex items-center  space-x-reverse space-x-2">
+                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span>حلول العناية بالبشرة المخصصة</span>
+                </li>
+                <li class="flex items-center space-x-reverse space-x-2">
+                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span>تجربة تسوق سلسة</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Left side with login form (aligned to the right in RTL) -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
+        <div class="w-full max-w-md space-y-8 text-right">
+            <h2 class="text-4xl font-bold text-gray-900 mb-6">تسجيل الدخول إلى سكينيور</h2>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">البريد الإلكتروني</label>
+                    <input id="email" formControlName="email" type="email" 
+                        class="block w-full px-5 py-3 border border-gray-300 rounded-lg shadow-sm text-gray-900 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition duration-300 ease-in-out"
+                        placeholder="أدخل بريدك الإلكتروني">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">كلمة المرور</label>
+                    <input id="password" formControlName="password" type="password"
+                        class="block w-full px-5 py-3 border border-gray-300 rounded-lg shadow-sm text-gray-900 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition duration-300 ease-in-out"
+                        placeholder="أدخل كلمة المرور">
+                </div>
+                <div>
+                    <button type="submit"
+                        class="w-full py-3 px-6 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out">
+                        تسجيل الدخول
+                    </button>
+                </div>
+
+                <div *ngIf="error" class="text-red-500 text-sm text-center">
+                    {{ error }}
+                </div>
+
+                <div class="text-center">
+                    <a href="#" class="text-sm font-medium text-blue-600 hover:underline">هل نسيت كلمة المرور؟</a>
+                </div>
+            </form>
+
+            <div class="text-center">
+                <p class="text-sm text-gray-600">ليس لديك حساب؟ <a routerLink="/signup"
+                        class="font-medium text-blue-600 hover:underline">إنشاء حساب جديد</a></p>
+            </div>
+        </div>
+    </div>
+</div>

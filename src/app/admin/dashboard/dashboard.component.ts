@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,6 +9,16 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent {
+export class DashboardComponent  implements OnInit{
+
+  token: string | null = '';  
+  
+  constructor(private authService: AuthService){};
+
+  ngOnInit(): void {
+    this.token = this.authService.getToken(),
+    console.log(this.token)
+  }
+  
 
 }
