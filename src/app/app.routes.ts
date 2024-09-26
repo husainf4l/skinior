@@ -6,6 +6,9 @@ import { ProductListComponent } from './components/product-list/product-list.com
 import { ProductDetailsComponent } from './components/product-details/product-details.component';
 import { ShopCategoryComponent } from './components/shop-category/shop-category.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { CartComponent } from './pages/cart/cart.component';
+import { CheckoutComponent } from './pages/checkout/checkout.component';
+import { OrderConfirmationComponent } from './pages/order-confirmation/order-confirmation.component';
 
 export const routes: Routes = [
     { path: "", component: HomeComponent },
@@ -15,6 +18,10 @@ export const routes: Routes = [
     { path: 'shop/product/:id', component: ProductDetailsComponent },
     { path: 'shop', component: ShopCategoryComponent },
     { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminRoutingModule) },
+    { path: 'cart', component: CartComponent },
+    { path: 'checkout', component: CheckoutComponent },
+    { path: 'order-confirmation', component: OrderConfirmationComponent },
+
 
     { path: '**', component: NotFoundComponent }
 

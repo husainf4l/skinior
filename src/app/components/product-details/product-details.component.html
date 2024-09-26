@@ -1,18 +1,42 @@
-<div class="container mx-auto p-6">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Product Image -->
-        <div>
-            <img [src]="product.images[0]?.url" alt="{{ product.name }}" class="w-full h-auto rounded-lg" />
+<div class="container mx-auto p-8 md:px-12 lg:px-20" *ngIf="product">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+        <!-- Product Image Section -->
+        <div class="relative group" *ngIf="product.images?.length > 0">
+            <img [src]="product.images[0]?.url" alt="{{ product.name }}"
+                class="w-full h-auto max-w-2xl rounded-lg object-cover shadow-lg transition-transform duration-500 ease-in-out group-hover:scale-105">
+            <!-- Optional Highlight Badge -->
+            <div
+                class="absolute top-4 left-4 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-xs px-3 py-1 rounded-full shadow-sm">
+                Exclusive
+            </div>
         </div>
 
-        <!-- Product Details -->
-        <div class="text-right">
-            <h1 class="text-3xl font-bold mb-4">{{ product.name }}</h1>
+        <!-- Product Details Section -->
+        <div class="space-y-8 text-right">
+            <!-- Brand & Name -->
+            <h1 class="text-5xl font-extrabold tracking-tight text-gray-900">{{ product.name }}</h1>
+            <h2 class="text-2xl text-gray-500 font-light">{{ product.brand }}</h2>
 
-            <!-- Render the HTML description -->
-            <div class="text-lg text-gray-700 mb-4" [innerHTML]="product.description"></div>
+            <!-- Price Display -->
+            <p class="text-4xl font-extrabold text-indigo-700">{{ product.price | currency: 'JOD' }}</p>
 
-            <p class="text-lg font-bold text-indigo-600">{{ product.price | currency:'USD' }}</p>
+            <!-- Product Description -->
+            <div class="text-lg leading-relaxed text-gray-700" [innerHTML]="product.description"></div>
+
+            <!-- Stock Information -->
+            <div class="flex justify-between items-center">
+                <p class="text-sm text-green-600 font-semibold">Available Now</p>
+                <!-- Add to Cart Button -->
+                <button (click)="addToCart()"
+                    class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-purple-700 hover:to-indigo-700 text-white text-lg font-semibold py-4 px-10 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105">
+                    Add to Cart
+                </button>
+            </div>
+
+            <!-- Additional Information (e.g. free shipping) -->
+            <div class="text-sm text-gray-500">
+                Free shipping on all orders above 50 JOD. <span class="text-gray-700 underline">Learn More</span>
+            </div>
         </div>
     </div>
 </div>
