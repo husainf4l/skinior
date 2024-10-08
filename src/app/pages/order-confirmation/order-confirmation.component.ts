@@ -15,16 +15,13 @@ export class OrderConfirmationComponent implements OnInit {
   constructor(private router: Router) { }
 
   ngOnInit(): void {
-    // Get the order from the router state (check if it exists)
     this.order = history.state?.order;
 
-    // Debug to check if the order is present
     console.log('Order confirmation data:', this.order);
 
-    // If no order was placed, redirect to home
-    if (!this.order || !this.order.cartItems?.length) {
+    if (!this.order || !this.order.orderItems?.length) {
       console.log('No order found, redirecting to home.');
-      this.router.navigate(['/']);
+      // this.router.navigate(['/']);
     }
   }
 

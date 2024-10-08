@@ -1,8 +1,10 @@
-import { Injectable, signal, computed } from '@angular/core';
+// src/app/services/cart-order.service.ts
+
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
+import { computed, signal } from '@angular/core';
+import { catchError, of, Observable } from 'rxjs';
 import { environment } from '../enviroments/enviroment';
-import { of } from 'rxjs';
 
 interface CartItem {
     product: {
@@ -10,24 +12,13 @@ interface CartItem {
         brand: string;
         name: string;
         price: number;
-        images: [
-            {
-                id: string;
-                url: string;
-                altText: string;
-            }
-        ];
+        images: Array<{
+            id: string;
+            url: string;
+            altText: string;
+        }>;
     };
     quantity: number;
-}
-
-interface ShippingAddress {
-    fullName: string;
-    addressLine1: string;
-    addressLine2?: string;
-    city: string;
-    postalCode: string;
-    country: string;
 }
 
 @Injectable({
@@ -37,9 +28,12 @@ export class CartOrderService {
     // Signal to track cart items
     private cartItemsSignal = signal<CartItem[]>([]);
 
-    // Computed signal to track total amount based on cartItemsSignal
+    // Computed signal to track total amount
     private totalAmountSignal = computed(() =>
-        this.cartItemsSignal().reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+        this.cartItemsSignal().reduce(
+            (acc, item) => acc + item.product.price * item.quantity,
+            0
+        )
     );
 
     // Computed signal to track total quantity of items
@@ -47,35 +41,48 @@ export class CartOrderService {
         this.cartItemsSignal().reduce((acc, item) => acc + item.quantity, 0)
     );
 
-    // Signal to track shipping address
-    private shippingAddressSignal = signal<ShippingAddress | null>(null);
+    // Signal to track phone number
+    private phoneNumberSignal = signal<string | null>(null);
 
-    private backendUrl = `${environment.apiUrl}/cart`;
+    private backendUrl = `${environment.apiUrl}`;
 
     constructor(private http: HttpClient) {
-        // Load cart from localStorage if available
         this.loadCartFromLocalStorage();
     }
 
-    // Add shipping address
-    setShippingAddress(address: ShippingAddress) {
-        this.shippingAddressSignal.set(address);
-        localStorage.setItem('shippingAddress', JSON.stringify(address));
+    // Set phone number
+    setPhoneNumber(phoneNumber: string) {
+        this.phoneNumberSignal.set(phoneNumber);
+        localStorage.setItem('phoneNumber', phoneNumber);
     }
 
-    // Load shipping address from localStorage
-    loadShippingAddress() {
-        const storedAddress = localStorage.getItem('shippingAddress');
-        if (storedAddress) {
-            const address = JSON.parse(storedAddress);
-            this.shippingAddressSignal.set(address);
+    // Load phone number from localStorage
+    private loadPhoneNumber() {
+        const storedPhoneNumber = localStorage.getItem('phoneNumber');
+        if (storedPhoneNumber) {
+            this.phoneNumberSignal.set(storedPhoneNumber);
         }
     }
 
     // Add product to the cart
-    addToCart(product: any, quantity: number = 1, userId: string | null = null, sessionId: string | null = null) {
+    addToCart(product: any, quantity: number = 1) {
+        this.getOrCreateCartId()
+            .then((cartId) => {
+                this.updateLocalCart(product, quantity);
+                this.addToCartBackend(product.id, quantity, cartId);
+            })
+            .catch((error) => {
+                console.error('Error adding to cart:', error);
+            });
+    }
+
+
+
+    private updateLocalCart(product: any, quantity: number) {
         const currentCart = [...this.cartItemsSignal()];
-        const existingItemIndex = currentCart.findIndex((item) => item.product.id === product.id);
+        const existingItemIndex = currentCart.findIndex(
+            (item) => item.product.id === product.id
+        );
 
         if (existingItemIndex >= 0) {
             currentCart[existingItemIndex].quantity += quantity;
@@ -85,27 +92,136 @@ export class CartOrderService {
 
         this.cartItemsSignal.set(currentCart);
         this.saveCartToLocalStorage();
-        return this.syncWithBackend('add', product.id, quantity, userId, sessionId);
+    }
+
+    private getOrCreateCartId(): Promise<number> {
+        return new Promise((resolve, reject) => {
+            const cartId = this.getCartIdFromLocalStorage();
+
+            if (cartId !== null) {
+                resolve(cartId);
+            } else {
+                this.createCart().subscribe({
+                    next: (response: any) => {
+                        if (response && response.id) {
+                            const newCartId = response.id;
+                            this.storeCartIdInLocalStorage(newCartId);
+                            resolve(newCartId);
+                        } else {
+                            reject('Failed to create cart: Invalid response');
+                        }
+                    },
+                    error: (error) => {
+                        reject(error);
+                    },
+                });
+            }
+        });
+    }
+
+    private createCart(): Observable<any> {
+        return this.http.post(`${this.backendUrl}/cart`, {}).pipe(
+            catchError((error) => this.handleError('Create Cart', error))
+        );
+    }
+
+    private addToCartBackend(
+        productId: number,
+        quantity: number,
+        cartId: number
+    ) {
+        const body = { cartId, productId, quantity };
+        this.http
+            .post(`${this.backendUrl}/cart/add`, body)
+            .pipe(
+                catchError((error) =>
+                    this.handleError('Add to Cart Backend', error)
+                )
+            )
+            .subscribe({
+                next: () => {
+                    // Item added successfully
+                },
+                error: (error) => {
+                    console.error('Error adding to cart backend:', error);
+                },
+            });
+    }
+
+
+    private storeCartIdInLocalStorage(cartId: number) {
+        localStorage.setItem('cartId', cartId.toString());
+    }
+
+    private getCartIdFromLocalStorage(): number | null {
+        const cartIdString = localStorage.getItem('cartId');
+        const cartId = cartIdString ? Number(cartIdString) : null;
+        return cartId !== null && !isNaN(cartId) ? cartId : null;
     }
 
     // Remove product from the cart
-    removeFromCart(productId: number, userId: string | null = null, sessionId: string | null = null) {
-        const updatedCart = this.cartItemsSignal().filter((item) => item.product.id !== productId);
+    removeFromCart(productId: number) {
+        const updatedCart = this.cartItemsSignal().filter(
+            (item) => item.product.id !== productId
+        );
         this.cartItemsSignal.set(updatedCart);
         this.saveCartToLocalStorage();
-        return this.syncWithBackend('remove', productId, 0, userId, sessionId);
+
+        const cartId = this.getCartIdFromLocalStorage();
+
+        if (cartId !== null) {
+            this.removeFromCartBackend(productId, cartId);
+        } else {
+            console.error('Cart ID is missing or invalid');
+        }
     }
 
+    private removeFromCartBackend(productId: number, cartId: number) {
+        const body = { cartId };
+        this.http
+            .delete(`${this.backendUrl}/cart/remove/${productId}`, { body })
+            .pipe(
+                catchError((error) =>
+                    this.handleError('Remove from Cart Backend', error)
+                )
+            )
+            .subscribe({
+                next: () => {
+                    // Item removed successfully
+                },
+                error: (error) => {
+                    console.error('Error removing from cart backend:', error);
+                },
+            });
+    }
+
+
     // Clear cart
-    clearCart(userId: string | null = null, sessionId: string | null = null) {
+    clearCart() {
         this.cartItemsSignal.set([]);
         localStorage.removeItem('cart');
-        localStorage.removeItem('shippingAddress');
-        const params = this.buildHttpParams(userId, sessionId);
-        return this.http.delete(`${this.backendUrl}/clear`, { params }).pipe(
-            catchError((error) => this.handleError('Clear Cart', error))
-        );
+        localStorage.removeItem('phoneNumber');
+
+        const cartId = this.getCartIdFromLocalStorage();
+
+        if (cartId !== null) {
+            const body = { cartId };
+            this.http
+                .delete(`${this.backendUrl}/cart/clear`, { body })
+                .pipe(catchError((error) => this.handleError('Clear Cart', error)))
+                .subscribe({
+                    next: () => {
+                        localStorage.removeItem('cartId');
+                    },
+                    error: (error) => {
+                        console.error('Error clearing cart:', error);
+                    },
+                });
+        } else {
+            console.error('Cart ID is missing or invalid');
+        }
     }
+
 
     private saveCartToLocalStorage() {
         const cartItems = this.cartItemsSignal();
@@ -118,29 +234,12 @@ export class CartOrderService {
             const cartItems = JSON.parse(storedCart) as CartItem[];
             this.cartItemsSignal.set(cartItems);
         }
-        this.loadShippingAddress(); // Load shipping address as well
+        this.loadPhoneNumber();
     }
 
-    private syncWithBackend(action: 'add' | 'remove', productId: number, quantity: number, userId: string | null, sessionId: string | null) {
-        const params = this.buildHttpParams(userId, sessionId);
-        const body = { productId, quantity };
-        let url = `${this.backendUrl}/${action}`;
-        if (action === 'remove') {
-            url = `${this.backendUrl}/remove/${productId}`;
-        }
-        return this.http.post(url, body, { params }).pipe(
-            catchError((error) => this.handleError(`Sync Cart - ${action}`, error))
-        ).subscribe();
-    }
-
-    private buildHttpParams(userId: string | null, sessionId: string | null): HttpParams {
+    private buildHttpParams(cartId: number): HttpParams {
         let params = new HttpParams();
-        if (userId) {
-            params = params.set('userId', userId);
-        }
-        if (sessionId) {
-            params = params.set('sessionId', sessionId);
-        }
+        params = params.set('cartId', cartId.toString());
         return params;
     }
 
@@ -162,13 +261,14 @@ export class CartOrderService {
         return this.totalQuantitySignal;
     }
 
-    get shippingAddress() {
-        return this.shippingAddressSignal;
+    get phoneNumber() {
+        return this.phoneNumberSignal;
     }
 
-
+    // Place order
     placeOrder(order: any) {
-        return this.http.post(`${this.backendUrl}/place-order`, order)
+        return this.http
+            .post(`${this.backendUrl}/orders`, order)
             .pipe(
                 catchError((error) => {
                     console.error('Error placing order:', error);
@@ -176,5 +276,4 @@ export class CartOrderService {
                 })
             );
     }
-
 }

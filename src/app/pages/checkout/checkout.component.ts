@@ -1,3 +1,5 @@
+// src/app/components/checkout/checkout.component.ts
+
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartOrderService } from '../../services/cart-order.service';
@@ -9,34 +11,64 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule],
 })
 export class CheckoutComponent {
-  shippingAddress = {
-    name: '',
-    address: '',
-    city: '',
-    postalCode: '',
-  };
+  phoneNumber: string = '';
+  shippingAddress: string = '';
+  shippingCity: string = '';
+  shippingCountry: string = 'Jordan';
 
-  paymentMethod = 'CashOnDelivery';
-
-  constructor(private router: Router, private cartOrderService: CartOrderService) { }
+  constructor(
+    private router: Router,
+    private cartOrderService: CartOrderService
+  ) { }
 
   placeOrder() {
+    // Ensure required fields are provided
+    if (!this.phoneNumber || !this.shippingAddress || !this.shippingCity) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+
+    // Set the phone number in the service (if needed)
+    this.cartOrderService.setPhoneNumber(this.phoneNumber);
+
+    const cartItems = this.cartOrderService.cartItems();
+    const totalAmount = this.cartOrderService.totalAmount();
+
+    // Get cartId from localStorage
+    const cartIdString = localStorage.getItem('cartId');
+    const cartId = cartIdString ? Number(cartIdString) : null;
+
+    if (!cartId) {
+      alert('Cart ID is missing. Please add items to your cart.');
+      return;
+    }
+
     const order = {
+      cartId,
+      phoneNumber: this.phoneNumber,
       shippingAddress: this.shippingAddress,
-      paymentMethod: this.paymentMethod,
-      cartItems: this.cartOrderService.cartItems(),  // Fetch cart items from the service
-      totalAmount: this.cartOrderService.totalAmount(), // Fetch total amount
+      shippingCity: this.shippingCity,
+      shippingCountry: this.shippingCountry,
+      totalAmount,
     };
 
     // Make a request to place the order using the CartOrderService
     this.cartOrderService.placeOrder(order).subscribe({
-      next: (response) => {
-        console.log('Order placed successfully:', response);
-        this.cartOrderService.clearCart();  // Clear cart after successful order placement
-        this.router.navigate(['/order-confirmation']);
+      next: (response: any) => {
+        if (response && response.id) {
+          console.log('Order placed successfully:', response);
+          this.cartOrderService.clearCart(); // Clear cart after successful order placement
+          // Pass the order data to the confirmation page
+          this.router.navigate(['/order-confirmation'], {
+            state: { order: response },
+          });
+        } else {
+          console.error('Order placement failed or returned invalid response.');
+          // Handle the error accordingly, maybe show a message to the user
+        }
       },
       error: (error) => {
         console.error('Error placing order:', error);
