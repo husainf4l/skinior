@@ -1,9 +1,12 @@
+// src/app/pages/addproduct/addproduct.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Product } from '../../services/models/product.model';
+import { NewProduct } from '../../services/models/product.model';
+import { Category } from '../../services/models/category.model';
 
 @Component({
   selector: 'app-addproduct',
@@ -13,51 +16,52 @@ import { Product } from '../../services/models/product.model';
   imports: [CommonModule, FormsModule]
 })
 export class AddProductComponent implements OnInit {
-  product: Product = {
+  product: NewProduct = { // Use NewProduct interface
     name: '',
     description: '',
     price: 0,
-    categoryId: 1, 
+    categoryId: 1,
     barcode: '',
     brand: '',
     isFeatured: false,
   };
 
-  categories: any[] = [];
+  categories: Category[] = []; // Use Category interface
   selectedFiles: File[] = [];
-  selectedCategoryId: any;
+  selectedCategoryId: number = 1; // Ensure correct type
 
-  constructor(private productService: ProductService, private router: Router) {}
+  constructor(private productService: ProductService, private router: Router) { }
 
   ngOnInit(): void {
     this.loadCategories();
   }
 
   loadCategories(): void {
-    this.productService.getCategories().subscribe((data) => {
+    this.productService.getCategories().subscribe((data: Category[]) => { // Type annotation
       this.categories = data;
     });
   }
 
-
-
   addProduct(): void {
-    // Construct the product object directly without FormData
-    const productData = {
-      name: this.product.name,
-      description: this.product.description,
-      price: this.product.price,
-      categoryId: 3, // Manually setting category ID to 3 as per your request
-      barcode: this.product.barcode,
-      brand: this.product.brand,
-      isFeatured: this.product.isFeatured
-    };
-  
-    console.log(productData)
+    // Validate the product data before sending
+    if (!this.product.name || !this.product.price || !this.product.categoryId) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+
+    // Log the product data for debugging
+    console.log('Adding Product:', this.product);
+
     // Make HTTP POST request with the JSON payload
-    this.productService.addProduct(productData).subscribe(() => {
-      this.router.navigate(['']);
+    this.productService.addProduct(this.product).subscribe({
+      next: (response) => {
+        console.log('Product added successfully:', response);
+        this.router.navigate(['']); // Navigate to home or another page
+      },
+      error: (error) => {
+        console.error('Error adding product:', error);
+        alert('Failed to add product. Please try again later.');
+      }
     });
   }
-  
 }

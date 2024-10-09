@@ -1,8 +1,8 @@
-import { CommonModule } from '@angular/common';
-import { Component, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CartOrderService } from '../../services/cart-order.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
@@ -10,25 +10,23 @@ import { CartOrderService } from '../../services/cart-order.service';
   imports: [CommonModule, RouterModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {
-  totalQuantity: number = 0;
-
-  constructor(public authService: AuthService, private router: Router, private cartOrderService: CartOrderService) {
-    // Use an effect to reactively get the cart quantity
-    effect(() => {
-      this.totalQuantity = this.cartOrderService.totalQuantity();
-    });
-  }
-
   isMenuOpen = false;
+  totalQuantity;
 
-  toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
+
+
+  constructor(
+    private router: Router,
+    public authService: AuthService,
+    private cartOrderService: CartOrderService
+  ) {
+    this.totalQuantity = this.cartOrderService.totalQuantity;
   }
 
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen;
   }
 }

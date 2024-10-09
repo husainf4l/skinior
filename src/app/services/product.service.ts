@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Product, Category } from './models/product.model';
+import { NewProduct, Product } from './models/product.model';
+import { Category } from './models/category.model'; // Correct import
+
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +15,7 @@ export class ProductService {
   constructor(private http: HttpClient) { }
 
   // Add new product with images
-  addProduct(productData: Product): Observable<Product> {
+  addProduct(productData: NewProduct): Observable<Product> {
     return this.http.post<Product>(`${this.apiUrl}/create`, productData);
   }
 

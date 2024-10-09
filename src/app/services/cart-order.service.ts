@@ -37,7 +37,7 @@ export class CartOrderService {
     );
 
     // Computed signal to track total quantity of items
-    private totalQuantitySignal = computed(() =>
+    public totalQuantity = computed(() =>
         this.cartItemsSignal().reduce((acc, item) => acc + item.quantity, 0)
     );
 
@@ -48,20 +48,13 @@ export class CartOrderService {
 
     constructor(private http: HttpClient) {
         this.loadCartFromLocalStorage();
+        this.loadPhoneNumber();
     }
 
     // Set phone number
     setPhoneNumber(phoneNumber: string) {
         this.phoneNumberSignal.set(phoneNumber);
         localStorage.setItem('phoneNumber', phoneNumber);
-    }
-
-    // Load phone number from localStorage
-    private loadPhoneNumber() {
-        const storedPhoneNumber = localStorage.getItem('phoneNumber');
-        if (storedPhoneNumber) {
-            this.phoneNumberSignal.set(storedPhoneNumber);
-        }
     }
 
     // Add product to the cart
@@ -75,8 +68,6 @@ export class CartOrderService {
                 console.error('Error adding to cart:', error);
             });
     }
-
-
 
     private updateLocalCart(product: any, quantity: number) {
         const currentCart = [...this.cartItemsSignal()];
@@ -133,11 +124,7 @@ export class CartOrderService {
         const body = { cartId, productId, quantity };
         this.http
             .post(`${this.backendUrl}/cart/add`, body)
-            .pipe(
-                catchError((error) =>
-                    this.handleError('Add to Cart Backend', error)
-                )
-            )
+            .pipe(catchError((error) => this.handleError('Add to Cart Backend', error)))
             .subscribe({
                 next: () => {
                     // Item added successfully
@@ -147,7 +134,6 @@ export class CartOrderService {
                 },
             });
     }
-
 
     private storeCartIdInLocalStorage(cartId: number) {
         localStorage.setItem('cartId', cartId.toString());
@@ -180,11 +166,7 @@ export class CartOrderService {
         const body = { cartId };
         this.http
             .delete(`${this.backendUrl}/cart/remove/${productId}`, { body })
-            .pipe(
-                catchError((error) =>
-                    this.handleError('Remove from Cart Backend', error)
-                )
-            )
+            .pipe(catchError((error) => this.handleError('Remove from Cart Backend', error)))
             .subscribe({
                 next: () => {
                     // Item removed successfully
@@ -194,7 +176,6 @@ export class CartOrderService {
                 },
             });
     }
-
 
     // Clear cart
     clearCart() {
@@ -222,7 +203,6 @@ export class CartOrderService {
         }
     }
 
-
     private saveCartToLocalStorage() {
         const cartItems = this.cartItemsSignal();
         localStorage.setItem('cart', JSON.stringify(cartItems));
@@ -235,6 +215,13 @@ export class CartOrderService {
             this.cartItemsSignal.set(cartItems);
         }
         this.loadPhoneNumber();
+    }
+
+    private loadPhoneNumber() {
+        const storedPhoneNumber = localStorage.getItem('phoneNumber');
+        if (storedPhoneNumber) {
+            this.phoneNumberSignal.set(storedPhoneNumber);
+        }
     }
 
     private buildHttpParams(cartId: number): HttpParams {
@@ -255,10 +242,6 @@ export class CartOrderService {
 
     get totalAmount() {
         return this.totalAmountSignal;
-    }
-
-    get totalQuantity() {
-        return this.totalQuantitySignal;
     }
 
     get phoneNumber() {

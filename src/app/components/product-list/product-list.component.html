@@ -1,42 +1,44 @@
-<!-- <h1 class="text-2xl font-bold text-center mb-6">Products</h1>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div *ngFor="let product of products"
-        class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-300 p-6 text-center">
-        <a [routerLink]="['/shop/product', product.id]">
-            <img [src]="product.images[0]?.url" alt="{{ product.name }}"
-                class="w-full h-48 object-cover rounded-lg mb-4" />
-            <h2 class="text-xl font-semibold text-gray-800">{{ product.name }}</h2>
-            <p class="text-lg font-medium text-indigo-600">{{ product.price | currency:'USD' }}</p>
-        </a>
-    </div>
-</div> -->
-
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mt-10 ">
-
-
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-10">
     <div *ngFor="let product of products" dir="ltr">
-        <section class="flex justify-center items-center">
-            <div class="bg-white shadow-md hover:scale-105 duration-300 border rounded-lg">
-                <a [routerLink]="['/shop/product', product.id]">
-                    <img class="h-80 w-72 object-contain" [src]="product.images[0]?.url">
-                </a>
-                <div class="px-4 py-3 w-72">
-                    <span class="text-gray-400 uppercase text-sm">{{product.brand}}</span>
-                    <p class="text-lg font-bold block truncate capitalize">{{product.name}}</p>
-                    <div class="flex items-center">
-                        <p class="text-lg font-semibold my-3">{{product.price}} JOD</p>
-                        <del>
-                            <!-- <p class="text-sm text-gray-600 ml-2">{{product.price}}</p> -->
-                        </del>
-                        <div class="ml-auto ">
-                            <a>
-                                <!-- add to cart buttom -->
-                                <div class="bx bx-cart bx-sm"></div>
-                            </a>
-                        </div>
-                    </div>
+        <div
+            class="bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 duration-300">
+
+            <!-- Product Image -->
+            <a [routerLink]="['/shop/product', product.id]" class="block">
+                <img [src]="product.images[0].url" [alt]="product.name" class="w-full h-64 object-cover"
+                    loading="lazy" />
+            </a>
+
+            <!-- Product Details -->
+            <div class="p-4">
+                <!-- Brand Name -->
+                <span class="text-gray-500 uppercase text-sm">{{ product.brand }}</span>
+
+                <!-- Product Name -->
+                <h3 class="mt-1 text-lg font-semibold text-gray-800 truncate">{{ product.name }}</h3>
+
+                <!-- Price and Add to Cart -->
+                <div class="flex items-center justify-between mt-2">
+                    <!-- Price -->
+                    <p class="text-indigo-600 font-bold text-lg">{{ product.price }} JOD</p>
+
+                    <!-- Add to Cart Button -->
+                    <button
+                        class="flex items-center justify-center bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors duration-200"
+                        (click)="addToCart(product)" [attr.aria-label]="'Add ' + product.name + ' to Cart'">
+                        <i class="bx bx-cart"></i>
+                    </button>
                 </div>
+
+                <!-- Optional: Badges (e.g., New, Sale) -->
+                <!-- Uncomment and customize as needed -->
+                <!-- 
+          <div class="mt-2">
+            <span class="inline-block bg-green-200 text-green-800 text-xs px-2 py-1 rounded-full">New</span>
+            <span class="inline-block bg-red-200 text-red-800 text-xs px-2 py-1 rounded-full">Sale</span>
+          </div>
+          -->
             </div>
-        </section>
+        </div>
     </div>
 </div>

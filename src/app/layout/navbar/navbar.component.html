@@ -1,103 +1,170 @@
-<!-- Navbar -->
-<nav class="bg-white shadow-md">
-    <div class="container mx-auto flex items-center justify-between py-4 px-4 md:px-6">
+<!-- src/app/components/navbar/navbar.component.html -->
 
-        <!-- Logo on the Left -->
-        <a routerLink="/" class="flex-shrink-0">
-            <img class="h-10 md:h-14" src="assets/logo/logoblack.png" alt="Toppik Logo">
+<nav class="bg-white shadow-md" aria-label="Main navigation">
+    <div class="container mx-auto flex items-center justify-between py-4 px-4 md:px-6">
+        <!-- Logo -->
+        <a routerLink="/" class="flex-shrink-0" aria-label="Home">
+            <img class="h-10 md:h-14" src="assets/logo/logoblack.png" alt="Toppik Logo" />
         </a>
 
-        <!-- Centered Navbar Links -->
+        <!-- Desktop Menu -->
         <div class="hidden md:flex justify-center flex-1">
             <ul class="flex space-x-reverse space-x-8 text-center">
-                <li class="nav-item">
-                    <a class="nav-link text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
-                        lang="ar" routerLink="/">الرئيسية</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
-                        lang="ar" routerLink="/shop">تسوق الان</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
-                        lang="ar" routerLink="/authorized">نقاط البيع المعتمدة</a>
-                </li>
-                <li class="nav-item">
-                    <a [href]="'https://wa.me/962798055229?text=' + ('مرحباً، أرغب في معرفة المزيد عن منتج توبيك.')"
-                        class="nav-link text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out">
-                        تواصل معنا
+                <!-- Home -->
+                <li>
+                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
+                        lang="ar" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                        الرئيسية
                     </a>
                 </li>
+                <!-- Perfumes -->
+                <li>
+                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
+                        lang="ar" routerLink="/shop/category/1" routerLinkActive="active">
+                        العطور
+                    </a>
+                </li>
+                <!-- Makeup -->
+                <li>
+                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
+                        lang="ar" routerLink="/shop/category/2" routerLinkActive="active">
+                        المكياج
+                    </a>
+                </li>
+                <!-- Hair -->
+                <li>
+                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
+                        lang="ar" routerLink="/shop/category/3" routerLinkActive="active">
+                        الشعر
+                    </a>
+                </li>
+                <!-- Face -->
+                <li>
+                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
+                        lang="ar" routerLink="/shop/category/4" routerLinkActive="active">
+                        العناية بالوجه
+                    </a>
+                </li>
+                <!-- Bath & Body -->
+                <li>
+                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
+                        lang="ar" routerLink="/shop/category/5" routerLinkActive="active">
+                        الاستحمام والجسم
+                    </a>
+                </li>
+                <!-- Oral Care -->
+                <li>
+                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
+                        lang="ar" routerLink="/shop/category/6" routerLinkActive="active">
+                        العناية بالفم
+                    </a>
+                </li>
+                <!-- Top Selling -->
+                <li>
+                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
+                        lang="ar" routerLink="/shop/category/7" routerLinkActive="active">
+                        الأكثر مبيعًا
+                    </a>
+                </li>
+                <!-- New Products -->
+                <li>
+                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
+                        lang="ar" routerLink="/shop/category/8" routerLinkActive="active">
+                        منتجات جديدة
+                    </a>
+                </li>
+
             </ul>
         </div>
 
-        <!-- Right-aligned Menu Icon and User/Cart Icons -->
+        <!-- Icons -->
         <div class="flex items-center space-x-4 md:space-x-6">
-            <div class="relative hidden md:block">
-                <div class="bx bx-cart bx-sm cursor-pointer text-gray-800 hover:text-blue-600" routerLink="/cart">
-
-                    {{totalQuantity}}
-                </div>
+            <!-- Cart Icon (Visible on all devices) -->
+            <div class="relative">
+                <a routerLink="/cart" aria-label="Cart" class="relative text-gray-800 hover:text-blue-600">
+                    <i class="bx bx-cart bx-sm"></i>
+                    <span *ngIf="totalQuantity() > 0"
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                        {{ totalQuantity() }}
+                    </span>
+                </a>
             </div>
 
-            <!-- Conditionally show Login/Logout based on user status -->
-            <div *ngIf="!authService.isLoggedIn(); else loggedIn" class="hidden md:block">
-                <div class="bx bx-log-out bx-sm cursor-pointer text-gray-800 hover:text-blue-600" routerLink="/login">
-                </div>
-            </div>
-            <ng-template #loggedIn>
-                <div class="hidden md:block">
-                    <div class="bx bx-log-out-circle text-red-600 bx-sm cursor-pointer  hover:text-blue-600"
-                        (click)="logout()" routerLink="/login"></div>
-                </div>
-            </ng-template>
-
-            <div class="md:hidden flex items-center">
-                <li class="nav-item flex  space-x-4 ">
-                    <div class="relative">
-                        <div class="bx bx-cart bx-sm cursor-pointer text-gray-800 hover:text-blue-600"
-                            routerLink="/cart"></div>
-                    </div>
-                    <div class="bx bx-menu bx-sm cursor-pointer text-gray-800 hover:text-blue-600"
-                        (click)="toggleMenu()"></div>
-                </li>
-            </div>
+            <!-- Mobile Menu Icon -->
+            <button class="md:hidden text-gray-800 hover:text-blue-600" (click)="toggleMenu()" aria-label="Toggle Menu"
+                [attr.aria-expanded]="isMenuOpen">
+                <i class="bx bx-menu bx-sm"></i>
+            </button>
         </div>
     </div>
 
-    <!-- Dropdown menu for small devices -->
-    <div [ngClass]="{ 'hidden': !isMenuOpen }" class="md:hidden bg-white shadow-lg">
+    <!-- Mobile Dropdown Menu -->
+    <div [ngClass]="{ hidden: !isMenuOpen }" class="md:hidden bg-white shadow-lg">
         <ul class="flex flex-col text-center divide-y divide-gray-200">
-            <li class="nav-item">
-                <a class="nav-link text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
-                    lang="ar" routerLink="/">الرئيسية</a>
+            <!-- Home -->
+            <li>
+                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
+                    lang="ar" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    الرئيسية
+                </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
-                    lang="ar" routerLink="/shop">تسوق الان</a>
+            <!-- Perfumes -->
+            <li>
+                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
+                    lang="ar" routerLink="/perfumes" routerLinkActive="active">
+                    العطور
+                </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
-                    lang="ar" routerLink="/authorized">نقاط البيع المعتمدة</a>
+            <!-- Makeup -->
+            <li>
+                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
+                    lang="ar" routerLink="/makeup" routerLinkActive="active">
+                    المكياج
+                </a>
             </li>
-            <li class="nav-item">
-                <a [href]="'https://wa.me/962798055229?text=' + ('مرحباً، أرغب في معرفة المزيد عن منتج توبيك.')"
-                    class="nav-link text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out">
-                    تواصل معنا
+            <!-- Hair -->
+            <li>
+                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
+                    lang="ar" routerLink="/hair" routerLinkActive="active">
+                    الشعر
+                </a>
+            </li>
+            <!-- Face -->
+            <li>
+                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
+                    lang="ar" routerLink="/face" routerLinkActive="active">
+                    العناية بالوجه
+                </a>
+            </li>
+            <!-- Bath & Body -->
+            <li>
+                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
+                    lang="ar" routerLink="/bath-body" routerLinkActive="active">
+                    الاستحمام والجسم
+                </a>
+            </li>
+            <!-- Oral Care -->
+            <li>
+                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
+                    lang="ar" routerLink="/oral-care" routerLinkActive="active">
+                    العناية بالفم
+                </a>
+            </li>
+            <!-- Top Selling -->
+            <li>
+                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
+                    lang="ar" routerLink="/top-selling" routerLinkActive="active">
+                    الأكثر مبيعًا
+                </a>
+            </li>
+            <!-- New Products -->
+            <li>
+                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
+                    lang="ar" routerLink="/new-products" routerLinkActive="active">
+                    منتجات جديدة
                 </a>
             </li>
 
-            <li class="nav-item">
-                <div *ngIf="!authService.isLoggedIn(); else loggedInMobile">
-                    <a class="nav-link text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
-                        routerLink="/login">تسجيل دخول</a>
-                </div>
-                <ng-template #loggedInMobile>
-                    <a class="nav-link text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
-                        (click)="logout()">تسجيل خروج</a>
-
-                </ng-template>
-            </li>
         </ul>
     </div>
 </nav>
