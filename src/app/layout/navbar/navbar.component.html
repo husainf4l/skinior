@@ -4,77 +4,22 @@
     <div class="container mx-auto flex items-center justify-between py-4 px-4 md:px-6">
         <!-- Logo -->
         <a routerLink="/" class="flex-shrink-0" aria-label="Home">
-            <img class="h-10 md:h-14" src="assets/logo/logoblack.png" alt="Toppik Logo" />
+            <img class="h-10 md:h-14" src={{mainLogo}} alt="skinior Logo" />
         </a>
 
         <!-- Desktop Menu -->
         <div class="hidden md:flex justify-center flex-1">
             <ul class="flex space-x-reverse space-x-8 text-center">
-                <!-- Home -->
-                <li>
+                <!-- Dynamic Navigation Links -->
+                <li *ngFor="let link of navigationLinks">
                     <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
-                        lang="ar" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                        الرئيسية
+                        [attr.lang]="link.lang" [routerLink]="link.routerLink" routerLinkActive="active"
+                        [routerLinkActiveOptions]="{ exact: link.id === 0 }">
+                        {{ link.name }}
                     </a>
                 </li>
-                <!-- Perfumes -->
-                <li>
-                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
-                        lang="ar" routerLink="/shop/category/1" routerLinkActive="active">
-                        العطور
-                    </a>
-                </li>
-                <!-- Makeup -->
-                <li>
-                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
-                        lang="ar" routerLink="/shop/category/2" routerLinkActive="active">
-                        المكياج
-                    </a>
-                </li>
-                <!-- Hair -->
-                <li>
-                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
-                        lang="ar" routerLink="/shop/category/3" routerLinkActive="active">
-                        الشعر
-                    </a>
-                </li>
-                <!-- Face -->
-                <li>
-                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
-                        lang="ar" routerLink="/shop/category/4" routerLinkActive="active">
-                        العناية بالوجه
-                    </a>
-                </li>
-                <!-- Bath & Body -->
-                <li>
-                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
-                        lang="ar" routerLink="/shop/category/5" routerLinkActive="active">
-                        الاستحمام والجسم
-                    </a>
-                </li>
-                <!-- Oral Care -->
-                <li>
-                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
-                        lang="ar" routerLink="/shop/category/6" routerLinkActive="active">
-                        العناية بالفم
-                    </a>
-                </li>
-                <!-- Top Selling -->
-                <li>
-                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
-                        lang="ar" routerLink="/shop/category/7" routerLinkActive="active">
-                        الأكثر مبيعًا
-                    </a>
-                </li>
-                <!-- New Products -->
-                <li>
-                    <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
-                        lang="ar" routerLink="/shop/category/8" routerLinkActive="active">
-                        منتجات جديدة
-                    </a>
-                </li>
-
             </ul>
+
         </div>
 
         <!-- Icons -->
@@ -108,60 +53,11 @@
                     الرئيسية
                 </a>
             </li>
-            <!-- Perfumes -->
-            <li>
-                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
-                    lang="ar" routerLink="/perfumes" routerLinkActive="active">
-                    العطور
-                </a>
-            </li>
-            <!-- Makeup -->
-            <li>
-                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
-                    lang="ar" routerLink="/makeup" routerLinkActive="active">
-                    المكياج
-                </a>
-            </li>
-            <!-- Hair -->
-            <li>
-                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
-                    lang="ar" routerLink="/hair" routerLinkActive="active">
-                    الشعر
-                </a>
-            </li>
-            <!-- Face -->
-            <li>
-                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
-                    lang="ar" routerLink="/face" routerLinkActive="active">
-                    العناية بالوجه
-                </a>
-            </li>
-            <!-- Bath & Body -->
-            <li>
-                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
-                    lang="ar" routerLink="/bath-body" routerLinkActive="active">
-                    الاستحمام والجسم
-                </a>
-            </li>
-            <!-- Oral Care -->
-            <li>
-                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
-                    lang="ar" routerLink="/oral-care" routerLinkActive="active">
-                    العناية بالفم
-                </a>
-            </li>
-            <!-- Top Selling -->
-            <li>
-                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
-                    lang="ar" routerLink="/top-selling" routerLinkActive="active">
-                    الأكثر مبيعًا
-                </a>
-            </li>
-            <!-- New Products -->
-            <li>
-                <a class="text-gray-800 hover:text-blue-600 py-3 font-medium transition duration-200 ease-in-out"
-                    lang="ar" routerLink="/new-products" routerLinkActive="active">
-                    منتجات جديدة
+            <li *ngFor="let link of navigationLinks">
+                <a class="text-gray-800 hover:text-blue-600 py-2 font-medium transition duration-200 ease-in-out"
+                    [attr.lang]="link.lang" [routerLink]="link.routerLink" routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: link.id === 0 }">
+                    {{ link.name }}
                 </a>
             </li>
 
