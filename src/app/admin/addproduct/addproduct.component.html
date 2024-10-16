@@ -1,53 +1,33 @@
 <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-8 mt-10">
   <h2 class="text-2xl font-semibold mb-6">إضافة منتج جديد</h2>
-  
+
   <form (ngSubmit)="addProduct()" #productForm="ngForm" enctype="multipart/form-data">
-  
+
     <!-- Product Name -->
     <div class="mb-4">
       <label for="name" class="block text-sm font-medium text-gray-700">اسم المنتج</label>
-      <input
-        id="name"
-        name="name"
-        [(ngModel)]="product.name"
-        required
-        class="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-        placeholder="ادخل اسم المنتج"
-      />
+      <input id="name" name="name" [(ngModel)]="product.name" required
+        class="w-full mt-2 p-2 border border-gray-300 rounded-lg" placeholder="ادخل اسم المنتج" />
       <div *ngIf="productForm.submitted && !product.name" class="text-red-600 mt-1">
         اسم المنتج مطلوب
       </div>
     </div>
-  
-    <!-- Product Description -->
-    <div class="mb-4">
+
+    <div class="mb-4" dir="ltr">
       <label for="description" class="block text-sm font-medium text-gray-700">وصف المنتج</label>
-      <textarea
-        id="description"
-        name="description"
-        [(ngModel)]="product.description"
-        required
-        class="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-        rows="4"
-        placeholder="ادخل وصف المنتج"
-      ></textarea>
+      <quill-editor id="description" [(ngModel)]="product.description" [required]="true" [styles]="{ height: '500px' }"
+        [modules]="quillModules" placeholder="ادخل وصف المنتج"></quill-editor>
       <div *ngIf="productForm.submitted && !product.description" class="text-red-600 mt-1">
         وصف المنتج مطلوب
       </div>
     </div>
-  
+
+
     <!-- Product Price -->
     <div class="mb-4">
       <label for="price" class="block text-sm font-medium text-gray-700">السعر</label>
-      <input
-        id="price"
-        name="price"
-        type="number"
-        [(ngModel)]="product.price"
-        required
-        class="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-        placeholder="ادخل السعر"
-      />
+      <input id="price" name="price" type="number" [(ngModel)]="product.price" required
+        class="w-full mt-2 p-2 border border-gray-300 rounded-lg" placeholder="ادخل السعر" />
       <div *ngIf="productForm.submitted && !product.price" class="text-red-600 mt-1">
         السعر مطلوب
       </div>
@@ -56,14 +36,8 @@
     <!-- Product Barcode -->
     <div class="mb-4">
       <label for="barcode" class="block text-sm font-medium text-gray-700">الباركود</label>
-      <input
-        id="barcode"
-        name="barcode"
-        [(ngModel)]="product.barcode"
-        required
-        class="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-        placeholder="ادخل الباركود"
-      />
+      <input id="barcode" name="barcode" [(ngModel)]="product.barcode" required
+        class="w-full mt-2 p-2 border border-gray-300 rounded-lg" placeholder="ادخل الباركود" />
       <div *ngIf="productForm.submitted && !product.barcode" class="text-red-600 mt-1">
         الباركود مطلوب
       </div>
@@ -72,14 +46,8 @@
     <!-- Product Brand -->
     <div class="mb-4">
       <label for="brand" class="block text-sm font-medium text-gray-700">العلامة التجارية</label>
-      <input
-        id="brand"
-        name="brand"
-        [(ngModel)]="product.brand"
-        required
-        class="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-        placeholder="ادخل العلامة التجارية"
-      />
+      <input id="brand" name="brand" [(ngModel)]="product.brand" required
+        class="w-full mt-2 p-2 border border-gray-300 rounded-lg" placeholder="ادخل العلامة التجارية" />
       <div *ngIf="productForm.submitted && !product.brand" class="text-red-600 mt-1">
         العلامة التجارية مطلوبة
       </div>
@@ -88,13 +56,8 @@
     <!-- Product Category -->
     <div class="mb-4">
       <label for="category" class="block text-sm font-medium text-gray-700">الفئة</label>
-      <select
-        id="category"
-        name="category"
-        [(ngModel)]="selectedCategoryId"
-        required
-        class="w-full mt-2 p-2 border border-gray-300 rounded-lg"
-      >
+      <select id="category" name="category" [(ngModel)]="selectedCategoryId" required
+        class="w-full mt-2 p-2 border border-gray-300 rounded-lg">
         <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
       </select>
       <div *ngIf="productForm.submitted && !selectedCategoryId" class="text-red-600 mt-1">
@@ -105,20 +68,11 @@
     <!-- Featured Checkbox -->
     <div class="mb-4">
       <label class="block text-sm font-medium text-gray-700">هل المنتج مميز؟</label>
-      <input
-        id="isFeatured"
-        name="isFeatured"
-        type="checkbox"
-        [(ngModel)]="product.isFeatured"
-        class="mt-2"
-      />
+      <input id="isFeatured" name="isFeatured" type="checkbox" [(ngModel)]="product.isFeatured" class="mt-2" />
     </div>
 
-    <button
-      type="submit"
-      class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700"
-      [disabled]="productForm.form.invalid"
-    >
+    <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700"
+      [disabled]="productForm.form.invalid">
       حفظ المنتج
     </button>
   </form>

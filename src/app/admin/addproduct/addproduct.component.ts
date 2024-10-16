@@ -5,18 +5,21 @@ import { Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NewProduct } from '../../services/models/product.model';
-import { Category } from '../../services/models/category.model';
+import { Category, NewProduct } from '../../services/models/interfaces.model';
+import { quillModules } from '../../services/models/quill-config';
+import { QuillModule } from 'ngx-quill';
 
 @Component({
   selector: 'app-addproduct',
   templateUrl: './addproduct.component.html',
   styleUrls: ['./addproduct.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule, QuillModule]
 })
 export class AddProductComponent implements OnInit {
-  product: NewProduct = { // Use NewProduct interface
+  quillModules = quillModules;
+
+  product: NewProduct = {
     name: '',
     description: '',
     price: 0,
@@ -64,4 +67,6 @@ export class AddProductComponent implements OnInit {
       }
     });
   }
+
+
 }

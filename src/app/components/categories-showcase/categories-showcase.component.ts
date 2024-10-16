@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { Category } from '../../services/models/category.model';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { Category } from '../../services/models/interfaces.model';
 
 @Component({
   selector: 'app-categories-showcase',
@@ -16,27 +16,30 @@ export class CategoriesShowcaseComponent {
     {
       id: 3,
       name: "Oral Care",
-      imageUrl: "https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600",
-      description: ""
+      images: ["https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600"],
+      description: "",
+      products: []
     },
     {
       id: 3,
       name: "Oral Care",
-      imageUrl: "https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600",
-      description: ""
+      images: ["https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600"],
+      description: "",
+      products: []
     },
     {
       id: 3,
       name: "Oral Care",
-      imageUrl: "https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600",
-      description: ""
+      images: ["https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600"],
+      description: "",
+      products: []
     },
     {
       id: 3,
       name: "Oral Care",
-      imageUrl: "https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600",
-      description: ""
+      images: ["https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600"],
+      description: "",
+      products: []
     },
-
   ]
 }

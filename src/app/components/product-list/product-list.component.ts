@@ -1,13 +1,11 @@
 // src/app/pages/product-list/product-list.component.ts
-
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Category } from '../../services/models/category.model'; // Correct import
-import { Product } from '../../services/models/product.model'; // Ensure Product is imported if used
 import { CartOrderService } from '../../services/cart-order.service'; // If needed
+import { Product } from '../../services/models/interfaces.model';
 
 @Component({
   selector: 'app-product-list',

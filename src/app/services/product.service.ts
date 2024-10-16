@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { NewProduct, Product } from './models/product.model';
-import { Category } from './models/category.model'; // Correct import
+import { environment } from '../enviroments/enviroment';
+import { Category, NewProduct, Product } from './models/interfaces.model';
 
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-  private apiUrl = 'http://localhost:3000/products'; // Your backend API URL
-  private categoryApiUrl = 'http://localhost:3000/products/categories'; // Categories API URL
+  private backendUrl = `${environment.apiUrl}`;
+
+  private apiUrl = `${environment.apiUrl}/products`
+  private categoryApiUrl = `${environment.apiUrl}/products/categories`;
 
   constructor(private http: HttpClient) { }
 
@@ -33,9 +35,8 @@ export class ProductService {
   getProductById(id: number): Observable<Product> {
     return this.http.get<Product>(`${this.apiUrl}/${id}`);
   }
-
-  // Update product
-  updateProduct(id: number, productData: FormData): Observable<Product> {
+  // Update product using JSON data
+  updateProduct(id: number, productData: Product): Observable<Product> {
     return this.http.put<Product>(`${this.apiUrl}/${id}`, productData);
   }
 
