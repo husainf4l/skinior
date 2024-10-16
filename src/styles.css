@@ -21,8 +21,13 @@ body {
 }
 
 /* Arabic font configuration */
-body:lang(ar) {
-    font-family: 'Tajawal', sans-serif;
+body:lang(ar),
+h1:lang(ar),
+h2:lang(ar),
+p:lang(ar),
+a:lang(ar),
+span:lang(ar) {
+    font-family: 'Tajawal', sans-serif !important;
 }
 
 /* Optional: Override body font */

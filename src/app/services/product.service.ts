@@ -31,7 +31,11 @@ export class ProductService {
     return this.http.get<Product[]>(this.apiUrl);
   }
 
-  // Fetch a single product by ID
+  getFeaturedProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}/featured`);
+  }
+
+  // Fetch a single product by ID  
   getProductById(id: number): Observable<Product> {
     return this.http.get<Product>(`${this.apiUrl}/${id}`);
   }
