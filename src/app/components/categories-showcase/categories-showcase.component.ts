@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Category } from '../../services/models/interfaces.model';
@@ -12,34 +12,54 @@ import { Category } from '../../services/models/interfaces.model';
 })
 export class CategoriesShowcaseComponent {
 
+
   categories: Category[] = [
     {
+      id: 1,
+      name: "العطور",
+      image: "assets/images/1.png",
+      description: "",
+      products: []
+    },
+
+    {
       id: 3,
-      name: "Oral Care",
-      images: ["https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600"],
+      name: "العناية بالبشرة",
+      image: "assets/images/1.png",
       description: "",
       products: []
     },
     {
       id: 3,
-      name: "Oral Care",
-      images: ["https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600"],
+      name: "المكياج",
+      image: "assets/images/1.png",
       description: "",
       products: []
     },
     {
       id: 3,
-      name: "Oral Care",
-      images: ["https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600"],
+      name: "الشعر",
+      image: "assets/images/category/haircare.jpg",
       description: "",
       products: []
     },
     {
       id: 3,
-      name: "Oral Care",
-      images: ["https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600"],
+      name: "العناية بالفم",
+      image: "assets/images/category/oralcare.jpg",
+      description: "",
+      products: []
+    },
+    {
+      id: 3,
+      name: "العناية بالجسم",
+      image: "assets/images/1.png",
       description: "",
       products: []
     },
   ]
+
+
+
+
 }
