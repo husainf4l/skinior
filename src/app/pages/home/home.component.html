@@ -1,17 +1,12 @@
 <app-hero></app-hero>
-<app-categories-showcase></app-categories-showcase>  
 
-<app-featured-products></app-featured-products>
+<div *ngFor="let showcase of productShowcases">
+    <app-product-showcase [categoryId]="showcase.categoryId" [title]="showcase.title">
+    </app-product-showcase>
+</div>
 
 
-<app-featured-products></app-featured-products>
 <app-promotions></app-promotions>
-
-<app-featured-products></app-featured-products>
-<app-featured-products></app-featured-products>
-
-
-
 <app-customer-reviews></app-customer-reviews>
 
 <app-cta-banner></app-cta-banner>

@@ -9,6 +9,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { OrderConfirmationComponent } from './pages/order-confirmation/order-confirmation.component';
+import { BlogDetailsComponent } from './components/blog-details/blog-details.component';
 
 export const routes: Routes = [
     { path: "", component: HomeComponent },
@@ -21,6 +22,8 @@ export const routes: Routes = [
     { path: 'cart', component: CartComponent },
     { path: 'checkout', component: CheckoutComponent },
     { path: 'order-confirmation', component: OrderConfirmationComponent },
+    { path: 'blog/:id', component: BlogDetailsComponent },
+
 
 
     { path: '**', component: NotFoundComponent }

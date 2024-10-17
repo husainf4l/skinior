@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CartOrderService } from '../../services/cart-order.service'; // If needed
-import { Product } from '../../services/models/interfaces.model';
+import { Category, Product } from '../../services/models/interfaces.model';
 
 @Component({
   selector: 'app-product-list',
@@ -19,12 +19,13 @@ export class ProductListComponent implements OnInit {
   categoryId: number = 0;
   isLoading: boolean = true;
   error: string | null = null;
+  category: Category | undefined;
+
 
   constructor(
     private productService: ProductService,
     private route: ActivatedRoute,
     private cartOrderService: CartOrderService
-
   ) { }
 
   ngOnInit(): void {
@@ -44,11 +45,17 @@ export class ProductListComponent implements OnInit {
     this.productService.getProductsByCategoryId(this.categoryId).subscribe({
       next: (data: Product[]) => {
         this.products = data;
+        if (this.products.length > 0) {
+          this.category = this.products[0].category;
+        }
         this.isLoading = false;
+
       },
       error: (err) => {
         console.error('Error fetching products:', err);
         this.error = 'Failed to load products. Please try again later.';
+
+
         this.isLoading = false;
       }
     });

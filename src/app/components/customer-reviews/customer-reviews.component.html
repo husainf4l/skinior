@@ -1,56 +1,23 @@
-<!-- src/app/components/customer-reviews/customer-reviews.component.html -->
-
 <div class="container mx-auto px-4 md:px-6 lg:px-10 my-16">
     <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12 tracking-wide">آراء العملاء</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
 
-        <!-- Customer Review Card -->
-        <div class="bg-white shadow-lg rounded-xl p-6 transform transition-all duration-500 hover:scale-105">
-            <div class="flex items-center mb-6">
-                <img class="w-16 h-16 rounded-full object-cover"
-                    src="https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600"
-                    alt="صورة العميلة الأولى" />
-                <div class="ml-4">
-                    <h3 class="text-lg font-semibold text-gray-900">سارة أحمد</h3>
-                    <span class="text-sm text-gray-500">عميلة راضية</span>
+    <!-- Scrollable Section -->
+    <div class="overflow-x-auto scroll-smooth scrollbar-hide">
+        <div class="flex gap-8 px-4">
+
+            <!-- Customer Review Card -->
+            <div *ngFor="let review of reviews" class="bg-white shadow-lg rounded-xl p-6 min-w-[300px] max-w-[300px] 
+                        transform transition-all duration-500 hover:scale-105 flex-shrink-0">
+                <div class="flex items-center mb-6 gap-4">
+                    <img class="w-16 h-16 rounded-3xl object-cover" [src]="review.image" alt="{{ review.name }}" />
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">{{ review.name }}</h3>
+                    </div>
                 </div>
+                <p class="text-gray-700 italic leading-relaxed">{{ review.message }}</p>
             </div>
-            <p class="text-gray-700 italic leading-relaxed">
-                "لقد كانت تجربة التسوق في سكينير مميزة، جودة المنتجات لا يعلى عليها! أنصح بشدة."
-            </p>
-        </div>
+            <!-- End of Customer Review Card -->
 
-        <!-- Customer Review Card -->
-        <div class="bg-white shadow-lg rounded-xl p-6 transform transition-all duration-500 hover:scale-105">
-            <div class="flex items-center mb-6">
-                <img class="w-16 h-16 rounded-full object-cover"
-                    src="https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600"
-                    alt="صورة العميلة الثانية" />
-                <div class="ml-4">
-                    <h3 class="text-lg font-semibold text-gray-900">ليلى خليل</h3>
-                    <span class="text-sm text-gray-500">عميلة راضية</span>
-                </div>
-            </div>
-            <p class="text-gray-700 italic leading-relaxed">
-                "منتجات العناية بالبشرة من سكينير غيرت روتيني تمامًا. أصبحت بشرتي أكثر نضارة وتألقًا."
-            </p>
         </div>
-
-        <!-- Customer Review Card -->
-        <div class="bg-white shadow-lg rounded-xl p-6 transform transition-all duration-500 hover:scale-105">
-            <div class="flex items-center mb-6">
-                <img class="w-16 h-16 rounded-full object-cover"
-                    src="https://kyliecosmetics.com/cdn/shop/files/Cosmetics_Visual-Nav-Block-Assets_lips.jpg?crop=center&height=600&v=1709151319&width=600"
-                    alt="صورة العميلة الثالثة" />
-                <div class="ml-4">
-                    <h3 class="text-lg font-semibold text-gray-900">مايا الحسن</h3>
-                    <span class="text-sm text-gray-500">عميلة سعيدة</span>
-                </div>
-            </div>
-            <p class="text-gray-700 italic leading-relaxed">
-                "أفضل مكياج استخدمته حتى الآن، التغطية ممتازة والخامات عالية الجودة. سأكرر الشراء بكل تأكيد."
-            </p>
-        </div>
-
     </div>
 </div>
