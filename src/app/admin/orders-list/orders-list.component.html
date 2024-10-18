@@ -1,0 +1,55 @@
+<div class="container mx-auto px-4 md:px-6 lg:px-10 my-12">
+    <h2 class="text-3xl font-extrabold text-center mb-6 text-gray-800 tracking-wide">
+        قائمة الطلبات
+    </h2>
+
+    <!-- Search and Filter Section -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        <!-- Search by Phone -->
+        <input type="text" placeholder="ابحث برقم الهاتف..." [(ngModel)]="searchTerm" (input)="filterOrders()"
+            class="p-3 border border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 w-full md:max-w-xs" />
+
+        <!-- Filter by Status -->
+        <select [(ngModel)]="selectedStatus" (change)="filterOrders()"
+            class=" border border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            <option value="">عرض الكل</option>
+            <option value="PENDING">بانتظار المعالجة</option>
+            <option value="PROCESSING">قيد التنفيذ</option>
+            <option value="SHIPPED">تم الشحن</option>
+            <option value="DELIVERED">تم التسليم</option>
+            <option value="CANCELLED">تم الإلغاء</option>
+        </select>
+    </div>
+
+    <div *ngIf="isLoading" class="text-center text-lg text-gray-600">جار التحميل...</div>
+    <div *ngIf="error" class="text-center text-red-500">{{ error }}</div>
+
+    <!-- Orders List -->
+    <ul class="space-y-6">
+        <li *ngFor="let order of filteredOrders" (click)="viewOrderDetails(order.id)" class="bg-white shadow-md rounded-lg p-6 hover:shadow-lg hover:-translate-y-1 
+                   transition-all duration-300 cursor-pointer">
+
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <p class="text-xl font-semibold text-gray-800">رقم الطلب #{{ order.id }}</p>
+                    <p class="text-sm text-gray-500">الحالة: {{ order.status }}</p>
+                </div>
+                <p class="text-lg font-bold text-indigo-600">{{ order.totalAmount | number:'1.2-2' }} JOD</p>
+            </div>
+
+            <p class="text-sm text-gray-500">تاريخ الطلب: {{ order.createdAt | date:'dd/MM/yyyy' }}</p>
+            <p class="text-sm text-gray-500">رقم الهاتف: {{ order.phoneNumber }}</p>
+
+            <div class="flex justify-between items-center mt-4">
+                <span class="text-sm text-gray-400">
+                    العنوان: {{ order.shippingAddress }}
+                </span>
+
+                <button class="bg-indigo-500 text-white px-5 py-2 rounded-full hover:bg-indigo-600 
+                         transition duration-300">
+                    تفاصيل الطلب
+                </button>
+            </div>
+        </li>
+    </ul>
+</div>

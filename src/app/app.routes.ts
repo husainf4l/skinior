@@ -10,6 +10,7 @@ import { CartComponent } from './pages/cart/cart.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { OrderConfirmationComponent } from './pages/order-confirmation/order-confirmation.component';
 import { BlogDetailsComponent } from './components/blog-details/blog-details.component';
+import { OrdersListComponent } from './admin/orders-list/orders-list.component';
 
 export const routes: Routes = [
     { path: "", component: HomeComponent },

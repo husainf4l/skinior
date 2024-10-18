@@ -123,6 +123,7 @@ export interface Order {
   shippingCity: string;
   shippingCountry: string;
   phoneNumber: string;
+  notes?: string;
 }
 
 export interface Cart {
@@ -148,4 +149,12 @@ export interface HeroContent {
   learnMoreText: string;
   learnMoreLink: string;
   imageUrl: string;
+}
+export enum OrderStatus {
+  SEEN = 'SEEN',
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  SHIPPED = 'SHIPPED',
+  DELIVERED = 'DELIVERED',
+  CANCELLED = 'CANCELLED',
 }

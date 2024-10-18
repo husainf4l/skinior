@@ -6,6 +6,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AddProductComponent } from './addproduct/addproduct.component';
 import { ProductsListComponent } from './products-list/products-list.component';
 import { ProductEditComponent } from './product-edit/product-edit.component';
+import { OrdersListComponent } from './orders-list/orders-list.component';
+import { OrderDetailsComponent } from './order-details/order-details.component';
 // Import other admin components as needed
 
 const routes: Routes = [
@@ -16,8 +18,13 @@ const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'products', component: ProductsListComponent },
       { path: 'products/add-product', component: AddProductComponent },
-      { path: 'products/edit/:id', component: ProductEditComponent }, // Add this route
+      { path: 'products/edit/:id', component: ProductEditComponent },
+      { path: 'orders', component: OrdersListComponent },
+      { path: 'orders/:id', component: OrderDetailsComponent },
+
+
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+
     ],
   },
 ];

@@ -1,21 +1,35 @@
 <!-- admin-layout.component.html -->
 <div class="flex h-screen">
   <!-- Sidebar -->
-  <aside class="w-64 bg-gray-800 text-white flex flex-col">
-    <div class="p-4 text-2xl font-semibold">
-      Admin Panel
-    </div>
+
+  <aside class="w-64 bg-gray-800 text-white flex flex-col h-screen">
+    <div class="p-4 text-2xl font-semibold">Admin Panel</div>
+
     <nav class="flex-1 px-2 py-4 space-y-2">
-      <a routerLink="/admin/dashboard" class="block px-4 py-2 rounded hover:bg-gray-700"
-        routerLinkActive="bg-gray-700">Dashboard</a>
-      <a routerLink="/admin/products" class="block px-4 py-2 rounded hover:bg-gray-700"
-        routerLinkActive="bg-gray-700">Products</a>
-      <a routerLink="/admin/products/bulk-edit" class="block px-4 py-2 rounded hover:bg-gray-700"
-        routerLinkActive="bg-gray-700">Bulk Edit</a>
+      <a routerLink="/admin/dashboard" class="block px-4 py-2 rounded hover:bg-gray-700" routerLinkActive="bg-gray-700"
+        [routerLinkActiveOptions]="{ exact: true }">
+        Dashboard
+      </a>
+
+      <a routerLink="/admin/products" class="block px-4 py-2 rounded hover:bg-gray-700" routerLinkActive="bg-gray-700">
+        Products
+      </a>
+
       <a routerLink="/admin/products/add-product" class="block px-4 py-2 rounded hover:bg-gray-700"
-        routerLinkActive="bg-gray-700">Add Product</a>
+        routerLinkActive="bg-gray-700">
+        Add Product
+      </a>
+
+      <a routerLink="/admin/orders" class="block px-4 py-2 rounded hover:bg-gray-700" routerLinkActive="bg-gray-700">
+        Orders
+      </a>
+
+      <a routerLink="/admin/settings" class="block px-4 py-2 rounded hover:bg-gray-700" routerLinkActive="bg-gray-700">
+        Settings
+      </a>
     </nav>
   </aside>
+
 
   <!-- Main Content -->
   <div class="flex-1 p-6 overflow-auto">

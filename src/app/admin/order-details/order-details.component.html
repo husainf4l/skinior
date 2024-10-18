@@ -1,0 +1,38 @@
+<div class="container mx-auto px-4 md:px-6 lg:px-10 my-12">
+    <h2 class="text-3xl font-extrabold text-center mb-8 text-gray-800 tracking-wide">
+        Order Details
+    </h2>
+
+    <div *ngIf="isLoading" class="text-center text-lg text-gray-600">Loading...</div>
+    <div *ngIf="error" class="text-center text-red-500">{{ error }}</div>
+
+    <div *ngIf="order" class="bg-white shadow-lg rounded-lg p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-2xl font-semibold text-gray-800">Order #{{ order.id }}</h3>
+
+
+        </div>
+
+        <p class="text-lg text-gray-600 mb-2">Total: {{ order.totalAmount | number:'1.2-2' }} JOD</p>
+        <p class="text-sm text-gray-500">Order Date: {{ order.createdAt | date:'dd/MM/yyyy' }}</p>
+        <p class="text-sm text-gray-500">Phone: {{ order.phoneNumber }}</p>
+
+        <div class="mt-4">
+            <h4 class="text-lg font-medium text-gray-700">Shipping Address</h4>
+            <p class="text-sm text-gray-500">{{ order.shippingAddress }}</p>
+        </div>
+
+        <div class="mt-6">
+            <h4 class="text-lg font-medium text-gray-700">Order Items</h4>
+            <ul class="mt-2 space-y-4">
+                <li *ngFor="let item of order.orderItems" class="border-b pb-2">
+                    <div class="flex justify-between">
+                        <p class="text-gray-800">{{ item.product.name }}</p>
+                        <p class="text-gray-600">{{ item.quantity }} x {{ item.price | number:'1.2-2' }} JOD</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</div>
