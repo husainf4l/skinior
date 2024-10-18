@@ -1,41 +1,47 @@
-<!-- src/app/components/hero/hero.component.html -->
-<div class="relative  overflow-hidden mt-10 ">
+<div class="relative overflow-hidden mt-10">
+  <div
+    class="absolute inset-0 bg-gradient-to-r from-white/80 to-transparent"
+  ></div>
 
-    <!-- Luxurious Gradient Overlay -->
-    <div class="absolute inset-0 bg-gradient-to-r from-white/80 to-transparent"></div>
+  <div
+    class="relative container mx-auto flex flex-col lg:flex-row items-center justify-between h-full px-6 lg:px-24 space-y-8 lg:space-y-0"
+  >
+    <div class="lg:w-1/2 space-y-8 animate-fadeIn" *ngIf="heroContent">
+      <h1
+        class="text-gray-900 text-4xl md:text-6xl lg:text-7xl font-semibold leading-tight tracking-tight"
+      >
+        {{ heroContent.title }}
+      </h1>
 
-    <!-- Hero Content -->
-    <div
-        class="relative container mx-auto flex flex-col lg:flex-row items-center justify-between h-full px-6 lg:px-24 space-y-8 lg:space-y-0">
-        <!-- Main Text Content -->
-        <div class="lg:w-1/2 space-y-8 animate-fadeIn">
-            <h1 class="text-gray-900 text-4xl md:text-6xl lg:text-7xl font-semibold leading-tight tracking-tight">
-                اكتشفي جمالك مع <span class="text-rose-500 ">سكينير</span>
-            </h1>
+      <p class="text-gray-600 text-lg md:text-xl max-w-md leading-relaxed">
+        {{ heroContent.description }}
+      </p>
 
-            <p class="text-gray-600 text-lg md:text-xl max-w-md leading-relaxed">
-                تميزي بأفضل منتجات العناية بالبشرة، المصممة لإبراز جمالك الطبيعي.
-                اختبري الأناقة في أبسط تفاصيلك.
-
-            </p>
-
-            <!-- CTA Button -->
-            <div class="flex space-x-4 rtl:space-x-reverse">
-                <a href="/shop" class="bg-rose-500 hover:bg-rose-600 text-white font-medium py-3 px-6 rounded-full shadow-md 
-                 transition duration-300 transform hover:scale-105">
-                    تسوقي الآن
-                </a>
-                <a href="/learn-more" class="text-rose-500 hover:text-rose-600 font-medium py-3 px-6 rounded-full 
-                 transition duration-300 transform hover:underline">
-                    اكتشفي المزيد
-                </a>
-            </div>
-        </div>
-
-        <!-- Featured Product Image -->
-        <div class="lg:w-1/3 flex justify-center animate-slideUp">
-            <img src="./assets/images/8.jpeg" alt="المنتج الرئيسي"
-                class=" h-auto rounded-2xl shadow-lg hover:scale-105 transition-transform duration-500" />
-        </div>
+      <div class="flex space-x-4 rtl:space-x-reverse">
+        <a
+          [href]="heroContent.buttonLink"
+          class="bg-rose-500 hover:bg-rose-600 text-white font-medium py-3 px-6 rounded-full shadow-md transition duration-300 transform hover:scale-105"
+        >
+          {{ heroContent.buttonText }}
+        </a>
+        <a
+          [href]="heroContent.learnMoreLink"
+          class="text-rose-500 hover:text-rose-600 font-medium py-3 px-6 rounded-full transition duration-300 transform hover:underline"
+        >
+          {{ heroContent.learnMoreText }}
+        </a>
+      </div>
     </div>
+
+    <div
+      class="lg:w-1/3 flex justify-center animate-slideUp"
+      *ngIf="heroContent"
+    >
+      <img
+        [src]="heroContent.imageUrl"
+        alt="المنتج الرئيسي"
+        class="h-auto rounded-2xl shadow-lg hover:scale-105 transition-transform duration-500"
+      />
+    </div>
+  </div>
 </div>
