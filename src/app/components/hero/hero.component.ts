@@ -18,6 +18,6 @@ export class HeroComponent {
     buttonLink: '/shop',
     learnMoreText: 'اكتشفي المزيد',
     learnMoreLink: '/learn-more',
-    imageUrl: './assets/images/8.jpeg',
+    imageUrl: './assets/images/banner/bannermain.jpg',
   };
 }

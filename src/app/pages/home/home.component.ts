@@ -8,11 +8,12 @@ import { BlogTeaserComponent } from "../../components/blog-teaser/blog-teaser.co
 import { NewsletterSignupComponent } from "../../components/newsletter-signup/newsletter-signup.component";
 import { ProductShowcaseComponent } from "../../components/product-showcase/product-showcase.component";
 import { CommonModule } from '@angular/common';
+import { BrandsShowcaseComponent } from "../../components/brands-showcase/brands-showcase.component";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeroComponent, CategoriesShowcaseComponent, PromotionsComponent, CustomerReviewsComponent, CtaBannerComponent, BlogTeaserComponent, NewsletterSignupComponent, ProductShowcaseComponent, CommonModule],
+  imports: [HeroComponent, CategoriesShowcaseComponent, PromotionsComponent, CustomerReviewsComponent, CtaBannerComponent, BlogTeaserComponent, NewsletterSignupComponent, ProductShowcaseComponent, CommonModule, BrandsShowcaseComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

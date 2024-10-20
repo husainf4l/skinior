@@ -15,9 +15,23 @@ export class CategoriesShowcaseComponent {
 
   categories: Category[] = [
     {
+      id: 3,
+      name: "التخفيضات",
+      image: "assets/images/category/sale.webp",
+      description: "",
+      products: []
+    },
+    {
+      id: 3,
+      name: "منتجاتنا",
+      image: "assets/images/category/margo.webp",
+      description: "",
+      products: []
+    },
+    {
       id: 1,
       name: "العطور",
-      image: "assets/images/1.png",
+      image: "assets/images/category/fragrance.webp",
       description: "",
       products: []
     },
@@ -25,38 +39,41 @@ export class CategoriesShowcaseComponent {
     {
       id: 3,
       name: "العناية بالبشرة",
-      image: "assets/images/1.png",
+      image: "assets/images/category/skincare.webp",
       description: "",
       products: []
     },
     {
       id: 3,
       name: "المكياج",
-      image: "assets/images/1.png",
+      image: "assets/images/category/makeup.webp",
       description: "",
       products: []
     },
     {
       id: 3,
       name: "الشعر",
-      image: "assets/images/category/haircare.jpg",
+      image: "assets/images/category/haircare.webp",
       description: "",
       products: []
     },
     {
       id: 3,
       name: "العناية بالفم",
-      image: "assets/images/category/oralcare.jpg",
+      image: "assets/images/category/oralcare.webp",
       description: "",
       products: []
     },
     {
       id: 3,
-      name: "العناية بالجسم",
-      image: "assets/images/1.png",
+      name: "Margo Group",
+      image: "assets/images/category/margo.webp",
       description: "",
       products: []
     },
+
+
+
   ]
 
 
