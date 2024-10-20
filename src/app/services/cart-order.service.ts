@@ -5,6 +5,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { computed, signal } from '@angular/core';
 import { catchError, of, Observable } from 'rxjs';
 import { environment } from '../enviroments/enviroment';
+import { Variant } from './models/interfaces.model';
 
 interface CartItem {
     product: {
@@ -16,7 +17,10 @@ interface CartItem {
             id: string;
             url: string;
             altText: string;
-        }>;
+        }
+        >;
+        variant?: Variant;
+
     };
     quantity: number;
 }
@@ -58,11 +62,11 @@ export class CartOrderService {
     }
 
     // Add product to the cart
-    addToCart(product: any, quantity: number = 1) {
+    addToCart(product: any, quantity: number = 1, variantId?: number) {
         this.getOrCreateCartId()
             .then((cartId) => {
                 this.updateLocalCart(product, quantity);
-                this.addToCartBackend(product.id, quantity, cartId);
+                this.addToCartBackend(product.id, quantity, cartId, variantId);
             })
             .catch((error) => {
                 console.error('Error adding to cart:', error);
@@ -119,9 +123,10 @@ export class CartOrderService {
     private addToCartBackend(
         productId: number,
         quantity: number,
-        cartId: number
+        cartId: number,
+        variantId?: number
     ) {
-        const body = { cartId, productId, quantity };
+        const body = { cartId, productId, quantity, variantId };
         this.http
             .post(`${this.backendUrl}/cart/add`, body)
             .pipe(catchError((error) => this.handleError('Add to Cart Backend', error)))

@@ -3,16 +3,19 @@ import { ProductService } from '../../services/product.service';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CartOrderService } from '../../services/cart-order.service';
+import { Product, Variant } from '../../services/models/interfaces.model'; // Ensure Variant interface is imported
 
 @Component({
   selector: 'app-product-details',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './product-details.component.html',
-  styleUrl: './product-details.component.css'
+  styleUrls: ['./product-details.component.css']
 })
 export class ProductDetailsComponent implements OnInit {
-  product: any = {};
+  product: Product | null = null;
+  selectedVariant: Variant | null = null;
+  selectedVariantImage: string | null = null;
 
   constructor(
     private productService: ProductService,
@@ -27,7 +30,21 @@ export class ProductDetailsComponent implements OnInit {
     });
   }
 
-  addToCart() {
-    this.cartOrderService.addToCart(this.product, 1);  // Add 1 unit of the product
+  onVariantSelect(variant: Variant): void {
+    this.selectedVariant = variant;
+    this.selectedVariantImage = variant.image || this.product?.images[0]?.url || null;
+  }
+
+  addToCart(): void {
+    if (this.selectedVariant) {
+      const itemToAdd = {
+        ...this.product,
+        variant: this.selectedVariant,
+      };
+      console.log(itemToAdd)
+      this.cartOrderService.addToCart(itemToAdd, 1, this.selectedVariant.id);
+    } else {
+      this.cartOrderService.addToCart(this.product, 1,);
+    }
   }
 }

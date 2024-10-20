@@ -63,7 +63,6 @@ export interface Image {
   url: string;
   altText?: string;
   productId?: number;
-  variantId?: number;
 }
 
 export interface Review {
@@ -76,13 +75,11 @@ export interface Review {
 }
 export interface Variant {
   id: number;
-  productId: number;
   name: string;
-  price: number;
-  compareAtPrice?: number;
-  stock: number;
-  sku?: string;
-  images: Image[];
+  image: string;
+  products: Product[];
+  orderItems: OrderItem[];
+  cartItems: CartItem[];
 }
 export interface OrderItem {
   id: number;

@@ -1,6 +1,4 @@
 @import 'quill/dist/quill.snow.css';
-
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,25 +10,18 @@
     margin: 0;
 }
 
-/* Font settings for HTML and body */
 html,
 body {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Tajawal', sans-serif !important;
     height: 100%;
     margin: 0;
 }
 
-/* Arabic font configuration */
-body:lang(ar),
-h1:lang(ar),
-h2:lang(ar),
-p:lang(ar),
-a:lang(ar),
-span:lang(ar) {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: 'Tajawal', sans-serif !important;
-}
-
-/* Optional: Override body font */
-body {
-    font-family: Roboto, "Helvetica Neue", sans-serif;
 }

@@ -5,29 +5,31 @@
     <div class="bg-green-100 p-4 rounded-lg mb-6">
         <p class="text-green-700 font-semibold">شكراً لطلبك!</p>
         <p class="text-gray-700"> لقد تم تقديم طلبك بنجاح. سنقوم بالتواصل معك قريباً.</p>
-        <p>Order Id: {{order.id}}</p>
+        <p>Order Id: {{order?.id}}</p>
     </div>
 
     <!-- Shipping Address Section -->
     <div class="bg-white p-6 rounded-lg shadow-md">
         <h2 class="text-xl font-semibold mb-4"> العنوان</h2>
-        <p><strong>العنوان:</strong> {{ order.shippingAddress }}</p>
-        <p><strong>المدينة:</strong> {{ order.shippingCity }}</p>
-        <p><strong>رقم الهاتف:</strong> {{ order.phoneNumber }}</p>
+        <p><strong>العنوان:</strong> {{ order?.shippingAddress }}</p>
+        <p><strong>المدينة:</strong> {{ order?.shippingCity }}</p>
+        <p><strong>رقم الهاتف:</strong> {{ order?.phoneNumber }}</p>
     </div>
 
     <!-- Order Summary Section -->
     <div class="bg-white p-6 mt-6 rounded-lg shadow-md">
         <h2 class="text-xl font-semibold mb-4">التفاصيل</h2>
-        <div *ngFor="let item of order.orderItems">
+        <div *ngFor="let item of order?.orderItems">
             <div class="flex justify-between mb-2">
-                <p>{{ item.product.name }} (x{{ item.quantity }})</p>
+                <p>{{ item.product.name }} (x{{ item.quantity }}) {{item.variant?.name}}
+                </p>
                 <p>{{ item.product.price * item.quantity | currency: 'JOD' }}</p>
+
             </div>
         </div>
         <div class="flex justify-between mt-4">
             <p class="font-bold">Total:</p>
-            <p class="font-bold">{{ order.totalAmount | currency: 'JOD' }}</p>
+            <p class="font-bold">{{ order?.totalAmount | currency: 'JOD' }}</p>
         </div>
     </div>
 

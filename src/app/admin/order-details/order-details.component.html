@@ -27,7 +27,8 @@
             <ul class="mt-2 space-y-4">
                 <li *ngFor="let item of order.orderItems" class="border-b pb-2">
                     <div class="flex justify-between">
-                        <p class="text-gray-800">{{ item.product.name }}</p>
+                        <p class="text-gray-800">{{ item.product.name }} {{item.variant?.name}}
+                        </p>
                         <p class="text-gray-600">{{ item.quantity }} x {{ item.price | number:'1.2-2' }} JOD</p>
                     </div>
                 </li>

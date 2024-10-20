@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Order } from '../../services/models/interfaces.model';
 
 @Component({
   selector: 'app-order-confirmation',
@@ -10,7 +11,7 @@ import { Router } from '@angular/router';
   imports: [CommonModule]
 })
 export class OrderConfirmationComponent implements OnInit {
-  order: any;
+  order: Order | null = null;
 
   constructor(private router: Router) { }
 

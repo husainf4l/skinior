@@ -47,8 +47,10 @@
                             <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
                                 <a href="#"
                                     class="text-base font-medium text-gray-900 hover:underline">{{item.product.brand}}
-                                    {{item.product.name}}</a>
+                                    {{item.product.name}} {{item.product.variant?.name}}
+                                </a>
                                 <div class="flex items-center gap-4">
+
                                     <button (click)="removeFromCart(item.product.id)"
                                         class="inline-flex items-center text-sm font-medium text-red-600 hover:underline">
                                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
