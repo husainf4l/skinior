@@ -19,6 +19,7 @@ export interface Product {
   brand?: string;
   isFeatured: boolean;
   categoryId: number;
+  discountedPrice?: number;
   category: Category;
   tags?: Tag[];
   image: String;
@@ -31,17 +32,17 @@ export interface Product {
   relatedBy?: Product[];
   createdAt?: Date;
   updatedAt?: Date;
-  items:items[];
+  items: items[];
 }
 
-export interface items{
-  id:number;
-  productId:number;
-  sku:string;
-  stock:number;
-  image:string;
-  price:number;
-  discountedPrice:number;
+export interface items {
+  id: number;
+  productId: number;
+  sku: string;
+  stock: number;
+  image: string;
+  price: number;
+  discountedPrice: number;
 }
 
 export interface NewProduct {
