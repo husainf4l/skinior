@@ -12,7 +12,7 @@ export class ProductService {
   private backendUrl = `${environment.apiUrl}`;
 
   private apiUrl = `${environment.apiUrl}/products`
-  private categoryApiUrl = `${environment.apiUrl}/products/categories`;
+  private categoryApiUrl = `${environment.apiUrl}/categories`;
 
   constructor(private http: HttpClient) { }
 

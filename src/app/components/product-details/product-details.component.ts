@@ -3,7 +3,7 @@ import { ProductService } from '../../services/product.service';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CartOrderService } from '../../services/cart-order.service';
-import { Product, Variant } from '../../services/models/interfaces.model'; // Ensure Variant interface is imported
+import { items, Product, Variant } from '../../services/models/interfaces.model'; // Ensure Variant interface is imported
 
 @Component({
   selector: 'app-product-details',
@@ -14,8 +14,8 @@ import { Product, Variant } from '../../services/models/interfaces.model'; // En
 })
 export class ProductDetailsComponent implements OnInit {
   product: Product | null = null;
-  selectedVariant: Variant | null = null;
-  selectedVariantImage: string | null = null;
+  selectedVariant: items | null = null;
+  selectedVariantImage: any = null;
 
   constructor(
     private productService: ProductService,
@@ -30,9 +30,9 @@ export class ProductDetailsComponent implements OnInit {
     });
   }
 
-  onVariantSelect(variant: Variant): void {
-    this.selectedVariant = variant;
-    this.selectedVariantImage = variant.image || this.product?.images[0]?.url || null;
+  onVariantSelect(items: items): void {
+    this.selectedVariant = items;
+    this.selectedVariantImage = items.image || this.product?.image || null;
   }
 
   addToCart(): void {

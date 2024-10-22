@@ -17,7 +17,7 @@
         <a [routerLink]="['/shop/product', product.id]" class="block">
           <div class="aspect-w-1 aspect-h-1">
             <img
-              [src]="product.images[0].url"
+              [src]="product.image"
               [alt]="product.name"
               class="w-full h-full object-cover rounded-t-xl"
               loading="lazy"

@@ -13,7 +13,7 @@ export interface Product {
   id: number;
   handle?: string;
   name: string;
-  description?: string;
+  descriptionAr?: string;
   price: number;
   barcode?: string;
   brand?: string;
@@ -21,7 +21,7 @@ export interface Product {
   categoryId: number;
   category: Category;
   tags?: Tag[];
-  images: Image[];
+  image: String;
   reviews?: Review[];
   orderItems?: OrderItem[];
   cartItems?: CartItem[];
@@ -31,6 +31,17 @@ export interface Product {
   relatedBy?: Product[];
   createdAt?: Date;
   updatedAt?: Date;
+  items:items[];
+}
+
+export interface items{
+  id:number;
+  productId:number;
+  sku:string;
+  stock:number;
+  image:string;
+  price:number;
+  discountedPrice:number;
 }
 
 export interface NewProduct {

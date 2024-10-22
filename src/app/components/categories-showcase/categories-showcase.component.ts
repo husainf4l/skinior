@@ -15,21 +15,21 @@ export class CategoriesShowcaseComponent {
 
   categories: Category[] = [
     {
-      id: 3,
+      id: 1,
       name: "التخفيضات",
       image: "assets/images/category/sale.webp",
       description: "",
       products: []
     },
     {
-      id: 3,
+      id: 1,
       name: "منتجاتنا",
       image: "assets/images/category/margo.webp",
       description: "",
       products: []
     },
     {
-      id: 1,
+      id: 6,
       name: "العطور",
       image: "assets/images/category/fragrance.webp",
       description: "",
@@ -37,21 +37,21 @@ export class CategoriesShowcaseComponent {
     },
 
     {
-      id: 3,
+      id: 2,
       name: "العناية بالبشرة",
       image: "assets/images/category/skincare.webp",
       description: "",
       products: []
     },
     {
-      id: 3,
+      id: 4,
       name: "المكياج",
       image: "assets/images/category/makeup.webp",
       description: "",
       products: []
     },
     {
-      id: 3,
+      id: 1,
       name: "الشعر",
       image: "assets/images/category/haircare.webp",
       description: "",
@@ -65,7 +65,7 @@ export class CategoriesShowcaseComponent {
       products: []
     },
     {
-      id: 3,
+      id: 1,
       name: "Margo Group",
       image: "assets/images/category/margo.webp",
       description: "",

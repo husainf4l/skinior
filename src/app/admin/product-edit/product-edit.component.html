@@ -43,9 +43,9 @@
 
 
 
-    <div class="mb-4">
+    <!-- <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700">Images</label>
-        <div *ngFor="let image of product.images; let i = index" class="flex items-center space-x-4 mt-2">
+        <div *ngFor="let image of product.image; let i = index" class="flex items-center space-x-4 mt-2">
             <input type="text" [(ngModel)]="product.images[i].url"
                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                 placeholder="Image URL" />
@@ -53,11 +53,11 @@
                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                 placeholder="Alt Text" />
         </div>
-    </div>
+    </div> -->
 
     <div class="mb-4">
         <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-        <quill-editor [(ngModel)]="product.description" [styles]="{ height: '200px' }" [modules]="quillModules">
+        <quill-editor [(ngModel)]="product.descriptionAr" [styles]="{ height: '200px' }" [modules]="quillModules">
         </quill-editor>
     </div>
 
