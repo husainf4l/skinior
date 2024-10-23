@@ -32,17 +32,15 @@ export interface Product {
   relatedBy?: Product[];
   createdAt?: Date;
   updatedAt?: Date;
-  items: items[];
 }
 
-export interface items {
+export interface Variant {
   id: number;
+  name:string
   productId: number;
   sku: string;
   stock: number;
   image: string;
-  price: number;
-  discountedPrice: number;
 }
 
 export interface NewProduct {
@@ -85,14 +83,7 @@ export interface Review {
   userId: string;
   createdAt: Date;
 }
-export interface Variant {
-  id: number;
-  name: string;
-  image: string;
-  products: Product[];
-  orderItems: OrderItem[];
-  cartItems: CartItem[];
-}
+
 export interface OrderItem {
   id: number;
   quantity: number;
