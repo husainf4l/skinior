@@ -2,101 +2,69 @@
     <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
         <h2 class="text-xl font-semibold text-gray-900 sm:text-2xl">Shopping Cart</h2>
 
-        <!-- Product List Section -->
-        <div *ngIf="cartItems().length > 0; else emptyCart" class="lg:flex lg:items-start xl:gap-8">
-
-            <!-- Left Section: Products -->
-            <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
-                <div class="space-y-6">
-                    <!-- Loop over cart items -->
-                    <div *ngFor="let item of cartItems()"
-                        class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm md:p-6">
-                        <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-                            <a href="#" class="shrink-0 md:order-1">
-                                <img class="h-20 w-20" [src]="item.product.images[0]!.url"
-                                    [alt]="item.product.images[0]!.altText" />
-                            </a>
-                            <div class="flex items-center justify-between md:order-3 md:justify-end">
-                                <div class="flex items-center">
-                                    <button type="button"
-                                        class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200">
-                                        <svg class="h-2.5 w-2.5 text-gray-900" xmlns="http://www.w3.org/2000/svg"
-                                            fill="none" viewBox="0 0 18 2">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="M1 1h16" />
-                                        </svg>
-                                    </button>
-                                    <input type="text"
-                                        class="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900"
-                                        [value]="item.quantity" readonly />
-                                    <button type="button"
-                                        class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200">
-                                        <svg class="h-2.5 w-2.5 text-gray-900" xmlns="http://www.w3.org/2000/svg"
-                                            fill="none" viewBox="0 0 18 18">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="M9 1v16M1 9h16" />
-                                        </svg>
-                                    </button>
-                                </div>
-                                <div class="text-end md:order-4 md:w-32">
-                                    <p class="text-base font-bold text-gray-900">{{ item.product.price * item.quantity
-                                        }} JOD</p>
-                                </div>
-                            </div>
-
-                            <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-                                <a href="#"
-                                    class="text-base font-medium text-gray-900 hover:underline">{{item.product.brand}}
-                                    {{item.product.name}} {{item.product.variant?.name}}
-                                </a>
+        <div *ngIf="cartItems().length > 0; else emptyCart">
+            <div class="lg:flex lg:items-start xl:gap-8">
+                <div class="mx-auto w-full lg:max-w-2xl xl:max-w-4xl space-y-6">
+                    <div *ngFor="let item of cartItems()">
+                        <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm md:p-6">
+                            <div class="md:flex md:items-center md:justify-between md:gap-6">
+                                <img class="h-20 w-20" [src]="item.product.image" [alt]="item.product.image" />
                                 <div class="flex items-center gap-4">
-
-                                    <button (click)="removeFromCart(item.product.id)"
-                                        class="inline-flex items-center text-sm font-medium text-red-600 hover:underline">
-                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                            viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                                    <button (click)="decrementQuantity(item.id, item.quantity)"
+                                        class="bg-gray-100 hover:bg-gray-200 rounded-md border p-1">
+                                        <svg class="h-2.5 w-2.5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                            viewBox="0 0 18 2">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
+                                                d="M1 1h16" />
                                         </svg>
-                                        Remove
+                                    </button>
+
+                                    <div>{{item.quantity}}</div>
+
+                                    <button (click)="incrementQuantity(item.id, item.quantity)"
+                                        class="bg-gray-100 hover:bg-gray-200 rounded-md border p-1">
+                                        <svg class="h-2.5 w-2.5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                            viewBox="0 0 18 18">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
+                                                d="M9 1v16M1 9h16" />
+                                        </svg>
                                     </button>
                                 </div>
+                                <p class="text-base font-bold text-gray-900">{{ item.total }}
+                                    JOD</p>
+                                <button (click)="removeFromCart(item.id)" class="text-red-600 hover:underline">
+                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
+                                            d="M6 18 17.94 6M18 18 6.06 6" />
+                                    </svg>
+                                    Remove
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Right Section: Order Summary -->
-            <div class="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
-                <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
-                    <p class="text-xl font-semibold text-gray-900">Order summary</p>
-                    <div class="space-y-4">
-                        <div class="space-y-2">
-                            <dl class="flex items-center justify-between gap-4">
-                                <dt class="text-base font-normal text-gray-500">Total</dt>
-                                <dd class="text-base font-medium text-gray-900">{{ totalAmount() }} JOD</dd>
-                            </dl>
-                            <dl class="flex items-center justify-between gap-4">
-                                <dt class="text-base font-normal text-gray-500">Shipping</dt>
-                                <dd class="text-base font-medium text-gray-900"><del>5 JOD</del></dd>
-                            </dl>
-                        </div>
-                        <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2">
-                            <dt class="text-base font-bold text-gray-900">Total</dt>
-                            <dd class="text-base font-bold text-gray-900">{{ totalAmount() }} JOD</dd>
+                <div class="mt-6 lg:mt-0 space-y-6 gap-4">
+                    <div class="border rounded-lg  bg-white shadow-sm gap-4 p-7">
+                        <p class="text-xl font-semibold">ملخص الطلب</p>
+                        <dl class="flex justify-between">
+                            <dt>Total</dt>
+                            <dd>{{ totalAmount() }} JOD</dd>
                         </dl>
+                        <dl class="flex justify-between">
+                            <dt>Total</dt>
+                            <dd>{{ cartCount() }} قطعة</dd>
+                        </dl>
+                        <div class="mt-4"><a [routerLink]="['/checkout']"
+                                class="bg-green-700 text-white rounded-lg px-5 py-2.5">Proceed
+                                to Checkout</a></div>
                     </div>
-                    <a class="flex w-full items-center justify-center rounded-lg bg-green-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800"
-                        [routerLink]="['/checkout']">
-                        >Proceed
-                        to Checkout</a>
+
                 </div>
             </div>
-
         </div>
 
-        <!-- Empty Cart Template -->
         <ng-template #emptyCart>
             <p>Your cart is empty.</p>
         </ng-template>

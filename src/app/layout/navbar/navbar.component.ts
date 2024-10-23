@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, computed, effect } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { CartOrderService } from '../../services/cart-order.service';
 import { CommonModule } from '@angular/common';
 import { NavigationLink } from '../../services/models/general.model';
+import { CartService } from '../../services/cart.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-navbar',
@@ -11,11 +12,11 @@ import { NavigationLink } from '../../services/models/general.model';
   imports: [CommonModule, RouterModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   isMenuOpen = false;
-  totalQuantity;
+
+  totalQuantity = computed(() => this.cartService.cartCount());
 
   navigationLinks: NavigationLink[] = [
     { id: 0, name: 'الرئيسية', routerLink: '/', lang: 'ar' },
@@ -32,14 +33,31 @@ export class NavbarComponent {
   mainLogo: string = 'assets/logo/logoblack.png';
 
   constructor(
-    private router: Router,
-    public authService: AuthService,
-    private cartOrderService: CartOrderService
+    private authService: AuthService,
+    private cartService: CartService
   ) {
-    this.totalQuantity = this.cartOrderService.totalQuantity;
+    effect(() => {
+      console.log('Cart updated:', this.totalQuantity());
+    });
   }
+
+
+  ngOnInit(): void {
+    let sessionId = localStorage.getItem('sessionId');
+    if (!sessionId) {
+      sessionId = uuidv4();
+      localStorage.setItem('sessionId', sessionId);
+    }
+
+    this.cartService.getCartBySessionId(sessionId).subscribe(
+      () => console.log('Cart loaded successfully.'),
+      (error) => console.error('Error loading cart:', error)
+    );
+  }
+
 
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
   }
+
 }

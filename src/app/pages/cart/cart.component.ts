@@ -1,30 +1,45 @@
-// src/app/components/cart/cart.component.ts
-
 import { Component, computed } from '@angular/core';
-import { CartOrderService } from '../../services/cart-order.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { CartService } from '../../services/cart.service';
+import { ProductDetailsComponent } from "../../components/product-details/product-details.component";
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css'],
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ProductDetailsComponent],
 })
 export class CartComponent {
-  cartItems = computed(() => this.cartOrderService.cartItems());
-  totalAmount = computed(() => this.cartOrderService.totalAmount());
+  cartCount = computed(() => this.cartService.cartCount()); // Correctly accessing items
+  cartItems = computed(() => this.cartService.items()); // Correctly accessing items
+  totalAmount = computed(() => this.cartService.totalAmount());
+  sessionId = localStorage.getItem('sessionId') || '';
 
-  constructor(private cartOrderService: CartOrderService) { }
+  constructor(private cartService: CartService) { }
 
-  // Remove an item from the cart
   removeFromCart(productId: number): void {
-    this.cartOrderService.removeFromCart(productId);
+    this.cartService.deleteItem(productId, this.sessionId).subscribe(() => {
+      console.log('Item removed, refreshing cart...');
+    });
   }
 
-  // Clear the cart
+  incrementQuantity(itemId: number, quantity: number): void {
+    this.cartService.updateItemQuantity(itemId, quantity + 1, this.sessionId).subscribe(() => {
+      console.log('Quantity incremented');
+    });
+  }
+
+  decrementQuantity(itemId: number, quantity: number): void {
+    if (quantity > 1) {
+      this.cartService.updateItemQuantity(itemId, quantity - 1, this.sessionId).subscribe(() => {
+        console.log('Quantity decremented');
+      });
+    }
+  }
+
   clearCart(): void {
-    this.cartOrderService.clearCart();
+    this.cartService.clearCart(this.sessionId);
   }
 }

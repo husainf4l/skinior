@@ -36,7 +36,7 @@ export interface Product {
 
 export interface Variant {
   id: number;
-  name:string
+  name: string
   productId: number;
   sku: string;
   stock: number;
@@ -97,12 +97,26 @@ export interface OrderItem {
 
 export interface CartItem {
   id: number;
-  quantity: number;
   productId: number;
   variantId?: number;
-  product: Product;
-  variant?: Variant;
-  cart: Cart;
+  quantity: number;
+  price: number;
+  total: number;
+  product: CartProduct
+
+}
+
+export interface Cart {
+  id: number;
+  sessionsId: string;
+  items: CartItem[];
+  total: number;
+  totalQuantity: number;
+}
+
+export interface CartProduct {
+  name: string,
+  image: string,
 }
 
 export interface Wishlist {
@@ -126,11 +140,7 @@ export interface Order {
   notes?: string;
 }
 
-export interface Cart {
-  id: number;
-  userId?: string;
-  items: CartItem[];
-}
+
 
 export interface Profile {
   id: number;

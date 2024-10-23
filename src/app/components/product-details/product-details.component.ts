@@ -2,49 +2,78 @@ import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { CartOrderService } from '../../services/cart-order.service';
-import { Variant, Product,  } from '../../services/models/interfaces.model'; // Ensure Variant interface is imported
+import { CartService } from '../../services/cart.service';
+import { Variant, Product } from '../../services/models/interfaces.model';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './product-details.component.html',
-  styleUrls: ['./product-details.component.css']
+  styleUrls: ['./product-details.component.css'],
 })
 export class ProductDetailsComponent implements OnInit {
   product: Product | null = null;
   selectedVariant: Variant | null = null;
+  quantity: number = 1;
   selectedVariantImage: any = null;
+
 
   constructor(
     private productService: ProductService,
-    private route: ActivatedRoute,
-    private cartOrderService: CartOrderService
+    private cartService: CartService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
     const productId = +this.route.snapshot.paramMap.get('id')!;
-    this.productService.getProductById(productId).subscribe(data => {
+    this.productService.getProductById(productId).subscribe((data) => {
       this.product = data;
+
+      // Use optional chaining to safely access variants
+      if (this.product?.variants?.length) {
+        this.selectedVariant = this.product.variants[0];
+      }
     });
   }
 
-  onVariantSelect(items: Variant): void {
-    this.selectedVariant = items;
-    this.selectedVariantImage = items.image || this.product?.image || null;
+  selectVariant(variant: Variant): void {
+    this.selectedVariant = variant;
+    this.selectedVariantImage = variant.image || this.product?.image || null;
+
   }
 
   addToCart(): void {
-    if (this.selectedVariant) {
-      const itemToAdd = {
-        ...this.product,
-        variant: this.selectedVariant,
-      };
-      console.log(itemToAdd)
-      this.cartOrderService.addToCart(itemToAdd, 1, this.selectedVariant.id);
-    } else {
-      this.cartOrderService.addToCart(this.product, 1,);
+    if (!this.product) {
+      alert('Product not found.');
+      return;
     }
+
+    const sessionId = localStorage.getItem('sessionId');
+    if (!sessionId) {
+      console.error('Session ID not found!');
+      return;
+    }
+
+    const variantId = this.selectedVariant ? this.selectedVariant.id : undefined;
+
+    this.cartService
+      .addItemToCart({
+        sessionsId: sessionId,
+        productId: this.product.id,
+        variantId: variantId,
+        quantity: this.quantity,
+        isAdd: true,
+      })
+      .subscribe(
+        () => {
+          alert('Product added to cart successfully!');
+        },
+        (error) => {
+          console.error('Error adding product to cart:', error);
+        }
+      );
   }
+
 }
