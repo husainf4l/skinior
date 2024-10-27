@@ -26,7 +26,8 @@ export class SeoService {
     availability: string = 'In Stock',
     discount?: number
   ): void {
-    // Standard meta tags
+    const url = window.location.href;
+
     this.updateOrCreateTag('name', 'description', description);
     this.updateOrCreateTag('name', 'keywords', keywords);
 
@@ -34,10 +35,11 @@ export class SeoService {
     this.updateOrCreateTag('property', 'og:title', title);
     this.updateOrCreateTag('property', 'og:description', description);
     this.updateOrCreateTag('property', 'og:image', image);
+    this.updateOrCreateTag('property', 'og:url', url);
+    this.updateOrCreateTag('property', 'og:type', 'product');
 
     // Availability and discount meta tags
     this.updateOrCreateTag('name', 'availability', availability);
-
     if (discount) {
       this.updateOrCreateTag('name', 'discount', `${discount}% off`);
     }

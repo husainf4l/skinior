@@ -99,14 +99,13 @@ export class ProductDetailsComponent implements OnInit {
 
     const title = this.product.metaTitle || this.product.name;
     const description =
-      this.product.metaDescription ||
-      this.product.descriptionAr ||
-      this.product.name;
+      this.product.metaDescription || this.product.descriptionAr || this.product.name;
     const keywords = this.product.metaKeywords || 'default, keywords';
     const image = this.product.image || 'default-image-url.jpg';
     const availability = this.product.stock > 0 ? 'In Stock' : 'Out of Stock';
     const discount = this.calculateDiscount();
 
+    // Update SEO tags and add structured data
     this.seoService.updatePageTitle(title);
     this.seoService.updateMetaTags(
       title,
@@ -116,6 +115,7 @@ export class ProductDetailsComponent implements OnInit {
       availability,
       discount
     );
+    this.seoService.addStructuredData(this.product);
   }
 
   private calculateDiscount(): number {
