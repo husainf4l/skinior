@@ -17,7 +17,7 @@ export class HeroComponent {
     buttonLink: '/shop',
     learnMoreText: 'اكتشفي المزيد',
     learnMoreLink: '/learn-more',
-    imageUrl: './assets/images/banner/bannermain.jpg',
+    imageUrl: './assets/images/banner/bannermain.webp',
     alt: 'a skinior girl image'
   };
 }
