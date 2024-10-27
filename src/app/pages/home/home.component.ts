@@ -5,7 +5,6 @@ import { PromotionsComponent } from "../../components/promotions/promotions.comp
 import { CustomerReviewsComponent } from "../../components/customer-reviews/customer-reviews.component";
 import { CtaBannerComponent } from "../../components/cta-banner/cta-banner.component";
 import { BlogTeaserComponent } from "../../components/blog-teaser/blog-teaser.component";
-import { NewsletterSignupComponent } from "../../components/newsletter-signup/newsletter-signup.component";
 import { ProductShowcaseComponent } from "../../components/product-showcase/product-showcase.component";
 import { CommonModule } from '@angular/common';
 import { BrandsShowcaseComponent } from "../../components/brands-showcase/brands-showcase.component";
@@ -13,7 +12,7 @@ import { BrandsShowcaseComponent } from "../../components/brands-showcase/brands
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeroComponent, CategoriesShowcaseComponent, PromotionsComponent, CustomerReviewsComponent, CtaBannerComponent, BlogTeaserComponent, NewsletterSignupComponent, ProductShowcaseComponent, CommonModule, BrandsShowcaseComponent],
+  imports: [HeroComponent, CategoriesShowcaseComponent, PromotionsComponent, CustomerReviewsComponent, CtaBannerComponent, BlogTeaserComponent, ProductShowcaseComponent, CommonModule, BrandsShowcaseComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
