@@ -1,0 +1,33 @@
+# Allow all search engines to access public pages
+User-agent: *
+Disallow: /admin/
+Disallow: /login/
+Disallow: /signup/
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /order-confirmation/
+Disallow: /api/
+Disallow: /orders-list/
+Disallow: /assets/
+Disallow: /pages/
+
+# Ensure product and category pages are indexed
+Allow: /shop/category/
+Allow: /shop/product/
+Allow: /blog/
+
+# Sitemap location for better indexing
+Sitemap: https://www.skinior.com/sitemap.xml
+
+# Optional: Manage server load by limiting crawler speed
+Crawl-delay: 10
+
+# Block specific bots (if needed)
+User-agent: BadBot
+Disallow: /
+
+User-agent: Googlebot-Image
+Disallow: /assets/private-images/
+
+User-agent: Bingbot
+Disallow: /admin/
