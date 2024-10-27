@@ -10,6 +10,8 @@ export interface ProductList {
 }
 
 export interface Product {
+  metaKeywords: string;
+  metaTitle: string;
   id: number;
   handle?: string;
   name: string;
@@ -22,7 +24,7 @@ export interface Product {
   discountedPrice?: number;
   category: Category;
   tags?: Tag[];
-  image: String;
+  image: string;
   reviews?: Review[];
   orderItems?: OrderItem[];
   cartItems?: CartItem[];
@@ -32,6 +34,8 @@ export interface Product {
   relatedBy?: Product[];
   createdAt?: Date;
   updatedAt?: Date;
+  stock: number;
+  metaDescription: string;
 }
 
 export interface Variant {
@@ -60,7 +64,7 @@ export interface Category {
   description?: string;
   image: string;
   products: Product[];
-  handle:string
+  handle: string
 }
 
 export interface Tag {
@@ -110,18 +114,18 @@ export interface CartItem {
 export interface Cart {
   id: number;
   sessionsId: string;
-  address?:Address;
+  address?: Address;
   items: CartItem[];
   total: number;
   totalQuantity: number;
 }
 
 export interface Address {
-  line1:string;
-  line2?:string;
-  city:string;
-  phoneNumber:string;
-  country:string;
+  line1: string;
+  line2?: string;
+  city: string;
+  phoneNumber: string;
+  country: string;
 }
 
 
@@ -146,7 +150,7 @@ export interface Order {
   userId?: string;
   orderItems: OrderItem[];
 
-  address:Address;
+  address: Address;
   phoneNumber: string;
   notes?: string;
 }
