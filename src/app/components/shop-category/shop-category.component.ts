@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductService } from '../../services/product.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Category } from '../../services/models/interfaces.model';
@@ -72,5 +71,10 @@ export class ShopCategoryComponent {
     },
 
   ]
+
+  onImageError(event: Event) {
+    (event.target as HTMLImageElement).src = 'assets/images/category/margo.webp';
+  }
+  
 
 }
