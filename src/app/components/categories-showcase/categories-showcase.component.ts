@@ -19,21 +19,27 @@ export class CategoriesShowcaseComponent {
       name: "التخفيضات",
       image: "assets/images/category/sale.webp",
       description: "",
-      products: []
+      products: [],
+      handle:"fragrance"
+
     },
     {
       id: 1,
       name: "منتجاتنا",
       image: "assets/images/category/margo.webp",
       description: "",
-      products: []
+      products: [],
+      handle:"fragrance"
+
     },
     {
       id: 6,
       name: "العطور",
       image: "assets/images/category/fragrance.webp",
       description: "",
-      products: []
+      products: [],
+      handle:"fragrance"
+
     },
 
     {
@@ -41,42 +47,46 @@ export class CategoriesShowcaseComponent {
       name: "العناية بالبشرة",
       image: "assets/images/category/skincare.webp",
       description: "",
-      products: []
+      products: [],
+      handle:"skincare"
+
     },
     {
       id: 4,
       name: "المكياج",
       image: "assets/images/category/makeup.webp",
       description: "",
-      products: []
+      products: [],
+      handle:"make-up"
+
     },
     {
       id: 1,
       name: "الشعر",
       image: "assets/images/category/haircare.webp",
       description: "",
-      products: []
+      products: [],
+      handle:"hair-care"
+
     },
     {
       id: 3,
       name: "العناية بالفم",
       image: "assets/images/category/oralcare.webp",
       description: "",
-      products: []
+      products: [],
+      handle:"oral-care"
+
     },
     {
       id: 1,
       name: "Margo Group",
       image: "assets/images/category/margo.webp",
       description: "",
-      products: []
+      products: [],
+      handle:"hair-care"
     },
 
-
-
   ]
-
-
-
 
 }

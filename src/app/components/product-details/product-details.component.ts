@@ -27,8 +27,8 @@ export class ProductDetailsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const productId = +this.route.snapshot.paramMap.get('id')!;
-    this.productService.getProductById(productId).subscribe((data) => {
+    const productHandle = this.route.snapshot.paramMap.get('handle')!;
+    this.productService.getProductByHandle(productHandle).subscribe((data) => {
       this.product = data;
 
       // Use optional chaining to safely access variants

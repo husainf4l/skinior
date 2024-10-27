@@ -1,7 +1,7 @@
 import { Injectable, Signal, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, catchError, of, switchMap } from 'rxjs';
-import { Cart, CartItem } from './models/interfaces.model';
+import { Address, Cart, CartItem } from './models/interfaces.model';
 import { environment } from '../enviroments/enviroment';
 
 @Injectable({
@@ -87,4 +87,13 @@ export class CartService {
       (error) => console.error('Error clearing cart:', error)
     );
   }
+
+  addAddress(
+    sessionId: string,
+    address: Address
+  ): Observable<any> {
+    const url = `${this.baseUrl}/address/${sessionId}`;
+    return this.http.post(url, address);
+  }
+  
 }

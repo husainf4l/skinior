@@ -18,7 +18,7 @@ export interface Product {
   barcode?: string;
   brand?: string;
   isFeatured: boolean;
-  categoryId: number;
+  categoryHandle: string;
   discountedPrice?: number;
   category: Category;
   tags?: Tag[];
@@ -60,6 +60,7 @@ export interface Category {
   description?: string;
   image: string;
   products: Product[];
+  handle:string
 }
 
 export interface Tag {
@@ -109,10 +110,21 @@ export interface CartItem {
 export interface Cart {
   id: number;
   sessionsId: string;
+  address?:Address;
   items: CartItem[];
   total: number;
   totalQuantity: number;
 }
+
+export interface Address {
+  line1:string;
+  line2?:string;
+  city:string;
+  phoneNumber:string;
+  country:string;
+}
+
+
 
 export interface CartProduct {
   name: string,
@@ -127,15 +139,14 @@ export interface Wishlist {
 
 export interface Order {
   id: string;
-  totalAmount: number;
+  total: number;
   status: string;
   createdAt: Date;
   updatedAt: Date;
   userId?: string;
   orderItems: OrderItem[];
-  shippingAddress: string;
-  shippingCity: string;
-  shippingCountry: string;
+
+  address:Address;
   phoneNumber: string;
   notes?: string;
 }

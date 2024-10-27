@@ -4,7 +4,7 @@
     </h6>
     <div class="overflow-x-auto scroll-smooth px-4 py-2">
         <div class="flex gap-4">
-            <a *ngFor="let product of products" [routerLink]="['/shop/product', product.id]" class="bg-white rounded-xl shadow-md min-w-[200px] max-w-[200px] md:min-w-[250px] md:max-w-[250px] 
+            <a *ngFor="let product of products" [routerLink]="['/shop/product', product.handle]" class="bg-white rounded-xl shadow-md min-w-[200px] max-w-[200px] md:min-w-[250px] md:max-w-[250px] 
                     hover:shadow-lg transition-transform hover:scale-105 duration-300 
                     snap-center overflow-hidden flex-shrink-0 mb-4 block">
                 <!-- Product Image -->

@@ -19,12 +19,12 @@ import { BrandsShowcaseComponent } from "../../components/brands-showcase/brands
 })
 export class HomeComponent {
   productShowcases = [
-    { categoryId: 1, title: 'المنتجات المميزة' },
-    { categoryId: 2, title: 'أفضل منتجات العناية بالبشرة' },
-    { categoryId: 1, title: 'أفضل منتجات العناية بالشعر' },
-    { categoryId: 3, title: 'المنتجات الجديدة' },
-    { categoryId: 1, title: 'الأكثر مبيعاً' },
-    { categoryId: 5, title: 'أفضل منتجات العناية بالجسم' },
+    { categoryHandle: "hair-care", title: 'المنتجات المميزة' },
+    { categoryHandle: 'skincare', title: 'أفضل منتجات العناية بالبشرة' },
+    { categoryHandle: "hair-care", title: 'أفضل منتجات العناية بالشعر' },
+    { categoryHandle: "hair-care", title: 'المنتجات الجديدة' },
+    { categoryHandle: "hair-care", title: 'الأكثر مبيعاً' },
+    { categoryHandle: "hair-care", title: 'أفضل منتجات العناية بالجسم' },
   ];
 
 

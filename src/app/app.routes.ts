@@ -37,7 +37,7 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'shop/category/:categoryId',
+    path: 'shop/category/:categoryHandle',
     component: ProductListComponent,
     data: {
       title: 'Category - Skinior',
@@ -45,7 +45,7 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'shop/product/:id',
+    path: 'shop/product/:handle',
     component: ProductDetailsComponent,
     data: {
       title: 'Product Details - Skinior',
@@ -77,7 +77,7 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'order-confirmation',
+    path: 'order-confirmation/:orderId',
     component: OrderConfirmationComponent,
     data: {
       title: 'Order Confirmation - Skinior',

@@ -1,42 +1,37 @@
 <div class="container mx-auto p-8">
-    <h1 class="text-3xl font-bold mb-6">تم تأكيد الطلب </h1>
-
-    <!-- Order Confirmation Message -->
-    <div class="bg-green-100 p-4 rounded-lg mb-6">
-        <p class="text-green-700 font-semibold">شكراً لطلبك!</p>
-        <p class="text-gray-700"> لقد تم تقديم طلبك بنجاح. سنقوم بالتواصل معك قريباً.</p>
-        <p>Order Id: {{order?.id}}</p>
+    <h1 class="text-3xl font-bold mb-6">Order Confirmation</h1>
+  
+    <div *ngIf="order; else noOrder" class="space-y-4">
+      <h2 class="text-xl font-semibold">Thank you for your order!</h2>
+  
+      <p>Order ID: <span class="font-semibold">{{ order.id }}</span></p>
+      <p>Total Amount: <span class="font-semibold">{{ order.total   }}</span></p>
+  
+      <div>
+        <h3 class="text-lg font-semibold">Shipping Address</h3>
+        <p>{{ order.address.line1 }} {{ order.address.line2 }}</p>
+        <p>{{ order.address.city }}, {{ order.address.country }}</p>
+        <p>Phone: {{ order.address.phoneNumber }}</p>
+      </div>
+  
+      <div>
+        <h3 class="text-lg font-semibold">Order Items</h3>
+        <ul class="list-disc ml-5">
+          <li *ngFor="let item of order.orderItems">
+            {{ item.quantity }} x Product ID: {{ item.productId }} - {{ item.price}}
+          </li>
+        </ul>
+      </div>
+  
+      <button 
+        (click)="goHome()" 
+        class="mt-6 bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
+        Go to Homepage
+      </button>
     </div>
-
-    <!-- Shipping Address Section -->
-    <div class="bg-white p-6 rounded-lg shadow-md">
-        <h2 class="text-xl font-semibold mb-4"> العنوان</h2>
-        <p><strong>العنوان:</strong> {{ order?.shippingAddress }}</p>
-        <p><strong>المدينة:</strong> {{ order?.shippingCity }}</p>
-        <p><strong>رقم الهاتف:</strong> {{ order?.phoneNumber }}</p>
-    </div>
-
-    <!-- Order Summary Section -->
-    <div class="bg-white p-6 mt-6 rounded-lg shadow-md">
-        <h2 class="text-xl font-semibold mb-4">التفاصيل</h2>
-        <div *ngFor="let item of order?.orderItems">
-            <div class="flex justify-between mb-2">
-                <p>{{ item.product.name }} (x{{ item.quantity }}) {{item.variant?.name}}
-                </p>
-                <p>{{ item.product.price * item.quantity | currency: 'JOD' }}</p>
-
-            </div>
-        </div>
-        <div class="flex justify-between mt-4">
-            <p class="font-bold">Total:</p>
-            <p class="font-bold">{{ order?.totalAmount | currency: 'JOD' }}</p>
-        </div>
-    </div>
-
-    <!-- Back to Home Button -->
-    <div class="mt-6">
-        <button (click)="goBackToHome()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
-            Back to Home
-        </button>
-    </div>
-</div>
+  
+    <ng-template #noOrder>
+      <p>No order details available.</p>
+    </ng-template>
+  </div>
+  

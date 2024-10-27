@@ -31,13 +31,17 @@ export class ProductService {
     return this.http.get<Product[]>(this.apiUrl);
   }
 
-  getFeaturedProducts(categoryId: number): Observable<Product[]> {
-    return this.http.get<Product[]>(`${this.apiUrl}/featured/${categoryId}`);
+  getFeaturedProducts(categoryHandle: string): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}/featured/${categoryHandle}`);
   }
 
   // Fetch a single product by ID  
   getProductById(id: number): Observable<Product> {
     return this.http.get<Product>(`${this.apiUrl}/${id}`);
+  }
+
+  getProductByHandle(handle: string): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/handle/${handle}`);
   }
   // Update product using JSON data
   updateProduct(id: number, productData: Product): Observable<Product> {
@@ -48,7 +52,7 @@ export class ProductService {
   deleteProduct(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
-  getProductsByCategoryId(categoryId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/category/${categoryId}`);
+  getProductsByCategoryHandle(categoryHandle: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/category/${categoryHandle}`);
   }
 }

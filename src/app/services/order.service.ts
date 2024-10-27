@@ -16,10 +16,15 @@ export class OrderService {
         return this.http.get<Order[]>(this.apiUrl);
     }
 
-    getOrderById(orderId: string): Observable<Order> {
-        return this.http.get<Order>(`${this.apiUrl}/${orderId}`);
+    getOrderById(orderId: number): Observable<Order> {
+        return this.http.get<Order>(`${this.apiUrl}/order/${orderId}`);
     }
 
+    createOrderFromSession(sessionId: string): Observable<any> {
+        const url = `${this.apiUrl}/session/${sessionId}`;
+        return this.http.post(url, {});
+      }
+    
 
 
 }

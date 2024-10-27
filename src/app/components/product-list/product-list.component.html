@@ -9,7 +9,7 @@
       <div
         class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-2 duration-300">
         <!-- Product Image -->
-        <a [routerLink]="['/shop/product', product.id]" class="block">
+        <a [routerLink]="['/shop/product', product.handle]" class="block">
           <div class="aspect-w-1 aspect-h-1">
             <img [src]="product.image" [alt]="product.name" class="w-full h-full object-cover rounded-t-xl"
               loading="lazy" />

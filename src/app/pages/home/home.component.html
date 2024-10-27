@@ -4,7 +4,7 @@
 <app-brands-showcase></app-brands-showcase>
 
 <div *ngFor="let showcase of productShowcases">
-    <app-product-showcase [categoryId]="showcase.categoryId" [title]="showcase.title">
+    <app-product-showcase [categoryHandle]="showcase.categoryHandle" [title]="showcase.title">
     </app-product-showcase>
 </div>
 

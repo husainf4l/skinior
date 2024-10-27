@@ -16,7 +16,7 @@ import { Category, Product } from '../../services/models/interfaces.model';
 })
 export class ProductListComponent implements OnInit {
   products: Product[] = [];
-  categoryId: number = 0;
+  categoryHandle: string = "";
   isLoading: boolean = true;
   error: string | null = null;
   category: Category | undefined;
@@ -30,9 +30,9 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      const idParam = params.get('categoryId');
+      const idParam = params.get('categoryHandle');
       if (idParam) {
-        this.categoryId = +idParam;
+        this.categoryHandle = idParam;
         this.loadProductsByCategory();
       } else {
         this.error = 'No category selected.';
@@ -42,7 +42,7 @@ export class ProductListComponent implements OnInit {
   }
 
   loadProductsByCategory(): void {
-    this.productService.getProductsByCategoryId(this.categoryId).subscribe({
+    this.productService.getProductsByCategoryHandle(this.categoryHandle).subscribe({
       next: (data: Product[]) => {
         this.products = data;
         if (this.products.length > 0) {

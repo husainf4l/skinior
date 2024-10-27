@@ -12,7 +12,7 @@ import { RouterLink } from '@angular/router';
   imports: [CommonModule, RouterLink]
 })
 export class ProductShowcaseComponent implements OnInit {
-  @Input() categoryId!: number; // Dynamic category ID input
+  @Input() categoryHandle!: string; // Dynamic category ID input
   @Input() title: string = 'Products'; // Dynamic title input
 
   products: Product[] = [];
@@ -20,13 +20,13 @@ export class ProductShowcaseComponent implements OnInit {
   constructor(private productService: ProductService) { }
 
   ngOnInit(): void {
-    if (this.categoryId) {
+    if (this.categoryHandle) {
       this.loadProducts();
     }
   }
 
   loadProducts() {
-    this.productService.getFeaturedProducts(this.categoryId).subscribe(
+    this.productService.getFeaturedProducts(this.categoryHandle).subscribe(
       (products) => {
         this.products = products;
       },

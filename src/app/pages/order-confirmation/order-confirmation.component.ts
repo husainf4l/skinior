@@ -1,32 +1,55 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { OrderService } from '../../services/order.service';
 import { Order } from '../../services/models/interfaces.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-order-confirmation',
   templateUrl: './order-confirmation.component.html',
   styleUrls: ['./order-confirmation.component.css'],
-  standalone: true,
-  imports: [CommonModule]
+  standalone:true,
+  imports:[CommonModule]
 })
 export class OrderConfirmationComponent implements OnInit {
-  order: Order | null = null;
+  order: Order | undefined;
+  orderId: number | null = null;
 
-  constructor(private router: Router) { }
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private orderService: OrderService
+  ) {}
 
   ngOnInit(): void {
-    this.order = history.state?.order;
+    // Retrieve order ID from route parameters or navigation state
+    this.orderId = this.route.snapshot.params['orderId'] || 
+      history.state?.['orderId'];
 
-    console.log('Order confirmation data:', this.order);
-
-    if (!this.order || !this.order.orderItems?.length) {
-      console.log('No order found, redirecting to home.');
-      // this.router.navigate(['/']);
+    if (this.orderId) {
+      this.fetchOrderDetails(this.orderId);
+    } else {
+      alert('No order ID found. Redirecting to homepage...');
+      this.router.navigate(['/']);
     }
   }
 
-  goBackToHome(): void {
+  // Fetch the order details from the backend using the order ID
+  fetchOrderDetails(orderId: number): void {
+    this.orderService.getOrderById(orderId).subscribe({
+      next: (order) => {
+        this.order = order;
+      },
+      error: (error) => {
+        console.error('Error fetching order:', error);
+        alert('Failed to load order details. Redirecting to homepage...');
+        this.router.navigate(['/']);
+      },
+    });
+  }
+
+  // Navigate back to the homepage
+  goHome(): void {
     this.router.navigate(['/']);
   }
 }

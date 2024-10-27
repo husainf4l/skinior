@@ -11,7 +11,7 @@
       <div *ngFor="let category of categories"
         class="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-transform transform 
                   hover:scale-105 duration-500 snap-center overflow-hidden flex-shrink-0 mb-5 w-48 h-48 relative cursor-pointer no-underline"
-        [routerLink]="['/shop/category', category.id]">
+        [routerLink]="['/shop/category', category.handle]">
 
         <!-- Category Name -->
         <div class="absolute top-5 right-5 text-xl font-medium text-gray-500">
