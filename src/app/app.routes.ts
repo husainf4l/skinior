@@ -10,23 +10,94 @@ import { CartComponent } from './pages/cart/cart.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { OrderConfirmationComponent } from './pages/order-confirmation/order-confirmation.component';
 import { BlogDetailsComponent } from './components/blog-details/blog-details.component';
-import { OrdersListComponent } from './admin/orders-list/orders-list.component';
 
 export const routes: Routes = [
-    { path: "", component: HomeComponent },
-    { path: 'login', component: LoginComponent },
-    { path: 'signup', component: SignupComponent },
-    { path: 'shop/category/:categoryId', component: ProductListComponent },
-    { path: 'shop/product/:id', component: ProductDetailsComponent },
-    { path: 'shop', component: ShopCategoryComponent },
-    { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminRoutingModule) },
-    { path: 'cart', component: CartComponent },
-    { path: 'checkout', component: CheckoutComponent },
-    { path: 'order-confirmation', component: OrderConfirmationComponent },
-    { path: 'blog/:id', component: BlogDetailsComponent },
-
-
-
-    { path: '**', component: NotFoundComponent }
-
+  {
+    path: '',
+    component: HomeComponent,
+    data: {
+      title: 'Skinior - Premium Beauty Products',
+      description: 'Discover Skinior’s collection of premium beauty and skincare products.',
+    },
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
+    data: {
+      title: 'Login - Skinior',
+      description: 'Log in to your Skinior account and start shopping for premium beauty products.',
+    },
+  },
+  {
+    path: 'signup',
+    component: SignupComponent,
+    data: {
+      title: 'Signup - Skinior',
+      description: 'Create a new Skinior account and explore our latest beauty offerings.',
+    },
+  },
+  {
+    path: 'shop/category/:categoryId',
+    component: ProductListComponent,
+    data: {
+      title: 'Category - Skinior',
+      description: 'Browse Skinior’s products by category to find the perfect beauty solution.',
+    },
+  },
+  {
+    path: 'shop/product/:id',
+    component: ProductDetailsComponent,
+    data: {
+      title: 'Product Details - Skinior',
+      description: 'View product details and features of our top beauty items.',
+    },
+  },
+  {
+    path: 'shop',
+    component: ShopCategoryComponent,
+    data: {
+      title: 'Shop Categories - Skinior',
+      description: 'Explore all product categories at Skinior.',
+    },
+  },
+  {
+    path: 'cart',
+    component: CartComponent,
+    data: {
+      title: 'Cart - Skinior',
+      description: 'Review your selected items in your cart before checkout.',
+    },
+  },
+  {
+    path: 'checkout',
+    component: CheckoutComponent,
+    data: {
+      title: 'Checkout - Skinior',
+      description: 'Complete your purchase securely on Skinior.',
+    },
+  },
+  {
+    path: 'order-confirmation',
+    component: OrderConfirmationComponent,
+    data: {
+      title: 'Order Confirmation - Skinior',
+      description: 'Thank you for your order! Your purchase has been successfully confirmed.',
+    },
+  },
+  {
+    path: 'blog/:id',
+    component: BlogDetailsComponent,
+    data: {
+      title: 'Blog - Skinior',
+      description: 'Stay updated with the latest news and trends from the Skinior blog.',
+    },
+  },
+  {
+    path: '**',
+    component: NotFoundComponent,
+    data: {
+      title: '404 - Page Not Found',
+      description: 'Oops! The page you are looking for does not exist.',
+    },
+  },
 ];
