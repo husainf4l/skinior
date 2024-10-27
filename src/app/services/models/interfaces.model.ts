@@ -174,6 +174,7 @@ export interface HeroContent {
   learnMoreText: string;
   learnMoreLink: string;
   imageUrl: string;
+  alt: string;
 }
 export enum OrderStatus {
   SEEN = 'SEEN',

@@ -1,20 +1,13 @@
 <div class="container mx-auto px-4 md:px-6 lg:px-10 my-12">
-  <h6 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-right mb-8 tracking-wide text-gray-800 font-sans">
-    تسوق حسب العلامات التجارية
-  </h6>
+  <p class="mb-12 tracking-wide text-gray-800 text-2xl">تسوق حسب العلامات التجارية</p>
 
-  <!-- Scrollable Section -->
   <div class="overflow-x-auto scroll-smooth scrollbar-hide">
-    <div class="flex gap-12 px-2 items-center ">
-
-      <!-- Brand Logo -->
-      <div *ngFor="let brand of brands" (click)="navigateToBrand(brand.route)" class="cursor-pointer transition-transform hover:scale-110 duration-300 
-                 w-32 h-32 flex-shrink-0">
-
-        <img [src]="brand.logo" alt="Brand Logo" class="object-contain w-full h-full">
+    <div class="flex gap-12 px-2 items-center">
+      <div *ngFor="let brand of brands" (click)="navigateToBrand(brand.route)"
+        class="cursor-pointer transition-transform hover:scale-110 duration-300 w-32 h-32 flex-shrink-0">
+        <img [src]="brand.logo" [alt]="'Logo of ' + brand.name" class="object-contain w-full h-full" [attr.width]="128"
+          [attr.height]="128">
       </div>
-      <!-- End of Brand Logo -->
-
     </div>
   </div>
 </div>

@@ -12,12 +12,12 @@ import { CommonModule } from '@angular/common';
 export class HeroComponent {
   heroContent: HeroContent = {
     title: 'اكتشفي جمالك مع سكينيور',
-    description:
-      'تميزي بأفضل منتجات العناية بالبشرة، المصممة لإبراز جمالك الطبيعي. اختبري الأناقة في أبسط تفاصيلك.',
+    description: 'تميزي بأفضل منتجات العناية بالبشرة، المصممة لإبراز جمالك الطبيعي. اختبري الأناقة في أبسط تفاصيلك.',
     buttonText: 'تسوقي الآن',
     buttonLink: '/shop',
     learnMoreText: 'اكتشفي المزيد',
     learnMoreLink: '/learn-more',
     imageUrl: './assets/images/banner/bannermain.jpg',
+    alt: 'a skinior girl image'
   };
 }
