@@ -57,4 +57,7 @@ export class ProductService {
   getProductsByBRAND(brand: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/brand/${brand}`);
   }
+  searchProducts(query: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/search?query=${query}`);
+  }
 }

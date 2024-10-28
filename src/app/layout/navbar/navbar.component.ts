@@ -5,16 +5,57 @@ import { CommonModule } from '@angular/common';
 import { NavigationLink } from '../../services/models/general.model';
 import { CartService } from '../../services/cart.service';
 import { v4 as uuidv4 } from 'uuid';
+import { FormsModule, NgModel } from '@angular/forms';
+import { ProductService } from '../../services/product.service';
+import { Product } from '../../services/models/interfaces.model';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent implements OnInit {
+  constructor(
+    private cartService: CartService,
+    private router:Router,
+    private productService: ProductService
+  ) {
+    effect(() => {
+      console.log('Cart updated:', this.totalQuantity());
+    });
+  }
   isMenuOpen = false;
+  searchTerm: string = '';
+  filteredProducts: any[] = [];
+  products: Product[] = [];
+
+  filterProducts() {
+    if (this.searchTerm.trim() === '') {
+      this.filteredProducts = [];
+      return;
+    }
+    
+    this.productService.searchProducts(this.searchTerm).subscribe(
+      (products) => {
+        this.filteredProducts = products;
+      },
+      (error) => {
+        console.error('Error fetching filtered products:', error);
+      }
+    );
+  }
+
+
+
+  navigateToSearchResults() {
+    this.router.navigate(['/search'], { queryParams: { q: this.searchTerm } });
+  }
+
+  goToProductPage(productHandel: string) {
+    this.router.navigate(['/shop/product', productHandel]);
+  }
 
   totalQuantity = computed(() => this.cartService.cartCount());
 
@@ -31,14 +72,7 @@ export class NavbarComponent implements OnInit {
 
   mainLogo: string = 'assets/logo/skinior.webp';
 
-  constructor(
-    private authService: AuthService,
-    private cartService: CartService
-  ) {
-    effect(() => {
-      console.log('Cart updated:', this.totalQuantity());
-    });
-  }
+
 
 
   ngOnInit(): void {
