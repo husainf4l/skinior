@@ -11,6 +11,7 @@ import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { OrderConfirmationComponent } from './pages/order-confirmation/order-confirmation.component';
 import { BlogDetailsComponent } from './components/blog-details/blog-details.component';
 import { ProductListBrandComponent } from './components/product-list-brand/product-list.component';
+import { SearchComponent } from './components/search/search.component';
 
 export const routes: Routes = [
   {
@@ -23,6 +24,13 @@ export const routes: Routes = [
       image: 'assets/logo/logoblack.png',
     },
   },
+
+  {
+    path: 'search',
+    component: SearchComponent,
+  },
+  
+
   {
     path: 'login',
     component: LoginComponent,

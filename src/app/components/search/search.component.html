@@ -1,0 +1,59 @@
+<div class="container mx-auto px-4 md:px-6 lg:px-10 my-12">
+    <h2 class="text-3xl font-extrabold text-center mb-12 text-gray-800 tracking-wide">
+      منتجات {{brand}}
+    </h2>
+  
+    <!-- Responsive Product Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
+      <div *ngFor="let product of products" class="flex flex-col" dir="ltr">
+        <div
+          class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-2 duration-300">
+          <!-- Product Image -->
+          <a [routerLink]="['/shop/product', product.handle]" class="block">
+            <div class="aspect-w-1 aspect-h-1">
+              <img [src]="product.image" [alt]="product.name" class="w-full h-full object-cover rounded-t-xl"
+                loading="lazy" />
+            </div>
+          </a>
+  
+          <!-- Product Info -->
+          <div class="p-4">
+            <!-- Brand -->
+            <span class="text-sm text-gray-400 uppercase block tracking-wide">
+              {{ product.brand }}
+            </span>
+  
+            <!-- Product Name -->
+            <p class="text-lg font-medium text-gray-900 mt-1 line-clamp-2 min-h-[48px]">
+              {{ product.name }}
+            </p>
+  
+  
+            <!-- Price and Add to Cart -->
+            <div class="flex items-center justify-between mt-4">
+              <!-- Price Section -->
+              <div class="flex items-baseline gap-2">
+                <!-- Original Price (line-through if there's a discount) -->
+                <p class="text-gray-400 text-md line-through"
+                  *ngIf="product.discountedPrice && product.price > product.discountedPrice">
+                  {{ product.price | number: '1.2-2' }} JOD
+                </p>
+  
+                <!-- Discounted Price -->
+                <p class="text-red-600 font-bold text-lg">
+                  {{ product.discountedPrice || product.discountedPrice | number: '1.2-2' }} JOD
+                </p>
+              </div>
+  
+              <!-- Add to Cart Button -->
+              <button (click)="addToCart(product)" [attr.aria-label]="'Add ' + product.name + ' to Cart'">
+                <i class="bx bx-cart-add bx-sm bx-tada-hover hover:text-teal-900"></i>
+              </button>
+            </div>
+  
+  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

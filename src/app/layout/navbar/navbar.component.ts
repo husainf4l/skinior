@@ -51,11 +51,23 @@ export class NavbarComponent implements OnInit {
 
   navigateToSearchResults() {
     this.router.navigate(['/search'], { queryParams: { q: this.searchTerm } });
+    this.searchTerm=""
+
   }
 
-  goToProductPage(productHandel: string) {
-    this.router.navigate(['/shop/product', productHandel]);
+
+  goToProductPage(productHandle: string) {
+    this.router.navigate(['/shop/product', productHandle]).then(success => {
+      if (success) {
+        console.log('Navigation successful!');
+        window.location.reload(); // Force page reload
+      } else {
+        console.error('Navigation failed!');
+      }
+    });
+    this.searchTerm = '';
   }
+  
 
   totalQuantity = computed(() => this.cartService.cartCount());
 
