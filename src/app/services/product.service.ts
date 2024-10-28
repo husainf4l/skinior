@@ -9,7 +9,6 @@ import { Category, NewProduct, Product } from './models/interfaces.model';
   providedIn: 'root',
 })
 export class ProductService {
-  private backendUrl = `${environment.apiUrl}`;
 
   private apiUrl = `${environment.apiUrl}/products`
   private categoryApiUrl = `${environment.apiUrl}/categories`;
@@ -54,5 +53,8 @@ export class ProductService {
   }
   getProductsByCategoryHandle(categoryHandle: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/category/${categoryHandle}`);
+  }
+  getProductsByBRAND(brand: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/brand/${brand}`);
   }
 }

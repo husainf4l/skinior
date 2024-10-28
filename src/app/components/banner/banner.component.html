@@ -1,0 +1,52 @@
+<!-- Large Cards Section with RTL Support -->
+<div class="mt-12 overflow-x-auto scroll-smooth scrollbar-hide" dir="rtl">
+    <div class="flex gap-2 ">
+  
+      <!-- Card Wrapper with Balanced Responsive Sizes -->
+      <div 
+        class="bg-white rounded-lg shadow-md transition-transform transform 
+               duration-500 snap-center overflow-hidden flex-shrink-0 
+               w-[14rem] sm:w-[16rem] md:w-[20rem] lg:w-[24rem] xl:w-[28rem]
+              
+               relative cursor-pointer"
+        *ngFor="let card of banners; let i = index">
+  
+        <!-- Image Wrapper with Placeholder Background -->
+        <div class="relative bg-gray-200 aspect-[800/531] w-full">
+          
+          <!-- Image Element -->
+          <img 
+            [src]="card.image1" 
+            alt="{{ card.title }}" 
+            loading="lazy" 
+            (load)="onImageLoad(i)"
+            [ngStyle]="{ 'visibility': imageLoaded[i] ? 'visible' : 'hidden' }"
+            class="w-full h-full object-cover rounded-t-lg">
+          
+        </div>
+  
+        <!-- Card Content -->
+        <div class="p-4 flex flex-col justify-between  " [ngStyle]="{ 'background-color': card.hexcode || '#000000' }">
+          <div>
+            <h2 class="text-lg sm:text-xl font-semibold mb-2 text-right text-white">
+              {{ card.title || 'عنوان المنتج' }}
+            </h2>
+            <p class="text-sm text-white leading-relaxed text-right">
+              {{ card.description || 'وصف المنتج هنا.' }}
+            </p>
+          </div>
+  
+          <div class="mt-4 text-left">
+            <a 
+              [routerLink]="[ card.link ] || '#'" 
+              class="text-white hover:text-gray-500 transition-colors duration-300 no-underline">
+              اكتشف المزيد 
+            </a>
+          </div>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+
+  

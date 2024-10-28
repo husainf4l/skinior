@@ -155,6 +155,15 @@ export interface Order {
   notes?: string;
 }
 
+export interface Banner{
+  id:number   
+  title    :   String
+  description :String
+  link        :String
+  image1 ?:String
+  image2 ?:String
+  hexcode:string
+}
 
 
 export interface Profile {

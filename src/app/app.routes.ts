@@ -10,6 +10,7 @@ import { CartComponent } from './pages/cart/cart.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { OrderConfirmationComponent } from './pages/order-confirmation/order-confirmation.component';
 import { BlogDetailsComponent } from './components/blog-details/blog-details.component';
+import { ProductListBrandComponent } from './components/product-list-brand/product-list.component';
 
 export const routes: Routes = [
   {
@@ -43,6 +44,15 @@ export const routes: Routes = [
   {
     path: 'shop/category/:categoryHandle',
     component: ProductListComponent,
+    data: {
+      title: 'التصنيفات - سكينيور',
+      description: 'تصفح منتجات سكينيور حسب التصنيف للعثور على الحل المثالي لجمالك.',
+      keywords: ['سكينيور', 'تصنيفات المنتجات', 'جمال', 'عناية بالبشرة', 'تسوق'],
+    },
+  },
+  {
+    path: 'brand/:brand',
+    component: ProductListBrandComponent,
     data: {
       title: 'التصنيفات - سكينيور',
       description: 'تصفح منتجات سكينيور حسب التصنيف للعثور على الحل المثالي لجمالك.',

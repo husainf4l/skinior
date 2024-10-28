@@ -26,11 +26,10 @@ export class NavbarComponent implements OnInit {
     { id: 2, name: 'العناية بالوجه', routerLink: '/shop/category/skincare', lang: 'ar' },
     { id: 5, name: 'الاستحمام والجسم', routerLink: '/shop/category/body-care', lang: 'ar' },
     { id: 3, name: 'العناية بالفم', routerLink: '/shop/category/oral-care', lang: 'ar' },
-    { id: 1, name: 'الأكثر مبيعًا', routerLink: '/shop/category/hair-care', lang: 'ar' },
-    { id: 1, name: 'منتجات جديدة', routerLink: '/shop/category/hair-care', lang: 'ar' }
+
   ];
 
-  mainLogo: string = 'assets/logo/logoblack.png';
+  mainLogo: string = 'assets/logo/skinior.webp';
 
   constructor(
     private authService: AuthService,

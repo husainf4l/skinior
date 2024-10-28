@@ -14,15 +14,16 @@ export class BrandsShowcaseComponent {
 
 
   brands:any[] = [
-{ name: 'Coverderm', logo: 'assets/logo/ecodenta.png' ,route: '/brand/coverderm'  },
-{ name: 'Toppik',logo: 'assets/logo/logoblack.png', route: '/brand/coverderm'  },
-{ name: 'Gerovital', logo: 'assets/logo/gerovital.png' , route: '/brand/coverderm' },
-{ name: 'Coverderm', logo: 'assets/logo/ecodenta.png' ,route: '/brand/coverderm'  },
-{ name: 'Toppik',logo: 'assets/logo/logoblack.png', route: '/brand/coverderm'  },
-{ name: 'Gerovital', logo: 'assets/logo/gerovital.png' , route: '/brand/coverderm' },
-{ name: 'Coverderm', logo: 'assets/logo/ecodenta.png' ,route: '/brand/coverderm'  },
-{ name: 'Toppik',logo: 'assets/logo/logoblack.png', route: '/brand/coverderm'  },
-{ name: 'Gerovital', logo: 'assets/logo/gerovital.png' , route: '/brand/coverderm' },
+{ name: 'Coverderm', logo: 'assets/logo/coverderm.webp' ,route: '/brand/coverderm'  },
+{ name: 'Toppik',logo: 'assets/logo/toppik.webp', route: '/brand/toppik'  },
+{ name: 'Gerovital', logo: 'assets/logo/gerovital.webp' , route: '/brand/gerovital' },
+{ name: 'Ecodenta', logo: 'assets/logo/ecodenta.webp' ,route: '/brand/ecodenta'  },
+{ name: 'Dentrax', logo: 'assets/logo/dentrax.webp' ,route: '/brand/dentrax'  },
+{ name: 'HFS', logo: 'assets/logo/hfs.webp' , route: '/brand/hfs' },
+{ name: 'Kili.g', logo: 'assets/logo/kilig.webp' ,route: '/brand/kilig'  },
+
+
+
 
 
 
