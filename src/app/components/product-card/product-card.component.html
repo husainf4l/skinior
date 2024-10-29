@@ -1,41 +1,55 @@
-<div class="flex flex-wrap gap-8 justify-center" dir="ltr">
+<div class="flex flex-wrap gap-8 justify-center" dir="ltr" lang="en">
   <!-- Product Card -->
-  <div class="relative w-[350px] h-[440px] bg-white shadow-md rounded-md overflow-hidden group hover:shadow-xl transition-all transform duration-300">
-    
+  <div
+    class="relative w-[315px] h-[390px] md:w-[350px] md:h-[420px] bg-white shadow-md rounded-md overflow-hidden group hover:shadow-xl transition-all transform duration-300">
+
     <!-- Image Section -->
     <a [routerLink]="['/shop/product', product.handle]" class="block">
-      <div class="w-full h-[350px] overflow-hidden relative">
+      <div class="relative w-full h-[315px] md:h-[350px] overflow-hidden">
         <img [src]="product.image" [alt]="product.name"
-          class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-95" loading="lazy" />
+          class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-95"
+          loading="lazy" />
       </div>
     </a>
 
     <!-- Content Section (Expands Over Image on Hover) -->
-    <div class="absolute bottom-0 w-full bg-white transition-all duration-300 group-hover:h-[140px] h-[90px] p-4 flex flex-col justify-between">
-<div class="flex flex-row justify-between items-center">
-  <div class="w-[250px]">
-    <span class="text-sm text-gray-500 uppercase block tracking-wide">
-      {{ product.brand }}
-    </span>
+    <div
+      class="absolute bottom-0 w-full bg-white transition-all duration-300 md:group-hover:h-[150px] h-[100px] p-4 flex flex-col justify-between">
+      <div class="flex flex-row justify-between items-center">
+        <div class="w-[220px]">
+          <span class="text-base text-neutral-700 font-bold block">
+            {{ product.brand }}
+          </span>
+          <p class="text-base font-normal text-neutral-900 mt-1 line-clamp-1">
+            {{ product.shortName || product.name }}
+          </p>
+        </div>
+        <div class="flex flex-col items-center">
+          <p class="text-base font-medium text-neutral-700">
+            {{ product.price }} JD
+          </p>
+          <button class="md:hidden">
+            <i class='bx bx-cart bx-sm text-neutral-700'></i>
+          </button>
+        </div>
+      </div>
 
-    <p class="text-lg font-medium text-gray-900 mt-1 line-clamp-1">
-      {{ product.shortName || product.name }}
-    </p>
+      <!-- Add to Cart (Responsive) -->
+      <div class="mt-2">
+        <!-- Full Button on Desktop -->
+        <!-- Full Button on Desktop -->
+        <button
+          class="hidden md:flex w-full h-[40px] items-center justify-center bg-rose-500 hover:bg-rose-700 text-white rounded transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+          <span class="text-center">اضف الى السلة</span>
+        </button>
 
 
-  </div>
-  <div >
-  <p class=" text-lg font-medium text-gray-700 line-clamp-1">
-    {{product.price}} JOD
-  </p>
-</div>
-</div>
-
-      <!-- Add to Cart Button -->
-      <button
-        class="w-full bg-gray-700 hover:bg-gray-900 text-white py-2 rounded mt-2 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
-        اضف الى السلة
-      </button>
+        <!-- Icon on Mobile -->
+        <button
+          class="hidden w-full bg-gray-700 hover:bg-gray-900 text-white py-2 rounded  items-center justify-center">
+          <i class='bx bx-cart bx-sm'></i>
+        </button>
+      </div>
     </div>
   </div>
 </div>

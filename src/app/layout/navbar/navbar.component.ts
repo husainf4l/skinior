@@ -27,47 +27,12 @@ export class NavbarComponent implements OnInit {
     });
   }
   isMenuOpen = false;
-  searchTerm: string = '';
-  filteredProducts: any[] = [];
   products: Product[] = [];
 
-  filterProducts() {
-    if (this.searchTerm.trim() === '') {
-      this.filteredProducts = [];
-      return;
-    }
-    
-    this.productService.searchProducts(this.searchTerm).subscribe(
-      (products) => {
-        this.filteredProducts = products;
-      },
-      (error) => {
-        console.error('Error fetching filtered products:', error);
-      }
-    );
-  }
 
 
 
-  navigateToSearchResults() {
-    this.router.navigate(['/search'], { queryParams: { q: this.searchTerm } });
-    this.searchTerm=""
 
-  }
-
-
-  goToProductPage(productHandle: string) {
-    this.router.navigate(['/shop/product', productHandle]).then(success => {
-      if (success) {
-        console.log('Navigation successful!');
-        window.location.reload(); // Force page reload
-      } else {
-        console.error('Navigation failed!');
-      }
-    });
-    this.searchTerm = '';
-  }
-  
 
   totalQuantity = computed(() => this.cartService.cartCount());
 
@@ -94,10 +59,7 @@ export class NavbarComponent implements OnInit {
       localStorage.setItem('sessionId', sessionId);
     }
 
-    this.cartService.getCartBySessionId(sessionId).subscribe(
-      () => console.log('Cart loaded successfully.'),
-      (error) => console.error('Error loading cart:', error)
-    );
+
   }
 
 

@@ -1,0 +1,7 @@
+/* Navbar Component CSS */
+@media (max-width: 768px) {
+    .mobile-menu {
+      transition: transform 0.3s ease-in-out;
+    }
+  }
+  
