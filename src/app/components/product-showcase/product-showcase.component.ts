@@ -3,13 +3,14 @@ import { ProductService } from '../../services/product.service';
 import { Product } from '../../services/models/interfaces.model';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { ProductCardComponent } from "../product-card/product-card.component";
 
 @Component({
   selector: 'app-product-showcase',
   templateUrl: './product-showcase.component.html',
   styleUrls: ['./product-showcase.component.css'],
   standalone: true,
-  imports: [CommonModule, RouterLink]
+  imports: [CommonModule, RouterLink, ProductCardComponent]
 })
 export class ProductShowcaseComponent implements OnInit {
   @Input() categoryHandle!: string; // Dynamic category ID input

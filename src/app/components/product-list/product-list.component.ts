@@ -6,11 +6,12 @@ import { RouterLink } from '@angular/router';
 import { CartOrderService } from '../../services/cart-order.service'; // If needed
 import { Category, Product } from '../../services/models/interfaces.model';
 import { SeoService } from '../../services/seo.service';
+import { ProductCardComponent } from "../product-card/product-card.component";
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ProductCardComponent],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })

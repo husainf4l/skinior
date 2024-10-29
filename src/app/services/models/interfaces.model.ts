@@ -15,6 +15,8 @@ export interface Product {
   id: number;
   handle?: string;
   name: string;
+  shortName?:string
+  shortDescription?:string;
   descriptionAr?: string;
   price: number;
   barcode?: string;

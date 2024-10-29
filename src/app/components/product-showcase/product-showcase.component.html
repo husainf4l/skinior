@@ -4,37 +4,8 @@
     </p>
     <div class="overflow-x-auto scroll-smooth px-4 py-2">
         <div class="flex gap-4">
-            <a *ngFor="let product of products" [routerLink]="['/shop/product', product.handle]" class="bg-white rounded-xl shadow-md min-w-[200px] max-w-[200px] md:min-w-[250px] md:max-w-[250px] 
-                    hover:shadow-lg transition-transform hover:scale-105 duration-300 
-                    snap-center overflow-hidden flex-shrink-0 mb-4 block">
-                <!-- Product Image -->
-                <div class="w-full h-[180px] md:h-[200px] bg-white flex items-center justify-center">
-                    <img [src]="product.image" alt="{{ product.name }}" class="max-w-full max-h-full object-contain"
-                        width="200" height="180" loading="lazy">
-                </div>
+            <app-product-card *ngFor="let product of products" [product]="product"></app-product-card>
 
-                <!-- Product Details -->
-                <div class="p-3 space-y-1 text-center" dir="ltr">
-                    <!-- Product Name -->
-                    <p
-                        class="text-xs md:text-sm font-medium text-gray-800 leading-snug product-name h-[40px] md:h-[48px]">
-                        {{ product.name }}
-                    </p>
-                    <!-- Prices Section -->
-                    <div class="flex justify-center items-center gap-2 text-sm">
-                        <!-- Original Price -->
-                        <p *ngIf="product.discountedPrice && product.price > product.discountedPrice"
-                            class="text-red-800 line-through text-xs">
-                            {{ product.price | currency: 'JOD' }}
-                        </p>
-
-                        <!-- Discounted Price -->
-                        <p class="text-gray-600 font-semibold">
-                            {{ product.discountedPrice || product.price | currency: 'JOD' }}
-                        </p>
-                    </div>
-                </div>
-            </a>
         </div>
     </div>
 
