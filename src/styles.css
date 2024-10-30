@@ -24,15 +24,20 @@ h4,
 h5,
 h6 {
     font-family: 'Tajawal', sans-serif !important;
+    margin: 0;
+
+
 }
+
+
 
 .flex-grow {
     min-height: 200px;
 }
 
 
-.engfont{
-    
+.engfont {
+
     font-family: 'Raleway', sans-serif !important;
 
 }

@@ -1,10 +1,11 @@
-<!-- <app-banner></app-banner> -->
+<app-hero></app-hero>
 
-
+<app-categories-showcase></app-categories-showcase>
 <div *ngFor="let showcase of productShowcases">
     <app-product-showcase [categoryHandle]="showcase.categoryHandle" [title]="showcase.title">
     </app-product-showcase>
 </div>
+
 
 <!-- <app-promotions></app-promotions> -->
 <!-- <app-customer-reviews></app-customer-reviews> -->
@@ -12,4 +13,3 @@
 <!-- <app-cta-banner></app-cta-banner> -->
 
 <!-- <app-blog-teaser></app-blog-teaser> -->
- 

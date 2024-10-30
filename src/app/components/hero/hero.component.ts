@@ -10,14 +10,20 @@ import { CommonModule } from '@angular/common';
   styleUrl: './hero.component.css',
 })
 export class HeroComponent {
-  heroContent: HeroContent = {
-    title: 'اكتشفي جمالك مع سكينيور',
-    description: 'تميزي بأفضل منتجات العناية بالبشرة، المصممة لإبراز جمالك الطبيعي. اختبري الأناقة في أبسط تفاصيلك.',
-    buttonText: 'تسوقي الآن',
-    buttonLink: '/shop',
-    learnMoreText: 'اكتشفي المزيد',
-    learnMoreLink: '/learn-more',
-    imageUrl: './assets/images/banner/bannermain.webp',
-    alt: 'a skinior girl image'
+  heroContent: any = {
+    title: 'تألقي بثقة',
+    title2: 'الدكتورة رهف - صيدلانية معتمدة تقود رحلتك نحو جمالك المتكامل',
+    description:
+      'ابدئي رحلتك اليوم مع الدكتورة رهف. استشارات مجانية ودعم متخصص لمساعدتك على تحقيق إطلالة تشعرين بها بالثقة والجمال.',
+    buttonText: 'ابدئي الآن',
+    buttonLink: '/consultation',
+    learnMoreText: 'تعرفي على الدكتورة رهف',
+    learnMoreLink: '/about-dr-rahaf',
+    imageUrl: './assets/images/banner/mainbanner2.jpg',
+    alt: 'الدكتورة رهف تقدم استشارات تجميلية'
   };
+
+
+
+
 }

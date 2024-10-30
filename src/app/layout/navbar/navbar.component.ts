@@ -19,7 +19,7 @@ import { Product } from '../../services/models/interfaces.model';
 export class NavbarComponent implements OnInit {
   constructor(
     private cartService: CartService,
-    private router:Router,
+    private router: Router,
     private productService: ProductService
   ) {
     effect(() => {

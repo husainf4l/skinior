@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../services/models/interfaces.model';
 import { CommonModule } from '@angular/common';
@@ -13,10 +13,12 @@ import { ProductCardComponent } from "../product-card/product-card.component";
   imports: [CommonModule, RouterLink, ProductCardComponent]
 })
 export class ProductShowcaseComponent implements OnInit {
-  @Input() categoryHandle!: string; // Dynamic category ID input
-  @Input() title: string = 'Products'; // Dynamic title input
+  @Input() categoryHandle!: string;
+  @Input() title: string = 'Products';
 
   products: Product[] = [];
+  loading: boolean = true; // Loading state
+
 
   constructor(private productService: ProductService) { }
 
@@ -26,14 +28,20 @@ export class ProductShowcaseComponent implements OnInit {
     }
   }
 
+
+
   loadProducts() {
     this.productService.getFeaturedProducts(this.categoryHandle).subscribe(
       (products) => {
         this.products = products;
+        this.loading = false;
       },
       (error) => {
-        console.error('Error loading products', error);
+        console.error('Error loading products:', error);
+        this.loading = false;
       }
     );
   }
+
+
 }

@@ -2,103 +2,88 @@
 <nav class="bg-white shadow-md" aria-label="Main navigation">
 
 
-  <!-- Desktop Navbar -->
-  <div class="container mx-auto flex items-center justify-between py-4 px-4 md:px-6">
+    <!-- Desktop Navbar -->
+    <div class="container mx-auto flex items-center justify-between py-4 px-4 md:px-6">
 
-    <div class="flex items-center space-x-4">
-    
+        <div class="flex items-center space-x-4">
 
-      <!-- Mobile Menu Button -->
-      <button 
-        class="md:hidden text-gray-800 hover:text-blue-600" 
-        (click)="toggleMenu()" 
-        aria-label="Toggle Menu" 
-        [attr.aria-expanded]="isMenuOpen">
-        <i class="bx bx-menu bx-sm"></i>
-      </button>
-      <div class="relative">
-        <a routerLink="/cart" aria-label="Cart" class="text-gray-800 hover:text-blue-600 relative">
-          <i class="bx bx-cart bx-sm"></i>
-          <span *ngIf="totalQuantity() > 0"
-            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-            {{ totalQuantity() }}
-          </span>
+
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-gray-800 hover:text-blue-600" (click)="toggleMenu()" aria-label="Toggle Menu"
+                [attr.aria-expanded]="isMenuOpen">
+                <i class="bx bx-menu bx-sm"></i>
+            </button>
+            <div class="relative">
+                <a routerLink="/cart" aria-label="Cart" class="text-gray-800 hover:text-blue-600 relative">
+                    <i class="bx bx-cart bx-sm"></i>
+                    <span *ngIf="totalQuantity() > 0"
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                        {{ totalQuantity() }}
+                    </span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Desktop Navigation Links -->
+        <ul class="hidden md:flex gap-4">
+            <li *ngFor="let link of navigationLinks">
+                <a class="text-neutral-700 hover:text-rose-500 font-medium transition duration-200 ease-in-out"
+                    [attr.lang]="link.lang" [routerLink]="link.routerLink" routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: link.id === 0 }">
+                    {{ link.name }}
+                </a>
+            </li>
+        </ul>
+
+        <!-- Icons -->
+
+
+        <a routerLink="/" class="flex-shrink-0" aria-label="Home">
+            <img [src]="mainLogo" alt="Skinior Logo" class="h-auto w-auto max-h-10 max-w-xs object-contain" width="140"
+                height="40" />
         </a>
-      </div>
     </div>
 
-    <!-- Desktop Navigation Links -->
-    <ul class="hidden md:flex gap-4">
-      <li *ngFor="let link of navigationLinks">
-        <a 
-          class="text-neutral-700 hover:text-rose-500 font-medium transition duration-200 ease-in-out"
-          [attr.lang]="link.lang" 
-          [routerLink]="link.routerLink" 
-          routerLinkActive="active" 
-          [routerLinkActiveOptions]="{ exact: link.id === 0 }">
-          {{ link.name }}
-        </a>
-      </li>
-    </ul>
+    <div [ngClass]="{ 'translate-x-0': isMenuOpen, 'translate-x-full': !isMenuOpen }"
+        class="fixed inset-y-0 right-0 w-3/4 z-40 bg-neutral-50 transform transition-transform duration-300 md:hidden flex flex-col justify-between">
 
-    <!-- Icons -->
-   
+        <!-- Close Button -->
+        <button class="absolute top-4 left-4 text-gray-800 hover:text-blue-600" (click)="toggleMenu()"
+            aria-label="Close Menu">
+            <i class="bx bx-x bx-sm"></i>
+        </button>
 
-    <a routerLink="/" class="flex-shrink-0" aria-label="Home">
-      <img 
-        [src]="mainLogo" 
-        alt="Skinior Logo" 
-        class="h-auto w-auto max-h-10 max-w-xs object-contain" 
-        width="140" 
-        height="40" 
-      />
-    </a>
-  </div>
+        <!-- Mobile Menu Links -->
+        <ul class="flex-grow flex flex-col items-start justify-center py-2 px-6 gap-2">
+            <li *ngFor="let link of navigationLinks" class="w-full ">
+                <div class="flex justify-between">
+                    <a class="flex items-center w-full text-gray-800 hover:text-blue-600 text-xl font-medium transition duration-200 ease-in-out "
+                        [attr.lang]="link.lang" [routerLink]="link.routerLink" routerLinkActive="active"
+                        (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: link.id === 0 }">
+                        <span>{{ link.name }}</span>
+                    </a>
+                    <i class="bx bx-chevron-left text-gray-500 "></i>
 
-  <div 
-  [ngClass]="{ 'translate-x-0': isMenuOpen, 'translate-x-full': !isMenuOpen }" 
-  class="fixed inset-y-0 right-0 w-3/4 z-40 bg-white transform transition-transform duration-300 md:hidden flex flex-col justify-between">
+                </div>
+            </li>
+        </ul>
 
-  <!-- Close Button -->
-  <button 
-    class="absolute top-4 left-4 text-gray-800 hover:text-blue-600" 
-    (click)="toggleMenu()" 
-    aria-label="Close Menu">
-    <i class="bx bx-x bx-sm"></i>
-  </button>
-
-  <!-- Mobile Menu Links -->
-  <ul class="flex-grow flex flex-col items-start justify-center gap-6 m-4">
-    <li *ngFor="let link of navigationLinks">
-      <a 
-        class="flex items-center w-full text-gray-800 hover:text-blue-600 text-xl font-medium transition duration-200 ease-in-out bg-rose-300"
-        [attr.lang]="link.lang" 
-        [routerLink]="link.routerLink" 
-        routerLinkActive="active" 
-        (click)="toggleMenu()" 
-        [routerLinkActiveOptions]="{ exact: link.id === 0 }">
-        <span>{{ link.name }}</span>
-        <i class="bx bx-chevron-left text-gray-500 "></i>
-      </a>
-    </li>
-  </ul>
-
-  <!-- Action Buttons in Gray Container -->
-  <div class="bg-gray-100 py-4 px-6">
-    <button 
-      class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 text-lg font-medium py-2 rounded mb-2 flex items-center justify-center">
-      <i class="bx bx-user mr-2"></i> ملفي الشخصي
-    </button>
-    <button 
-      class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 text-lg font-medium py-2 rounded mb-2 flex items-center justify-center">
-      <i class="bx bx-cart mr-2"></i> سلة التسوق
-    </button>
-    <button 
-      class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 text-lg font-medium py-2 rounded flex items-center justify-center">
-      <i class="bx bx-phone mr-2"></i> اتصل بنا
-    </button>
-  </div>
-</div>
+        <!-- Action Buttons in Gray Container -->
+        <div class="bg-neutral-100 py-4 px-6">
+            <button
+                class="w-full bg-neutral-200 hover:bg-gray-300 text-gray-800 text-lg font-medium py-2 rounded mb-2 flex items-center justify-center gap-2">
+                <i class="bx bx-user mr-2"></i> ملفي الشخصي
+            </button>
+            <button
+                class="w-full bg-neutral-200 hover:bg-gray-300 text-gray-800 text-lg font-medium py-2 rounded mb-2 flex items-center justify-center gap-2">
+                <i class="bx bx-cart mr-2"></i> سلة التسوق
+            </button>
+            <button
+                class="w-full bg-neutral-200 hover:bg-gray-300 text-gray-800 text-lg font-medium py-2 rounded flex items-center justify-center gap-2">
+                <i class="bx bx-phone mr-2"></i> اتصل بنا
+            </button>
+        </div>
+    </div>
 
 
 

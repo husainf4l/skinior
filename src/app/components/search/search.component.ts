@@ -17,19 +17,19 @@ export class SearchComponent implements OnInit {
   brand: string = '';
   isLoading: boolean = true;
   error: string | null = null;
-  q: string = ''; 
+  q: string = '';
   constructor(
     private productService: ProductService,
     private route: ActivatedRoute,
     private seoService: SeoService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Subscribe to query parameters dynamically
     this.route.queryParamMap.subscribe((params) => {
       this.q = params.get('q') || ''; // Handle the query parameter
 
-      if (this.q ) {
+      if (this.q) {
         this.loadProductsBySearch();
       } else {
         this.handleError('No query or brand provided.');
@@ -38,7 +38,7 @@ export class SearchComponent implements OnInit {
   }
 
   private loadProductsBySearch(): void {
-    const searchCriteria = this.q ; // Use query or brand as criteria
+    const searchCriteria = this.q; // Use query or brand as criteria
     this.productService.searchProducts(searchCriteria).subscribe({
       next: (products: Product[]) => {
         this.products = products;
