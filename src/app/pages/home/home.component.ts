@@ -10,11 +10,12 @@ import { CommonModule } from '@angular/common';
 import { BrandsShowcaseComponent } from "../../components/brands-showcase/brands-showcase.component";
 import { Banner } from '../../services/models/interfaces.model';
 import { BannerComponent } from "../../components/banner/banner.component";
+import { Hero2Component } from "../../components/hero2/hero2.component";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeroComponent, CategoriesShowcaseComponent, PromotionsComponent, CustomerReviewsComponent, CtaBannerComponent, BlogTeaserComponent, ProductShowcaseComponent, CommonModule, BrandsShowcaseComponent, BannerComponent],
+  imports: [HeroComponent, CategoriesShowcaseComponent, PromotionsComponent, CustomerReviewsComponent, CtaBannerComponent, BlogTeaserComponent, ProductShowcaseComponent, CommonModule, BrandsShowcaseComponent, BannerComponent, Hero2Component],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

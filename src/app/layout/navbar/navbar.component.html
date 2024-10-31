@@ -1,30 +1,18 @@
 <!-- Navbar Component -->
-<nav class="bg-white shadow-md" aria-label="Main navigation">
-
+<nav class="bg-white shadow-md fixed top-0 w-full z-50" aria-label="Main navigation">
 
     <!-- Desktop Navbar -->
     <div class="container mx-auto flex items-center justify-between py-4 px-4 md:px-6">
+        <button class="md:hidden text-gray-800 hover:text-blue-600" (click)="toggleMenu()" aria-label="Toggle Menu"
+        [attr.aria-expanded]="isMenuOpen">
+        <i class="bx bx-menu bx-sm"></i>
+    </button>
+        <a routerLink="/" class="flex-shrink-0" aria-label="Home">
+            <img [src]="mainLogo" alt="Skinior Logo" class="h-auto w-auto max-h-10 max-w-xs object-contain" width="140"
+                height="40" />
+        </a>
+     
 
-        <div class="flex items-center space-x-4">
-
-
-            <!-- Mobile Menu Button -->
-            <button class="md:hidden text-gray-800 hover:text-blue-600" (click)="toggleMenu()" aria-label="Toggle Menu"
-                [attr.aria-expanded]="isMenuOpen">
-                <i class="bx bx-menu bx-sm"></i>
-            </button>
-            <div class="relative">
-                <a routerLink="/cart" aria-label="Cart" class="text-gray-800 hover:text-blue-600 relative">
-                    <i class="bx bx-cart bx-sm"></i>
-                    <span *ngIf="totalQuantity() > 0"
-                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-                        {{ totalQuantity() }}
-                    </span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Desktop Navigation Links -->
         <ul class="hidden md:flex gap-4">
             <li *ngFor="let link of navigationLinks">
                 <a class="text-neutral-700 hover:text-rose-500 font-medium transition duration-200 ease-in-out"
@@ -35,13 +23,29 @@
             </li>
         </ul>
 
-        <!-- Icons -->
+
+        <div class="flex items-center space-x-4">
+
+        
+            
+            <div class="relative">
+                <a routerLink="/cart" aria-label="Cart" class="text-gray-800 hover:text-blue-600 relative">
+                    <i class="bx bx-cart bx-sm"></i>
+                    <span *ngIf="totalQuantity() > 0"
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                        {{ totalQuantity() }}
+                    </span>
+                </a>
+            </div>
+            <div class="relative">
+                <a aria-label="Search" class="text-gray-800 hover:text-blue-600 relative">
+                    <i class="bx bx-search bx-sm"></i>
+                  
+                </a>
+            </div>
+        </div>
 
 
-        <a routerLink="/" class="flex-shrink-0" aria-label="Home">
-            <img [src]="mainLogo" alt="Skinior Logo" class="h-auto w-auto max-h-10 max-w-xs object-contain" width="140"
-                height="40" />
-        </a>
     </div>
 
     <div [ngClass]="{ 'translate-x-0': isMenuOpen, 'translate-x-full': !isMenuOpen }"
@@ -84,7 +88,5 @@
             </button>
         </div>
     </div>
-
-
 
 </nav>

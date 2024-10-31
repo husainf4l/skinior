@@ -3,41 +3,35 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    * {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+    }
 
-* {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-}
+    html,
+    body {
+        font-family: 'Tajawal', sans-serif !important;
+        height: 100%;
+        margin: 0;
+    }
 
-html,
-body {
-    font-family: 'Tajawal', sans-serif !important;
-    height: 100%;
-    margin: 0;
-}
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: 'Tajawal', sans-serif !important;
+        margin: 0;
+    }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-family: 'Tajawal', sans-serif !important;
-    margin: 0;
+    .flex-grow {
+        min-height: 200px;
+    }
 
-
-}
-
-
-
-.flex-grow {
-    min-height: 200px;
-}
-
-
-.engfont {
-
-    font-family: 'Raleway', sans-serif !important;
-
+    .engfont {
+        font-family: 'Raleway', sans-serif !important;
+    }
 }

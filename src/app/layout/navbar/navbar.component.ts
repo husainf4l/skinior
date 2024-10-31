@@ -47,7 +47,7 @@ export class NavbarComponent implements OnInit {
 
   ];
 
-  mainLogo: string = 'assets/logo/skinior.webp';
+  mainLogo: string = 'assets/logo/skinior-logo-ar.webp';
 
 
 
