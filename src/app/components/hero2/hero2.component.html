@@ -1,18 +1,25 @@
-<div class="w-full max-h-screen relative"> <!-- Adjust 64px to your navbar height -->
-    <img src="assets/images/banner/hero-desk.webp" alt="hero image skinior" class="h-screen w-screen  object-cover custom-object-position ">
+<div class="w-full max-h-screen relative "> <!-- Adjust 64px to your navbar height -->
+    <picture>
+        <source media="(max-width: 768px)" srcset="assets/images/banner/hero-mob.webp">
+        <img src="assets/images/banner/hero-desk.webp" alt="hero image skinior"
+            class="h-[80vh] md:h-[95vh] w-screen object-cover custom-object-position">
+    </picture>
 
-    <div class="absolute inset-0 flex flex-col justify-center text-white px-4">
-        <div class="w-full md:w-1/4 md:mr-16">
-            <div class="text-center mt-32">
-                <h1 style="font-size: 1.5rem; line-height: 2; font-weight: bold;">
+    <div class="absolute inset-0 flex flex-col justify-center text-white px-4 ">
+        <div class="w-full md:w-1/2 flex flex-col md:flex-row justify-between items-center">
+            <div class="hidden md:block"></div>
+            <div class="text-center md:w-1/2">
+                <h1 style="font-size: 1.5rem; line-height: 2; font-weight: 500;">
                     تسوقي أجمل منتجات التجميل وأحدث صيحات العناية بالبشرة من متجرنا الإلكتروني!
-                    اجعلي روتينك اليومي أكثر إشراقًا وتألقًا لأن الجمال يبدأ هنا!
+                    <br>اجعلي روتينك اليومي أكثر إشراقًا وتألقًا لأن الجمال يبدأ هنا!
                 </h1>
-                <button class="px-6 py-2 mt-4 border border-white hover:border-opacity-75 text-white rounded-md text-lg">
+                <button
+                    class="px-6 py-2 mt-4 border border-white hover:border-opacity-75 text-white rounded-md text-lg">
                     اكتشف المزيد
                 </button>
-                
             </div>
+            <div class="hidden md:block"></div>
         </div>
     </div>
+
 </div>

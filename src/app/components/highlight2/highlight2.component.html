@@ -1,0 +1,23 @@
+<div class="w-full max-h-screen relative "> <!-- Adjust 64px to your navbar height -->
+    <picture>
+        <source media="(max-width: 768px)" srcset={{highlight.imagemob}}>
+        <img src={{highlight.image}} alt={{highlight.altimage}}
+            class="h-[80vh] md:h-[60vh] w-screen object-cover object-right">
+    </picture>
+
+    <div class="absolute inset-0 flex flex-col justify-center  px-4 ">
+        <div class="w-full md:w-1/2 flex flex-col md:flex-row justify-between items-center">
+            <div class="hidden md:block"></div>
+            <div class="text-center md:w-1/2 ">
+                <h1 style="font-size: 1.5rem; line-height: 2; font-weight: 500;">
+                    {{highlight.description}}
+                </h1>
+                <button class="px-6 py-2 mt-4 border border-white hover:border-opacity-75  rounded-md text-lg">
+                    اكتشف المزيد
+                </button>
+            </div>
+            <div class="hidden md:block"></div>
+        </div>
+    </div>
+
+</div>

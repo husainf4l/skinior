@@ -1,0 +1,28 @@
+<div class="p-2">
+    <section class="hero2 w-full flex flex-col md:flex-row justify-between  relative  bg-yellow-300">
+        <!-- First Box: Image -->
+        <div class="w-full md:w-1/3">
+            <img src="{{highlight.image1}}" alt="{{highlight.alt1}}" class="h-auto w-full object-cover ">
+        </div>
+
+        <!-- Second Box: Text -->
+        <div class="w-full md:w-1/3 flex items-center">
+            <div class="text-center bg-yellow-300 flex flex-col justify-center p-6 rounded-md  w-full">
+                <h2 class="text-xl font-bold mb-4">
+                    {{highlight.title}}
+                </h2>
+                <p class="mb-4">
+                    {{highlight.description}}
+                </p>
+                <button class="px-6 py-2 border-2 border-white hover:border-opacity-75 text-lg">
+                    اكتشف المزيد
+                </button>
+            </div>
+        </div>
+
+        <!-- Third Box: Image -->
+        <div class="hidden md:flex w-full md:w-1/3">
+            <img src="{{highlight.image2}}" alt="{{highlight.alt2}}" class="h-auto w-full object-cover ">
+        </div>
+    </section>
+</div>

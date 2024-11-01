@@ -1,12 +1,37 @@
-    <app-hero2></app-hero2>
-  
-<app-categories-showcase></app-categories-showcase>
-<div *ngFor="let showcase of productShowcases">
-    <app-product-showcase [categoryHandle]="showcase.categoryHandle" [title]="showcase.title">
-    </app-product-showcase>
+<app-hero2></app-hero2>
+
+<app-product-showcase [categoryHandle]="productShowcases[0].categoryHandle" [title]="productShowcases[0].title">
+</app-product-showcase>
+<div class="w-full text-center mb-4">
+    <button class="border rounded-md p-4">مشاهدة الكل</button>
+
 </div>
 
 
+<app-highlight></app-highlight>
+<app-product-showcase [categoryHandle]="productShowcases[1].categoryHandle" [title]="productShowcases[1].title">
+</app-product-showcase>
+
+<div class="w-full text-center mb-4">
+    <button class="border rounded-md p-4">مشاهدة الكل</button>
+
+</div>
+
+<app-highlight2 [highlight]="highlight[0]"></app-highlight2>
+<app-product-showcase [categoryHandle]="productShowcases[3].categoryHandle" [title]="productShowcases[3].title">
+</app-product-showcase>
+<div class="w-full text-center mb-4">
+    <button class="border rounded-md p-4">مشاهدة الكل</button>
+
+</div>
+
+<app-highlight3 [highlight]="highlight[1]"></app-highlight3>
+<app-product-showcase [categoryHandle]="productShowcases[2].categoryHandle" [title]="productShowcases[2].title">
+</app-product-showcase>
+<div class="w-full text-center mb-4">
+    <button class="border rounded-md p-4">مشاهدة الكل</button>
+
+</div>
 <!-- <app-promotions></app-promotions> -->
 <!-- <app-customer-reviews></app-customer-reviews> -->
 

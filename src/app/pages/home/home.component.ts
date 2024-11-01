@@ -11,11 +11,14 @@ import { BrandsShowcaseComponent } from "../../components/brands-showcase/brands
 import { Banner } from '../../services/models/interfaces.model';
 import { BannerComponent } from "../../components/banner/banner.component";
 import { Hero2Component } from "../../components/hero2/hero2.component";
+import { HighlightComponent } from "../../components/highlight/highlight.component";
+import { Highlight2Component } from "../../components/highlight2/highlight2.component";
+import { Highlight3Component } from "../../components/highlight3/highlight3.component";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeroComponent, CategoriesShowcaseComponent, PromotionsComponent, CustomerReviewsComponent, CtaBannerComponent, BlogTeaserComponent, ProductShowcaseComponent, CommonModule, BrandsShowcaseComponent, BannerComponent, Hero2Component],
+  imports: [HeroComponent, CategoriesShowcaseComponent, PromotionsComponent, CustomerReviewsComponent, CtaBannerComponent, BlogTeaserComponent, ProductShowcaseComponent, CommonModule, BrandsShowcaseComponent, BannerComponent, Hero2Component, HighlightComponent, Highlight2Component, Highlight3Component],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -27,6 +30,13 @@ export class HomeComponent {
     { categoryHandle: "oral-care", title: 'أفضل منتجات العناية بالفم' },
     { categoryHandle: "body-care", title: 'أفضل منتجات العناية بالجسم' },
   ];
+
+  highlight = [
+    { title: 'Coverderm Camouflage', description: 'امنحي ابتسامتك عناية فائقة مع معجون أسنان نباتي 100٪ يجمع بين الطبيعة والعناية الصحية لأسنان نظيفة وحماية تدوم.', imagemob: 'assets/images/banner/ecodenta-banner.png', image: "assets/images/banner/ecodenta-banner.png", altimage: 'ecodenta image' },
+    { title: 'Coverderm Camouflage', description: 'تقدم مجموعة تغطية مثالية وطبيعية لعيوب البشرة تدوم طوال اليوم، مع حماية من أشعة الشمس ومقاومة للماء.', imagemob: 'assets/images/banner/coverderm-card-image.jpg', image: "assets/images/banner/coverderm-card-image.jpg", altimage: 'coverderm-card-image' }
+
+  ]
+
 
 
 }
