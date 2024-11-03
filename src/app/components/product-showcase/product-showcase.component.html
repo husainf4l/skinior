@@ -1,13 +1,10 @@
 <div class="container mx-auto px-4 md:px-6 lg:px-10 mt-12 relative">
-    <p class=" mb-12 tracking-wide text-gray-800 text-2xl">
+    <p class="mb-12 tracking-wide text-gray-800 text-2xl">
         {{ title }}
     </p>
-    <div class="overflow-x-auto scroll-smooth px-4 py-2">
+    <div class="overflow-x-auto scroll-smooth px-4 py-2 no-scrollbar">
         <div class="flex gap-4">
             <app-product-card *ngFor="let product of products" [product]="product"></app-product-card>
-
         </div>
     </div>
-
-
 </div>

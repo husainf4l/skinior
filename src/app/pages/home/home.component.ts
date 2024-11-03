@@ -32,8 +32,8 @@ export class HomeComponent {
   ];
 
   highlight = [
-    { title: 'Coverderm Camouflage', description: 'امنحي ابتسامتك عناية فائقة مع معجون أسنان نباتي 100٪ يجمع بين الطبيعة والعناية الصحية لأسنان نظيفة وحماية تدوم.', imagemob: 'assets/images/banner/ecodenta-banner.png', image: "assets/images/banner/ecodenta-banner.png", altimage: 'ecodenta image' },
-    { title: 'Coverderm Camouflage', description: 'تقدم مجموعة تغطية مثالية وطبيعية لعيوب البشرة تدوم طوال اليوم، مع حماية من أشعة الشمس ومقاومة للماء.', imagemob: 'assets/images/banner/coverderm-card-image.jpg', image: "assets/images/banner/coverderm-card-image.jpg", altimage: 'coverderm-card-image' }
+    { title: 'Coverderm Camouflage', description: 'امنحي ابتسامتك عناية فائقة مع معجون أسنان نباتي 100٪ يجمع بين الطبيعة والعناية الصحية لأسنان نظيفة وحماية تدوم.', imagemob: 'assets/images/banner/ecodenta-mob.webp', image: "assets/images/banner/ecodenta-desk.webp", altimage: 'ecodenta image' },
+    { title: 'Coverderm Camouflage', description: 'تقدم مجموعة تغطية مثالية وطبيعية لعيوب البشرة تدوم طوال اليوم، مع حماية من أشعة الشمس ومقاومة للماء.', imagemob: 'assets/images/banner/coverderm-mob.webp', image: "assets/images/banner/coverderm-desk.webp", altimage: 'coverderm-card-image' }
 
   ]
 
