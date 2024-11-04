@@ -45,6 +45,7 @@
       <!-- Add to Cart Button -->
       <div class="m-2">
         <button
+        [routerLink]="['/shop/product', product.handle]" 
           class="hidden md:flex w-full h-[40px] items-center justify-center bg-rose-500 hover:bg-rose-700 text-white rounded transition-opacity duration-300 opacity-0 group-hover:opacity-100">
           <span class="text-center">عرض المنتج</span>
         </button>
