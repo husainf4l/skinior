@@ -12,6 +12,7 @@ import { OrderConfirmationComponent } from './pages/order-confirmation/order-con
 import { BlogDetailsComponent } from './components/blog-details/blog-details.component';
 import { ProductListBrandComponent } from './components/product-list-brand/product-list.component';
 import { SearchComponent } from './components/search/search.component';
+import { EcodentaComponent } from './landing/ecodenta/ecodenta.component';
 
 export const routes: Routes = [
   {
@@ -121,6 +122,16 @@ export const routes: Routes = [
       keywords: ['سكينيور', 'المدونة', 'أخبار الجمال', 'اتجاهات التجميل', 'نصائح العناية بالبشرة'],
     },
   },
+  {
+    path: 'landing/ecodenta',
+    component: EcodentaComponent,
+    data: {
+      title: 'منتجات ايكودينتا',
+      description: 'اكتشف منتجات ايكودينتا للعناية بصحة الفم، ابتسامة صحية ومشرقة مع أفضل المكونات الطبيعية والفعّالة.',
+      keywords: ['ايكودينتا', 'صحة الفم', 'رعاية الأسنان', 'منتجات طبيعية', 'تبييض الأسنان', 'العناية بالابتسامة'],
+    },
+},
+
   {
     path: '**',
     component: NotFoundComponent,
