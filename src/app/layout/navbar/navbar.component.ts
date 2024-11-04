@@ -38,7 +38,6 @@ export class NavbarComponent implements OnInit {
 
   navigationLinks: NavigationLink[] = [
     { id: 0, name: 'الرئيسية', routerLink: '/', lang: 'ar' },
-    { id: 6, name: 'العطور', routerLink: '/shop/category/fragrance', lang: 'ar' },
     { id: 4, name: 'المكياج', routerLink: '/shop/category/make-up', lang: 'ar' },
     { id: 1, name: 'الشعر', routerLink: '/shop/category/hair-care', lang: 'ar' },
     { id: 2, name: 'العناية بالوجه', routerLink: '/shop/category/skincare', lang: 'ar' },
