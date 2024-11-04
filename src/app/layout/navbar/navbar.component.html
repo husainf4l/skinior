@@ -68,18 +68,20 @@
 
         <!-- Action Buttons in Gray Container -->
         <div class="bg-neutral-100 py-4 px-6">
-            <button
+            <button [routerLink]="'/login'"(click)="toggleMenu()"
                 class="w-full bg-neutral-200 hover:bg-gray-300 text-gray-800 text-lg font-medium py-2 rounded mb-2 flex items-center justify-center gap-2">
                 <i class="bx bx-user mr-2"></i> ملفي الشخصي
             </button>
-            <button
+            <button [routerLink]="'/cart'"(click)="toggleMenu()"
                 class="w-full bg-neutral-200 hover:bg-gray-300 text-gray-800 text-lg font-medium py-2 rounded mb-2 flex items-center justify-center gap-2">
                 <i class="bx bx-cart mr-2"></i> سلة التسوق
             </button>
-            <button
-                class="w-full bg-neutral-200 hover:bg-gray-300 text-gray-800 text-lg font-medium py-2 rounded flex items-center justify-center gap-2">
-                <i class="bx bx-phone mr-2"></i> اتصل بنا
-            </button>
+            <button 
+            class="w-full bg-neutral-200 hover:bg-gray-300 text-gray-800 text-lg font-medium py-2 rounded flex items-center justify-center gap-2"
+            onclick="window.open('https://wa.me/962797333208', '_blank')">
+            <i class="bx bx-phone mr-2"></i> اتصل بنا
+        </button>
+        
         </div>
     </div>
 
