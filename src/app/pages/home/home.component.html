@@ -3,9 +3,12 @@
 <app-product-showcase [categoryHandle]="productShowcases[0].categoryHandle" [title]="productShowcases[0].title">
 </app-product-showcase>
 <div class="w-full text-center mb-4">
-    <button class="border rounded-md p-4">مشاهدة الكل</button>
-
+    <button [routerLink]="['/shop/category/skincare']" class="border rounded-md p-4">
+        مشاهدة الكل
+    </button>
 </div>
+
+
 
 
 <app-highlight></app-highlight>
@@ -13,7 +16,7 @@
 </app-product-showcase>
 
 <div class="w-full text-center mb-4">
-    <button class="border rounded-md p-4">مشاهدة الكل</button>
+    <button [routerLink]="['/shop/category/hair-care']"class="border rounded-md p-4">مشاهدة الكل</button>
 
 </div>
 
@@ -21,7 +24,7 @@
 <app-product-showcase [categoryHandle]="productShowcases[3].categoryHandle" [title]="productShowcases[3].title">
 </app-product-showcase>
 <div class="w-full text-center mb-4">
-    <button class="border rounded-md p-4">مشاهدة الكل</button>
+    <button [routerLink]="['/shop/category/oral-care']"class="border rounded-md p-4">مشاهدة الكل</button>
 
 </div>
 
@@ -29,7 +32,7 @@
 <app-product-showcase [categoryHandle]="productShowcases[2].categoryHandle" [title]="productShowcases[2].title">
 </app-product-showcase>
 <div class="w-full text-center mb-4">
-    <button class="border rounded-md p-4">مشاهدة الكل</button>
+    <button [routerLink]="['/shop/category/make-up']"class="border rounded-md p-4">مشاهدة الكل</button>
 
 </div>
 <!-- <app-promotions></app-promotions>

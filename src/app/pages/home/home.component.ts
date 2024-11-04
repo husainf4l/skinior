@@ -14,11 +14,12 @@ import { Hero2Component } from "../../components/hero2/hero2.component";
 import { HighlightComponent } from "../../components/highlight/highlight.component";
 import { Highlight2Component } from "../../components/highlight2/highlight2.component";
 import { Highlight3Component } from "../../components/highlight3/highlight3.component";
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeroComponent, CategoriesShowcaseComponent, PromotionsComponent, CustomerReviewsComponent, CtaBannerComponent, BlogTeaserComponent, ProductShowcaseComponent, CommonModule, BrandsShowcaseComponent, BannerComponent, Hero2Component, HighlightComponent, Highlight2Component, Highlight3Component],
+  imports: [HeroComponent, CategoriesShowcaseComponent, PromotionsComponent, CustomerReviewsComponent, CtaBannerComponent, BlogTeaserComponent,RouterLink, ProductShowcaseComponent, CommonModule, BrandsShowcaseComponent, BannerComponent, Hero2Component, HighlightComponent, Highlight2Component, Highlight3Component],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
