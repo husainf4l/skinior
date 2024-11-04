@@ -41,7 +41,7 @@ export class NavbarComponent implements OnInit {
     { id: 4, name: 'المكياج', routerLink: '/shop/category/make-up', lang: 'ar' },
     { id: 1, name: 'الشعر', routerLink: '/shop/category/hair-care', lang: 'ar' },
     { id: 2, name: 'العناية بالوجه', routerLink: '/shop/category/skincare', lang: 'ar' },
-    { id: 5, name: 'الاستحمام والجسم', routerLink: '/shop/category/body-care', lang: 'ar' },
+    { id: 5, name: 'العناية بالجسم', routerLink: '/shop/category/body-care', lang: 'ar' },
     { id: 3, name: 'العناية بالفم', routerLink: '/shop/category/oral-care', lang: 'ar' },
 
   ];
