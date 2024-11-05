@@ -15,6 +15,7 @@ export interface Product {
   id: number;
   handle?: string;
   name: string;
+  line?:string;
   shortName?:string
   shortDescription?:string;
   descriptionAr?: string;

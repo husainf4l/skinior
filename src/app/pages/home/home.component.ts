@@ -20,7 +20,7 @@ import { NewsletterComponent } from "../../components/newsletter/newsletter.comp
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeroComponent, CategoriesShowcaseComponent, PromotionsComponent, CustomerReviewsComponent, CtaBannerComponent, BlogTeaserComponent, RouterLink, ProductShowcaseComponent, CommonModule, BrandsShowcaseComponent, BannerComponent, Hero2Component, HighlightComponent, Highlight2Component, Highlight3Component, NewsletterComponent],
+  imports: [Hero2Component, ProductShowcaseComponent, RouterLink, HighlightComponent, Highlight2Component, Highlight3Component, NewsletterComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
