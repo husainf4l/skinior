@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Skin Analysis - Live Video Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1em;
+        }
+
+        .main-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .video-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        #localVideo, #remoteVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .analysis-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .video-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-primary {
+            background: rgba(75, 192, 192, 0.8);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: rgba(75, 192, 192, 1);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .analysis-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .panel-section h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff6b6b;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.connected {
+            background: #51cf66;
+        }
+
+        .status-indicator.analyzing {
+            background: #ffd43b;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .metric-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+        }
+
+        .metric-value {
+            color: white;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #51cf66, #ffd43b, #ff6b6b);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .problem-areas {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .problem-item {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.4);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .problem-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .problem-type {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .problem-severity {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .connection-status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .connection-status.disconnected {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.4);
+            color: white;
+        }
+
+        .connection-status.connected {
+            background: rgba(81, 207, 102, 0.2);
+            border: 1px solid rgba(81, 207, 102, 0.4);
+            color: white;
+        }
+
+        .recommendations {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .recommendation-item {
+            background: rgba(75, 192, 192, 0.2);
+            border: 1px solid rgba(75, 192, 192, 0.4);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .recommendation-item:last-child {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔬 AI Skin Analysis</h1>
+        <p>Real-time computer vision skin analysis with live video processing</p>
+    </div>
+
+    <div class="main-container">
+        <div class="video-section">
+            <div class="video-container">
+                <video id="localVideo" autoplay muted playsinline></video>
+                <video id="remoteVideo" autoplay playsinline style="display: none;"></video>
+                <canvas id="analysisOverlay" class="analysis-overlay"></canvas>
+            </div>
+            
+            <div class="video-controls">
+                <button id="connectBtn" class="btn btn-primary">Connect to Analysis</button>
+                <button id="toggleCamera" class="btn btn-secondary" disabled>Toggle Camera</button>
+                <button id="toggleAnalysis" class="btn btn-secondary" disabled>Toggle Analysis</button>
+            </div>
+        </div>
+
+        <div class="analysis-panel">
+            <div id="connectionStatus" class="connection-status disconnected">
+                <div class="status-indicator"></div>
+                Disconnected from Analysis Server
+            </div>
+
+            <div class="panel-section">
+                <h3>
+                    <span class="status-indicator" id="analysisStatus"></span>
+                    Live Analysis
+                </h3>
+                <div class="metric">
+                    <span class="metric-label">Faces Detected</span>
+                    <span class="metric-value" id="facesCount">0</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Analysis FPS</span>
+                    <span class="metric-value" id="analysisFps">0</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Processing Time</span>
+                    <span class="metric-value" id="processingTime">0ms</span>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>Skin Analysis Results</h3>
+                <div class="metric">
+                    <span class="metric-label">Skin Tone</span>
+                    <span class="metric-value" id="skinTone">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Texture Score</span>
+                    <span class="metric-value" id="textureScore">-</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="textureProgress" style="width: 0%"></div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Hydration Level</span>
+                    <span class="metric-value" id="hydrationLevel">-</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="hydrationProgress" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>Problem Areas</h3>
+                <div class="problem-areas" id="problemAreas">
+                    <p style="color: rgba(255, 255, 255, 0.6); text-align: center;">No issues detected</p>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>Recommendations</h3>
+                <div class="recommendations" id="recommendations">
+                    <p style="color: rgba(255, 255, 255, 0.6); text-align: center;">Start analysis to get recommendations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/livekit-client@2.3.0/dist/livekit-client.umd.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
