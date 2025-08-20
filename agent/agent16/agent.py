@@ -6,6 +6,7 @@ Agent16 provides outstanding, strong, and useful skin recommendations with user 
 import logging
 import json
 import asyncio
+import os
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 from livekit.agents import Agent, JobContext
@@ -75,6 +76,15 @@ class AdvancedSkinAnalysisAgent(Agent):
             "routine": {},
             "progress_tracking": {}
         }
+        
+        # Get authentication credentials
+        self.auth_token = os.getenv("AGENT16_AUTH_TOKEN")
+        self.api_key = os.getenv("AGENT16_API_KEY")
+        
+        if self.auth_token:
+            logger.info(f"🔐 Agent16 authenticated with JWT token")
+        if self.api_key:
+            logger.info(f"🔑 Agent16 authenticated with API key")
 
         # Debug logging for metadata keys
         logger.info(f"🔍 DEBUG - metadata keys: {list(self.metadata.keys())}")
@@ -152,7 +162,9 @@ class AdvancedSkinAnalysisAgent(Agent):
             result = await create_analysis_session(
                 user_id=self.user_id,
                 session_id=self.session_id,
-                language=self.interview_language
+                language=self.interview_language,
+                auth_token=self.auth_token,
+                api_key=self.api_key
             )
             
             if "error" not in result:
@@ -175,7 +187,9 @@ class AdvancedSkinAnalysisAgent(Agent):
                 user_id=self.user_id,
                 analysis_id=self.analysis_id,
                 analysis_type=analysis_type,
-                data=data
+                data=data,
+                auth_token=self.auth_token,
+                api_key=self.api_key
             )
             
             if "error" not in result:
@@ -193,7 +207,12 @@ class AdvancedSkinAnalysisAgent(Agent):
                 return []
                 
             # Get user analysis history using the tools
-            history = await get_user_analysis_history(user_id=self.user_id, limit=5)
+            history = await get_user_analysis_history(
+                user_id=self.user_id, 
+                limit=5,
+                auth_token=self.auth_token,
+                api_key=self.api_key
+            )
             
             logger.info(f"✅ Retrieved {len(history)} analysis records for user {self.user_id}")
             return history
@@ -209,7 +228,9 @@ class AdvancedSkinAnalysisAgent(Agent):
             products = await get_available_products(
                 skin_type=skin_type,
                 concerns=concerns,
-                budget_range="all"
+                budget_range="all",
+                auth_token=self.auth_token,
+                api_key=self.api_key
             )
             
             logger.info(f"✅ Retrieved {len(products)} available products for {skin_type} skin")
@@ -229,7 +250,9 @@ class AdvancedSkinAnalysisAgent(Agent):
             recommendations = await create_product_recommendations(
                 user_id=self.user_id,
                 analysis_id=self.analysis_id,
-                skin_analysis=skin_analysis
+                skin_analysis=skin_analysis,
+                auth_token=self.auth_token,
+                api_key=self.api_key
             )
             
             logger.info(f"✅ Created {len(recommendations)} product recommendations for user {self.user_id}")

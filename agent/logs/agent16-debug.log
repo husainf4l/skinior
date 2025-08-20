@@ -86,3 +86,703 @@ asyncio 2025-08-20 23:47:06,478 - DEBUG - __init__:64 - Using selector: KqueueSe
 livekit.agents 2025-08-20 23:47:06,481 - INFO - run:390 - starting worker
 livekit.agents 2025-08-20 23:47:07,069 - INFO - _handle_register:801 - registered worker
 livekit.agents 2025-08-20 23:49:00,057 - INFO - aclose:576 - shutting down worker
+agent16.main 2025-08-21 01:25:13,582 - INFO - <module>:232 - 🔬 Starting agent16 on port 8000 - Advanced Skin Analysis Agent
+asyncio 2025-08-21 01:25:13,587 - DEBUG - __init__:64 - Using selector: KqueueSelector
+livekit.agents 2025-08-21 01:25:13,588 - DEV - run:84 - Watching /Users/al-husseinabdullah/Desktop/skinior/agent/agent16
+asyncio 2025-08-21 01:25:14,325 - DEBUG - __init__:64 - Using selector: KqueueSelector
+livekit.agents 2025-08-21 01:25:14,328 - INFO - run:390 - starting worker
+livekit.agents 2025-08-21 01:25:14,901 - INFO - _handle_register:801 - registered worker
+livekit.agents 2025-08-21 01:25:41,138 - INFO - _answer_availability:872 - received job request
+livekit.agents 2025-08-21 01:25:41,274 - INFO - initialize:167 - initializing process
+asyncio 2025-08-21 01:25:42,066 - DEBUG - __init__:64 - Using selector: KqueueSelector
+livekit.agents 2025-08-21 01:25:42,066 - INFO - initialize:184 - process initialized
+asyncio 2025-08-21 01:25:42,066 - DEBUG - __init__:64 - Using selector: KqueueSelector
+agent16.main 2025-08-21 01:25:42,067 - INFO - entrypoint:107 - 🔬 Starting agent16 entrypoint - Advanced Skin Analysis Agent
+agent16.main 2025-08-21 01:25:42,067 - INFO - entrypoint:107 - 🔬 Starting agent16 entrypoint - Advanced Skin Analysis Agent
+livekit 2025-08-21 01:25:42,068 - INFO - ffi_event_callback:167 - livekit_ffi::server:139:livekit_ffi::server - initializing ffi server v0.12.30
+livekit 2025-08-21 01:25:42,068 - INFO - ffi_event_callback:167 - livekit_ffi::cabi:36:livekit_ffi::cabi - initializing ffi server v0.12.30
+livekit 2025-08-21 01:25:42,069 - INFO - ffi_event_callback:167 - livekit_api::signal_client::signal_stream:106:livekit_api::signal_client::signal_stream - connecting to wss://roya34-pfnbnrut.livekit.cloud/rtc?sdk=python&protocol=16&auto_subscribe=1&adaptive_stream=0&version=1.0.12&access_token=...
+livekit 2025-08-21 01:25:42,350 - DEBUG - ffi_event_callback:167 - rustls::anchors:150:rustls::anchors - add_parsable_certificates processed 154 valid and 0 invalid certs
+livekit 2025-08-21 01:25:42,350 - DEBUG - ffi_event_callback:167 - tokio_tungstenite::tls::encryption::rustls:103:tokio_tungstenite::tls::encryption::rustls - Added 154/154 native root certificates (ignored 0)
+livekit 2025-08-21 01:25:42,350 - DEBUG - ffi_event_callback:167 - rustls::client::hs:73:rustls::client::hs - No cached session for DnsName("roya34-pfnbnrut.livekit.cloud")
+livekit 2025-08-21 01:25:42,350 - DEBUG - ffi_event_callback:167 - rustls::client::hs:132:rustls::client::hs - Not resuming any session
+livekit 2025-08-21 01:25:42,475 - DEBUG - ffi_event_callback:167 - rustls::client::hs:615:rustls::client::hs - Using ciphersuite TLS13_AES_128_GCM_SHA256
+livekit 2025-08-21 01:25:42,476 - DEBUG - ffi_event_callback:167 - rustls::client::tls13:142:rustls::client::tls13 - Not resuming
+livekit 2025-08-21 01:25:42,476 - DEBUG - ffi_event_callback:167 - rustls::client::tls13:381:rustls::client::tls13 - TLS1.3 encrypted extensions: []
+livekit 2025-08-21 01:25:42,476 - DEBUG - ffi_event_callback:167 - rustls::client::hs:472:rustls::client::hs - ALPN protocol is None
+livekit 2025-08-21 01:25:42,775 - DEBUG - ffi_event_callback:167 - tungstenite::handshake::client:95:tungstenite::handshake::client - Client handshake done.
+agent16.main 2025-08-21 01:25:43,351 - INFO - entrypoint:114 - ✅ Connected to LiveKit on attempt 1
+utils.metadata 2025-08-21 01:25:43,353 - INFO - extract_from_room:62 - Extracted metadata keys: ['aiPrompt', 'language', 'interviewLanguage']
+utils.metadata 2025-08-21 01:25:43,353 - INFO - extract_from_room:64 - AI Prompt length: 2 characters
+agent16.main 2025-08-21 01:25:43,353 - INFO - entrypoint:126 - 🔍 RAW ROOM METADATA: {"type":"skincare_consultation","sessionType":"general_analysis","createdAt":"2025-08-20T22:25:39.895Z","createdBy":"500a3e7e-d498-440c-a465-1243b7c9bf86","user":{"id":"500a3e7e-d498-440c-a465-1243b7c9bf86","email":"al-hussein@papayatrading.com","displayName":"Alhussein Qasem Abdullah","firstName":"Alhussein","lastName":"Qasem Abdullah","role":"customer","memberSince":"2025-08-19T23:23:08.834Z"},"description":"Comprehensive general skin analysis and personalized consultation for Alhussein Qasem Abdullah","aiPrompt":{"english":"You are a comprehensive skincare consultant. You are consulting with Alhussein Qasem Abdullah, a valued client. Provide a thorough analysis of their skin and create a personalized skincare routine.\n\nFOCUS AREAS:\n• Determine accurate skin type (normal, dry, oily, combination)\n• Identify primary skin concerns and goals\n• Assess current skincare routine effectiveness\n• Recommend suitable products and ingredients\n• Create a balanced, achievable routine\n\nTake a holistic approach, considering their lifestyle, budget, and preferences. Provide education about skincare basics and help them build sustainable habits for long-term skin health.","arabic":"أنت مستشار شامل للعناية بالبشرة. تستشير مع Alhussein Qasem Abdullah، عميل قيم. قدم تحليلاً شاملاً لبشرتهم وأنشئ روتين عناية شخصي.\n\nمجالات التركيز:\n• تحديد نوع البشرة بدقة (عادية، جافة، دهنية، مختلطة)\n• تحديد مشاكل البشرة الأساسية والأهداف\n• تقييم فعالية روتين العناية بالبشرة الحالي\n• توصية بالمنتجات والمكونات المناسبة\n• إنشاء روتين متوازن وقابل للتحقيق\n\nاتبع نهجاً شاملاً، مع مراعاة نمط حياتهم وميزانيتهم وتفضيلاتهم. قدم التعليم حول أساسيات العناية بالبشرة وساعدهم في بناء عادات مستدامة لصحة البشرة على المدى الطويل."},"language":"arabic","sessionSettings":{"analysisType":"general_analysis","personalizedGreeting":true,"productRecommendations":true,"followUpReminders":true,"specializedFocus":["overall_health","skin_type","concerns","routine_optimization","prevention"],"recommendedProducts":["cleansers","moisturizers","treatments","sunscreens","serums"],"analysisSteps":["determine_skin_type","identify_main_concerns","assess_current_routine","recommend_improvements","create_personalized_plan"]},"features":["skin_analysis","product_recommendations","personalized_advice","bilingual_support","user_profile_integration","session_history","comprehensive_analysis","skin_type_detection","routine_optimization"]}
+agent16.main 2025-08-21 01:25:43,351 - INFO - entrypoint:114 - ✅ Connected to LiveKit on attempt 1
+agent16.main 2025-08-21 01:25:43,353 - INFO - entrypoint:127 - 🔍 EXTRACTED METADATA: {'aiPrompt': {'english': 'You are a comprehensive skincare consultant. You are consulting with Alhussein Qasem Abdullah, a valued client. Provide a thorough analysis of their skin and create a personalized skincare routine.\n\nFOCUS AREAS:\n• Determine accurate skin type (normal, dry, oily, combination)\n• Identify primary skin concerns and goals\n• Assess current skincare routine effectiveness\n• Recommend suitable products and ingredients\n• Create a balanced, achievable routine\n\nTake a holistic approach, considering their lifestyle, budget, and preferences. Provide education about skincare basics and help them build sustainable habits for long-term skin health.', 'arabic': 'أنت مستشار شامل للعناية بالبشرة. تستشير مع Alhussein Qasem Abdullah، عميل قيم. قدم تحليلاً شاملاً لبشرتهم وأنشئ روتين عناية شخصي.\n\nمجالات التركيز:\n• تحديد نوع البشرة بدقة (عادية، جافة، دهنية، مختلطة)\n• تحديد مشاكل البشرة الأساسية والأهداف\n• تقييم فعالية روتين العناية بالبشرة الحالي\n• توصية بالمنتجات والمكونات المناسبة\n• إنشاء روتين متوازن وقابل للتحقيق\n\nاتبع نهجاً شاملاً، مع مراعاة نمط حياتهم وميزانيتهم وتفضيلاتهم. قدم التعليم حول أساسيات العناية بالبشرة وساعدهم في بناء عادات مستدامة لصحة البشرة على المدى الطويل.'}, 'language': 'arabic', 'interviewLanguage': 'arabic'}
+utils.metadata 2025-08-21 01:25:43,353 - INFO - extract_from_room:62 - Extracted metadata keys: ['aiPrompt', 'language', 'interviewLanguage']
+utils.metadata 2025-08-21 01:25:43,353 - INFO - extract_from_room:64 - AI Prompt length: 2 characters
+agent16.main 2025-08-21 01:25:43,353 - INFO - entrypoint:126 - 🔍 RAW ROOM METADATA: {"type":"skincare_consultation","sessionType":"general_analysis","createdAt":"2025-08-20T22:25:39.895Z","createdBy":"500a3e7e-d498-440c-a465-1243b7c9bf86","user":{"id":"500a3e7e-d498-440c-a465-1243b7c9bf86","email":"al-hussein@papayatrading.com","displayName":"Alhussein Qasem Abdullah","firstName":"Alhussein","lastName":"Qasem Abdullah","role":"customer","memberSince":"2025-08-19T23:23:08.834Z"},"description":"Comprehensive general skin analysis and personalized consultation for Alhussein Qasem Abdullah","aiPrompt":{"english":"You are a comprehensive skincare consultant. You are consulting with Alhussein Qasem Abdullah, a valued client. Provide a thorough analysis of their skin and create a personalized skincare routine.\n\nFOCUS AREAS:\n• Determine accurate skin type (normal, dry, oily, combination)\n• Identify primary skin concerns and goals\n• Assess current skincare routine effectiveness\n• Recommend suitable products and ingredients\n• Create a balanced, achievable routine\n\nTake a holistic approach, considering their lifestyle, budget, and preferences. Provide education about skincare basics and help them build sustainable habits for long-term skin health.","arabic":"أنت مستشار شامل للعناية بالبشرة. تستشير مع Alhussein Qasem Abdullah، عميل قيم. قدم تحليلاً شاملاً لبشرتهم وأنشئ روتين عناية شخصي.\n\nمجالات التركيز:\n• تحديد نوع البشرة بدقة (عادية، جافة، دهنية، مختلطة)\n• تحديد مشاكل البشرة الأساسية والأهداف\n• تقييم فعالية روتين العناية بالبشرة الحالي\n• توصية بالمنتجات والمكونات المناسبة\n• إنشاء روتين متوازن وقابل للتحقيق\n\nاتبع نهجاً شاملاً، مع مراعاة نمط حياتهم وميزانيتهم وتفضيلاتهم. قدم التعليم حول أساسيات العناية بالبشرة وساعدهم في بناء عادات مستدامة لصحة البشرة على المدى الطويل."},"language":"arabic","sessionSettings":{"analysisType":"general_analysis","personalizedGreeting":true,"productRecommendations":true,"followUpReminders":true,"specializedFocus":["overall_health","skin_type","concerns","routine_optimization","prevention"],"recommendedProducts":["cleansers","moisturizers","treatments","sunscreens","serums"],"analysisSteps":["determine_skin_type","identify_main_concerns","assess_current_routine","recommend_improvements","create_personalized_plan"]},"features":["skin_analysis","product_recommendations","personalized_advice","bilingual_support","user_profile_integration","session_history","comprehensive_analysis","skin_type_detection","routine_optimization"]}
+agent16.main 2025-08-21 01:25:43,353 - INFO - entrypoint:127 - 🔍 EXTRACTED METADATA: {'aiPrompt': {'english': 'You are a comprehensive skincare consultant. You are consulting with Alhussein Qasem Abdullah, a valued client. Provide a thorough analysis of their skin and create a personalized skincare routine.\n\nFOCUS AREAS:\n• Determine accurate skin type (normal, dry, oily, combination)\n• Identify primary skin concerns and goals\n• Assess current skincare routine effectiveness\n• Recommend suitable products and ingredients\n• Create a balanced, achievable routine\n\nTake a holistic approach, considering their lifestyle, budget, and preferences. Provide education about skincare basics and help them build sustainable habits for long-term skin health.', 'arabic': 'أنت مستشار شامل للعناية بالبشرة. تستشير مع Alhussein Qasem Abdullah، عميل قيم. قدم تحليلاً شاملاً لبشرتهم وأنشئ روتين عناية شخصي.\n\nمجالات التركيز:\n• تحديد نوع البشرة بدقة (عادية، جافة، دهنية، مختلطة)\n• تحديد مشاكل البشرة الأساسية والأهداف\n• تقييم فعالية روتين العناية بالبشرة الحالي\n• توصية بالمنتجات والمكونات المناسبة\n• إنشاء روتين متوازن وقابل للتحقيق\n\nاتبع نهجاً شاملاً، مع مراعاة نمط حياتهم وميزانيتهم وتفضيلاتهم. قدم التعليم حول أساسيات العناية بالبشرة وساعدهم في بناء عادات مستدامة لصحة البشرة على المدى الطويل.'}, 'language': 'arabic', 'interviewLanguage': 'arabic'}
+utils.recording 2025-08-21 01:25:44,678 - INFO - start_recording:51 - Recording started: EG_ynzsqrhScXug
+botocore.hooks 2025-08-21 01:25:44,679 - DEBUG - _alias_event_name:482 - Changing event name from creating-client-class.iot-data to creating-client-class.iot-data-plane
+botocore.hooks 2025-08-21 01:25:44,681 - DEBUG - _alias_event_name:482 - Changing event name from before-call.apigateway to before-call.api-gateway
+utils.recording 2025-08-21 01:25:44,678 - INFO - start_recording:51 - Recording started: EG_ynzsqrhScXug
+botocore.hooks 2025-08-21 01:25:44,682 - DEBUG - _alias_event_name:482 - Changing event name from request-created.machinelearning.Predict to request-created.machine-learning.Predict
+botocore.hooks 2025-08-21 01:25:44,683 - DEBUG - _alias_event_name:482 - Changing event name from before-parameter-build.autoscaling.CreateLaunchConfiguration to before-parameter-build.auto-scaling.CreateLaunchConfiguration
+botocore.hooks 2025-08-21 01:25:44,683 - DEBUG - _alias_event_name:482 - Changing event name from before-parameter-build.route53 to before-parameter-build.route-53
+botocore.hooks 2025-08-21 01:25:44,683 - DEBUG - _alias_event_name:482 - Changing event name from request-created.cloudsearchdomain.Search to request-created.cloudsearch-domain.Search
+botocore.hooks 2025-08-21 01:25:44,684 - DEBUG - _alias_event_name:482 - Changing event name from docs.*.autoscaling.CreateLaunchConfiguration.complete-section to docs.*.auto-scaling.CreateLaunchConfiguration.complete-section
+botocore.hooks 2025-08-21 01:25:44,686 - DEBUG - _alias_event_name:482 - Changing event name from before-parameter-build.logs.CreateExportTask to before-parameter-build.cloudwatch-logs.CreateExportTask
+botocore.hooks 2025-08-21 01:25:44,686 - DEBUG - _alias_event_name:482 - Changing event name from docs.*.logs.CreateExportTask.complete-section to docs.*.cloudwatch-logs.CreateExportTask.complete-section
+botocore.hooks 2025-08-21 01:25:44,686 - DEBUG - _alias_event_name:482 - Changing event name from before-parameter-build.cloudsearchdomain.Search to before-parameter-build.cloudsearch-domain.Search
+botocore.hooks 2025-08-21 01:25:44,686 - DEBUG - _alias_event_name:482 - Changing event name from docs.*.cloudsearchdomain.Search.complete-section to docs.*.cloudsearch-domain.Search.complete-section
+botocore.loaders 2025-08-21 01:25:44,691 - DEBUG - _load_file:181 - Loading JSON file: /Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/botocore/data/endpoints.json
+botocore.loaders 2025-08-21 01:25:44,705 - DEBUG - _load_file:181 - Loading JSON file: /Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/botocore/data/sdk-default-configuration.json
+botocore.hooks 2025-08-21 01:25:44,705 - DEBUG - _emit:238 - Event choose-service-name: calling handler <function handle_service_name_alias at 0x1249eafc0>
+botocore.loaders 2025-08-21 01:25:44,723 - DEBUG - _load_file:181 - Loading JSON file: /Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/botocore/data/s3/2006-03-01/service-2.json.gz
+botocore.loaders 2025-08-21 01:25:44,734 - DEBUG - _load_file:181 - Loading JSON file: /Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/botocore/data/s3/2006-03-01/service-2.sdk-extras.json
+botocore.loaders 2025-08-21 01:25:44,744 - DEBUG - _load_file:181 - Loading JSON file: /Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/botocore/data/s3/2006-03-01/endpoint-rule-set-1.json.gz
+botocore.loaders 2025-08-21 01:25:44,785 - DEBUG - _load_file:181 - Loading JSON file: /Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/botocore/data/partitions.json
+botocore.hooks 2025-08-21 01:25:44,786 - DEBUG - _emit:238 - Event creating-client-class.s3: calling handler <function add_generate_presigned_post at 0x12496d8a0>
+botocore.hooks 2025-08-21 01:25:44,786 - DEBUG - _emit:238 - Event creating-client-class.s3: calling handler <function lazy_call.<locals>._handler at 0x124aa9bc0>
+botocore.hooks 2025-08-21 01:25:44,796 - DEBUG - _emit:238 - Event creating-client-class.s3: calling handler <function add_generate_presigned_url at 0x12496d620>
+botocore.configprovider 2025-08-21 01:25:44,797 - DEBUG - provide:979 - Looking for endpoint for s3 via: environment_service
+botocore.configprovider 2025-08-21 01:25:44,797 - DEBUG - provide:979 - Looking for endpoint for s3 via: environment_global
+botocore.configprovider 2025-08-21 01:25:44,797 - DEBUG - provide:979 - Looking for endpoint for s3 via: config_service
+botocore.configprovider 2025-08-21 01:25:44,797 - DEBUG - provide:979 - Looking for endpoint for s3 via: config_global
+botocore.configprovider 2025-08-21 01:25:44,797 - DEBUG - provide:995 - No configured endpoint found.
+botocore.endpoint 2025-08-21 01:25:44,799 - DEBUG - create_endpoint:414 - Setting s3 timeout as (60, 60)
+botocore.loaders 2025-08-21 01:25:44,800 - DEBUG - _load_file:181 - Loading JSON file: /Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/botocore/data/_retry.json
+botocore.client 2025-08-21 01:25:44,800 - DEBUG - _register_legacy_retries:286 - Registering retry handlers for service: s3
+botocore.utils 2025-08-21 01:25:44,801 - DEBUG - register:1748 - Registering S3 region redirector handler
+botocore.utils 2025-08-21 01:25:44,801 - DEBUG - register:1696 - Registering S3Express Identity Resolver
+botocore.hooks 2025-08-21 01:25:44,801 - DEBUG - _emit:238 - Event before-parameter-build.s3.GetObject: calling handler <function sse_md5 at 0x1249eb9c0>
+botocore.hooks 2025-08-21 01:25:44,801 - DEBUG - _emit:238 - Event before-parameter-build.s3.GetObject: calling handler <function validate_bucket_name at 0x1249eb920>
+botocore.hooks 2025-08-21 01:25:44,801 - DEBUG - _emit:238 - Event before-parameter-build.s3.GetObject: calling handler <function remove_bucket_from_url_paths_from_model at 0x124a25bc0>
+botocore.hooks 2025-08-21 01:25:44,801 - DEBUG - _emit:238 - Event before-parameter-build.s3.GetObject: calling handler <bound method S3RegionRedirectorv2.annotate_request_context of <botocore.utils.S3RegionRedirectorv2 object at 0x15d7c67b0>>
+botocore.hooks 2025-08-21 01:25:44,801 - DEBUG - _emit:238 - Event before-parameter-build.s3.GetObject: calling handler <bound method ClientCreator._inject_s3_input_parameters of <botocore.client.ClientCreator object at 0x124af16a0>>
+botocore.hooks 2025-08-21 01:25:44,801 - DEBUG - _emit:238 - Event before-parameter-build.s3.GetObject: calling handler <function generate_idempotent_uuid at 0x1249eb740>
+botocore.hooks 2025-08-21 01:25:44,801 - DEBUG - _emit:238 - Event before-parameter-build.s3.GetObject: calling handler <function _handle_request_validation_mode_member at 0x124a262a0>
+botocore.hooks 2025-08-21 01:25:44,801 - DEBUG - _emit:238 - Event before-endpoint-resolution.s3: calling handler <function customize_endpoint_resolver_builtins at 0x124a25da0>
+botocore.hooks 2025-08-21 01:25:44,801 - DEBUG - _emit:238 - Event before-endpoint-resolution.s3: calling handler <bound method S3RegionRedirectorv2.redirect_from_cache of <botocore.utils.S3RegionRedirectorv2 object at 0x15d7c67b0>>
+botocore.regions 2025-08-21 01:25:44,801 - DEBUG - construct_endpoint:506 - Calling endpoint provider with parameters: {'Bucket': '4wk-garage-media', 'Region': 'aws-global', 'UseFIPS': False, 'UseDualStack': False, 'ForcePathStyle': False, 'Accelerate': False, 'UseGlobalEndpoint': True, 'Key': 'recordings/skincare-Alhussein-1755728739888-j370c2z8u_AJ_XT7Mi42v9Sva.mp4', 'DisableMultiRegionAccessPoints': False, 'UseArnRegion': True}
+botocore.regions 2025-08-21 01:25:44,802 - DEBUG - construct_endpoint:521 - Endpoint provider result: https://4wk-garage-media.s3.amazonaws.com
+botocore.regions 2025-08-21 01:25:44,802 - DEBUG - auth_schemes_to_signing_ctx:687 - Selecting from endpoint provider's list of auth schemes: "sigv4". User selected auth scheme is: "None"
+botocore.regions 2025-08-21 01:25:44,802 - DEBUG - auth_schemes_to_signing_ctx:762 - Selected auth type "v4" as "v4" with signing context params: {'region': 'us-east-1', 'signing_name': 's3', 'disableDoubleEncoding': True}
+botocore.hooks 2025-08-21 01:25:44,802 - DEBUG - _emit:238 - Event choose-signer.s3.GetObject: calling handler <function set_operation_specific_signer at 0x1249eb4c0>
+botocore.hooks 2025-08-21 01:25:44,802 - DEBUG - _emit:238 - Event before-sign.s3.GetObject: calling handler <function remove_arn_from_signing_path at 0x124a25d00>
+botocore.hooks 2025-08-21 01:25:44,802 - DEBUG - _emit:238 - Event before-sign.s3.GetObject: calling handler <function _set_extra_headers_for_unsigned_request at 0x124a26340>
+botocore.hooks 2025-08-21 01:25:44,802 - DEBUG - _emit:238 - Event before-sign.s3.GetObject: calling handler <bound method S3ExpressIdentityResolver.resolve_s3express_identity of <botocore.utils.S3ExpressIdentityResolver object at 0x15d7c6900>>
+botocore.auth 2025-08-21 01:25:44,802 - DEBUG - add_auth:429 - Calculating signature using v4 auth.
+botocore.auth 2025-08-21 01:25:44,802 - DEBUG - add_auth:430 - CanonicalRequest:
+GET
+/recordings/skincare-Alhussein-1755728739888-j370c2z8u_AJ_XT7Mi42v9Sva.mp4
+X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA46ALPORV5VMEIW63%2F20250820%2Fme-central-1%2Fs3%2Faws4_request&X-Amz-Date=20250820T222544Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host
+host:4wk-garage-media.s3.amazonaws.com
+
+host
+UNSIGNED-PAYLOAD
+botocore.auth 2025-08-21 01:25:44,802 - DEBUG - add_auth:432 - StringToSign:
+AWS4-HMAC-SHA256
+20250820T222544Z
+20250820/me-central-1/s3/aws4_request
+1e28550d990c9bf59c033dbbc14e0bcd259dfe495dce3f27dc66b0b6d10abe2b
+botocore.auth 2025-08-21 01:25:44,802 - DEBUG - add_auth:434 - Signature:
+28ef03772db8d871d388af8f539e76f1ee9bd5ea15b2cbf2b18321a5ee978b8f
+utils.recording 2025-08-21 01:25:44,803 - INFO - _generate_presigned_url:79 - Generated presigned URL for recording access
+agent16.main 2025-08-21 01:25:44,803 - INFO - entrypoint:147 - 🎥 Recording started: https://4wk-garage-media.s3.amazonaws.com/recordings/skincare-Alhussein-1755728739888-j370c2z8u_AJ_XT7Mi42v9Sva.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA46ALPORV5VMEIW63%2F20250820%2Fme-central-1%2Fs3%2Faws4_request&X-Amz-Date=20250820T222544Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=28ef03772db8d871d388af8f539e76f1ee9bd5ea15b2cbf2b18321a5ee978b8f
+utils.transcript_saver 2025-08-21 01:25:44,803 - INFO - __init__:45 - TranscriptSaver initialized for room: skincare-Alhussein-1755728739888-j370c2z8u
+utils.recording 2025-08-21 01:25:44,803 - INFO - _generate_presigned_url:79 - Generated presigned URL for recording access
+utils.transcript_saver 2025-08-21 01:25:44,803 - INFO - __init__:46 - Endpoint: http://localhost:4008/api/interviews/room/skincare-Alhussein-1755728739888-j370c2z8u/transcripts
+agent16.main 2025-08-21 01:25:44,803 - INFO - entrypoint:147 - 🎥 Recording started: https://4wk-garage-media.s3.amazonaws.com/recordings/skincare-Alhussein-1755728739888-j370c2z8u_AJ_XT7Mi42v9Sva.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA46ALPORV5VMEIW63%2F20250820%2Fme-central-1%2Fs3%2Faws4_request&X-Amz-Date=20250820T222544Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=28ef03772db8d871d388af8f539e76f1ee9bd5ea15b2cbf2b18321a5ee978b8f
+agent16.main 2025-08-21 01:25:44,803 - INFO - entrypoint:157 - 📝 Transcript saver initialized for room: skincare-Alhussein-1755728739888-j370c2z8u
+utils.transcript_saver 2025-08-21 01:25:44,803 - INFO - __init__:45 - TranscriptSaver initialized for room: skincare-Alhussein-1755728739888-j370c2z8u
+utils.transcript_saver 2025-08-21 01:25:44,803 - INFO - __init__:46 - Endpoint: http://localhost:4008/api/interviews/room/skincare-Alhussein-1755728739888-j370c2z8u/transcripts
+agent 2025-08-21 01:25:44,803 - INFO - __init__:85 - 🔐 Agent16 authenticated with JWT token
+agent16.main 2025-08-21 01:25:44,803 - INFO - entrypoint:157 - 📝 Transcript saver initialized for room: skincare-Alhussein-1755728739888-j370c2z8u
+agent 2025-08-21 01:25:44,803 - INFO - __init__:87 - 🔑 Agent16 authenticated with API key
+agent 2025-08-21 01:25:44,803 - INFO - __init__:90 - 🔍 DEBUG - metadata keys: ['aiPrompt', 'language', 'interviewLanguage']
+agent 2025-08-21 01:25:44,803 - INFO - __init__:91 - 👤 User ID: None
+agent 2025-08-21 01:25:44,803 - INFO - __init__:85 - 🔐 Agent16 authenticated with JWT token
+agent 2025-08-21 01:25:44,803 - INFO - __init__:92 - 🆔 Session ID: None
+agent 2025-08-21 01:25:44,803 - INFO - __init__:98 - Creating Advanced Skin Analysis AI agent for comprehensive consultation
+agent 2025-08-21 01:25:44,803 - INFO - __init__:87 - 🔑 Agent16 authenticated with API key
+agent 2025-08-21 01:25:44,803 - INFO - __init__:99 - Language: arabic
+agent 2025-08-21 01:25:44,803 - INFO - __init__:90 - 🔍 DEBUG - metadata keys: ['aiPrompt', 'language', 'interviewLanguage']
+agent 2025-08-21 01:25:44,803 - INFO - __init__:100 - Instructions length: 538 characters
+agent 2025-08-21 01:25:44,803 - INFO - __init__:91 - 👤 User ID: None
+agent 2025-08-21 01:25:44,803 - INFO - __init__:92 - 🆔 Session ID: None
+agent 2025-08-21 01:25:44,803 - INFO - __init__:98 - Creating Advanced Skin Analysis AI agent for comprehensive consultation
+agent 2025-08-21 01:25:44,803 - INFO - __init__:99 - Language: arabic
+agent 2025-08-21 01:25:44,803 - INFO - __init__:100 - Instructions length: 538 characters
+agent 2025-08-21 01:25:44,869 - INFO - __init__:113 - ✅ AdvancedSkinAnalysisAgent initialized with Google Real-time model
+agent 2025-08-21 01:25:44,869 - INFO - __init__:113 - ✅ AdvancedSkinAnalysisAgent initialized with Google Real-time model
+livekit.agents 2025-08-21 01:25:44,870 - DEBUG - on_attached:65 - input stream attached
+livekit.agents 2025-08-21 01:25:44,870 - DEBUG - on_attached:65 - input stream attached
+livekit.agents 2025-08-21 01:25:44,870 - DEBUG - on_attached:65 - input stream attached
+livekit.agents 2025-08-21 01:25:44,870 - DEBUG - on_attached:65 - input stream attached
+livekit.plugins.google 2025-08-21 01:25:44,906 - DEBUG - _main_task:590 - connecting to Gemini Realtime API...
+livekit.plugins.google 2025-08-21 01:25:44,906 - DEBUG - _main_task:590 - connecting to Gemini Realtime API...
+agent 2025-08-21 01:25:44,907 - WARNING - _create_analysis_session:158 - ⚠️ No user ID provided, skipping analysis session creation
+agent 2025-08-21 01:25:44,908 - INFO - on_enter:150 - ✅ Initial greeting generated for advanced skin analysis
+agent 2025-08-21 01:25:44,907 - WARNING - _create_analysis_session:158 - ⚠️ No user ID provided, skipping analysis session creation
+agent 2025-08-21 01:25:44,908 - INFO - on_enter:150 - ✅ Initial greeting generated for advanced skin analysis
+livekit.agents 2025-08-21 01:25:44,908 - DEBUG - start:546 - using audio io: `RoomIO` -> `AgentSession` -> `TranscriptSynchronizer` -> `RoomIO`
+livekit.agents 2025-08-21 01:25:44,908 - DEBUG - start:552 - using transcript io: `AgentSession` -> `TranscriptSynchronizer` -> `RoomIO`
+livekit.agents 2025-08-21 01:25:44,908 - DEBUG - start:558 - using video io: `RoomIO` > `AgentSession` > (none)
+agent16.main 2025-08-21 01:25:44,908 - INFO - entrypoint:192 - 📝 Recording transcript saving configured
+agent16.main 2025-08-21 01:25:44,908 - INFO - save_video_to_backend:90 - 🔬 Saving video URL to backend: http://localhost:4008/interviews/room/skincare-Alhussein-1755728739888-j370c2z8u/save-video
+livekit.agents 2025-08-21 01:25:44,908 - DEBUG - start:546 - using audio io: `RoomIO` -> `AgentSession` -> `TranscriptSynchronizer` -> `RoomIO`
+livekit.agents 2025-08-21 01:25:44,908 - DEBUG - start:552 - using transcript io: `AgentSession` -> `TranscriptSynchronizer` -> `RoomIO`
+livekit.agents 2025-08-21 01:25:44,908 - DEBUG - start:558 - using video io: `RoomIO` > `AgentSession` > (none)
+agent16.main 2025-08-21 01:25:44,908 - INFO - entrypoint:192 - 📝 Recording transcript saving configured
+agent16.main 2025-08-21 01:25:44,908 - INFO - save_video_to_backend:90 - 🔬 Saving video URL to backend: http://localhost:4008/interviews/room/skincare-Alhussein-1755728739888-j370c2z8u/save-video
+agent16.main 2025-08-21 01:25:44,924 - ERROR - save_video_to_backend:98 - ❌ Failed to save video URL: 404 {"message":"Cannot POST /interviews/room/skincare-Alhussein-1755728739888-j370c2z8u/save-video","error":"Not Found","statusCode":404}
+agent16.main 2025-08-21 01:25:44,924 - ERROR - save_video_to_backend:98 - ❌ Failed to save video URL: 404 {"message":"Cannot POST /interviews/room/skincare-Alhussein-1755728739888-j370c2z8u/save-video","error":"Not Found","statusCode":404}
+websockets.client 2025-08-21 01:25:44,985 - DEBUG - state:175 - = connection is CONNECTING
+websockets.client 2025-08-21 01:25:45,078 - DEBUG - send_request:292 - > GET //ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent HTTP/1.1
+websockets.client 2025-08-21 01:25:45,079 - DEBUG - send_request:294 - > Host: generativelanguage.googleapis.com
+websockets.client 2025-08-21 01:25:45,079 - DEBUG - send_request:294 - > Upgrade: websocket
+websockets.client 2025-08-21 01:25:45,079 - DEBUG - send_request:294 - > Connection: Upgrade
+websockets.client 2025-08-21 01:25:45,079 - DEBUG - send_request:294 - > Sec-WebSocket-Key: X200BR2qR0gCN1O1CKHl1Q==
+websockets.client 2025-08-21 01:25:45,079 - DEBUG - send_request:294 - > Sec-WebSocket-Version: 13
+websockets.client 2025-08-21 01:25:45,079 - DEBUG - send_request:294 - > Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
+websockets.client 2025-08-21 01:25:45,079 - DEBUG - send_request:294 - > Content-Type: application/json
+websockets.client 2025-08-21 01:25:45,079 - DEBUG - send_request:294 - > x-goog-api-key: AIzaSyCMhmRvX6U0PjXHNCHeivZQhJLps8-nbQs
+websockets.client 2025-08-21 01:25:45,079 - DEBUG - send_request:294 - > user-agent: google-genai-sdk/1.31.0 gl-python/3.13.5
+websockets.client 2025-08-21 01:25:45,079 - DEBUG - send_request:294 - > x-goog-api-client: google-genai-sdk/1.31.0 gl-python/3.13.5
+websockets.client 2025-08-21 01:25:45,170 - DEBUG - parse:318 - < HTTP/1.1 101 Switching Protocols
+websockets.client 2025-08-21 01:25:45,170 - DEBUG - parse:320 - < X-Client-Wire-Protocol: HTTP/1.1
+websockets.client 2025-08-21 01:25:45,170 - DEBUG - parse:320 - < Connection: Upgrade
+websockets.client 2025-08-21 01:25:45,171 - DEBUG - parse:320 - < Upgrade: websocket
+websockets.client 2025-08-21 01:25:45,171 - DEBUG - parse:320 - < Sec-WebSocket-Accept: DyTmWEKjubahMeZ9Kz78GUXyqNg=
+websockets.client 2025-08-21 01:25:45,171 - DEBUG - parse:320 - < Date: Wed, 20 Aug 2025 22:25:45 GMT
+websockets.client 2025-08-21 01:25:45,171 - DEBUG - parse:320 - < Server-Timing: gfet4t7; dur=15
+websockets.client 2025-08-21 01:25:45,171 - DEBUG - parse:320 - < Set-Cookie: S==8ti8LJub_AbCPsFrt-UUMthqdbVkFq_bnkInkYTar1w; path=/; priority=low
+websockets.client 2025-08-21 01:25:45,171 - DEBUG - parse:320 - < Alt-Svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+websockets.client 2025-08-21 01:25:45,171 - DEBUG - state:175 - = connection is OPEN
+websockets.client 2025-08-21 01:25:45,172 - DEBUG - send_frame:745 - > TEXT '{"setup": {"model": "models/gemini-2.0-flash-ex...dioTranscription": {}}}' [3033 bytes]
+websockets.client 2025-08-21 01:25:45,293 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 74 75 70 43 6f 6d 70 6c 65 ... 22 3a 20 7b 7d 0a 7d 0a [26 bytes]
+google_genai.live 2025-08-21 01:25:45,294 - INFO - connect:1057 - b'{\n  "setupComplete": {}\n}\n'
+google_genai.live 2025-08-21 01:25:45,294 - INFO - connect:1057 - b'{\n  "setupComplete": {}\n}\n'
+websockets.client 2025-08-21 01:25:45,295 - DEBUG - send_frame:745 - > TEXT '{"client_content": {"turns": [{"parts": [{"text... "turnComplete": true}}' [2226 bytes]
+websockets.client 2025-08-21 01:25:45,384 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 73 73 69 6f 6e 52 65 73 75 ... 22 3a 20 7b 7d 0a 7d 0a [36 bytes]
+websockets.client 2025-08-21 01:25:45,787 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [13008 bytes]
+websockets.client 2025-08-21 01:25:45,787 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:45,855 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:45,855 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:45,880 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:45,881 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:45,913 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:45,913 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:45,936 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:45,937 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [84 bytes]
+websockets.client 2025-08-21 01:25:45,952 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:45,953 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [84 bytes]
+websockets.client 2025-08-21 01:25:45,970 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:45,970 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [84 bytes]
+websockets.client 2025-08-21 01:25:45,990 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:45,990 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [84 bytes]
+websockets.client 2025-08-21 01:25:46,016 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,016 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [84 bytes]
+websockets.client 2025-08-21 01:25:46,043 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,044 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [84 bytes]
+websockets.client 2025-08-21 01:25:46,072 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,073 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [84 bytes]
+websockets.client 2025-08-21 01:25:46,102 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,102 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [84 bytes]
+websockets.client 2025-08-21 01:25:46,131 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,131 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [85 bytes]
+websockets.client 2025-08-21 01:25:46,161 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,162 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:46,191 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,191 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:46,220 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,220 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:46,249 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,250 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:46,279 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,279 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:46,309 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,309 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:46,323 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [10448 bytes]
+websockets.client 2025-08-21 01:25:46,323 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [84 bytes]
+websockets.client 2025-08-21 01:25:46,479 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [13008 bytes]
+websockets.client 2025-08-21 01:25:46,480 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:46,512 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,512 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:46,541 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,541 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:46,570 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,570 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:46,599 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,599 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:46,629 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,630 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:46,658 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,658 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:46,688 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,688 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:46,718 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,718 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:46,747 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,747 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:46,777 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,777 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:46,806 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,807 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:46,836 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,836 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:46,866 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,866 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:46,895 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,895 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:46,925 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,925 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:46,955 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,955 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:46,984 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:46,984 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:47,013 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,014 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:47,044 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,044 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,073 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,073 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:47,104 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,104 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,133 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,133 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:47,161 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,161 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,191 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,191 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,221 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,221 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:47,250 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,251 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,281 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,281 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:47,309 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,309 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,339 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,339 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,369 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,369 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:47,398 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,398 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,427 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,428 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,457 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,457 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,486 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,486 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:47,517 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,517 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,545 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,546 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:47,575 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,575 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,605 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,605 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,634 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,635 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:47,664 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,664 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,693 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,693 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,723 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,723 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:47,752 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,752 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,782 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,782 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,812 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,812 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:47,841 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,841 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,871 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,871 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,901 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,901 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:47,929 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,929 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:47,959 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,960 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:47,989 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:47,989 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:48,019 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,020 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,048 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,048 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:48,077 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,077 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:48,080 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [2768 bytes]
+websockets.client 2025-08-21 01:25:48,081 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [83 bytes]
+websockets.client 2025-08-21 01:25:48,167 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [13008 bytes]
+websockets.client 2025-08-21 01:25:48,167 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,199 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,200 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:48,228 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,229 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:48,258 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,258 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,287 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,288 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,318 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,318 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,347 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,348 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:48,382 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,382 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:48,406 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,406 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,436 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,436 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:48,464 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,465 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,497 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,498 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,525 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,525 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:48,554 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,554 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,583 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,583 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,612 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,612 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:48,642 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,642 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,671 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,672 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,701 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,701 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:48,731 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,731 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,760 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,760 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,790 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,790 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:48,819 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,819 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,833 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [10448 bytes]
+websockets.client 2025-08-21 01:25:48,833 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [85 bytes]
+websockets.client 2025-08-21 01:25:48,912 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [13008 bytes]
+websockets.client 2025-08-21 01:25:48,912 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:48,944 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,945 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:48,973 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:48,973 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:49,006 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:49,006 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:49,034 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:49,034 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:49,063 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:49,063 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:49,092 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:49,093 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:49,122 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:49,122 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:49,151 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:49,151 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:49,181 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:49,181 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:49,210 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:49,211 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:49,240 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:49,240 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:49,269 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:49,269 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:49,299 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:49,299 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:49,328 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [15568 bytes]
+websockets.client 2025-08-21 01:25:49,328 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [87 bytes]
+websockets.client 2025-08-21 01:25:49,350 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [13008 bytes]
+websockets.client 2025-08-21 01:25:49,351 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [86 bytes]
+websockets.client 2025-08-21 01:25:49,361 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 7d 0a 20 20 7d 0a 7d 0a [164 bytes]
+websockets.client 2025-08-21 01:26:05,173 - DEBUG - send_frame:745 - > PING 3b ab 79 7e [binary, 4 bytes]
+websockets.client 2025-08-21 01:26:05,174 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:26:05,261 - DEBUG - parse:599 - < PONG 3b ab 79 7e [binary, 4 bytes]
+websockets.client 2025-08-21 01:26:05,261 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:26:13,049 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 72 76 65 72 43 6f 6e 74 65 ... 5d 0a 20 20 7d 0a 7d 0a [381 bytes]
+websockets.client 2025-08-21 01:26:14,213 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 73 73 69 6f 6e 52 65 73 75 ... 65 0a 20 20 7d 0a 7d 0a [138 bytes]
+websockets.client 2025-08-21 01:26:25,175 - DEBUG - send_frame:745 - > PING 'ÉJr' [text, 4 bytes]
+websockets.client 2025-08-21 01:26:25,176 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:26:25,263 - DEBUG - parse:599 - < PONG 'ÉJr' [text, 4 bytes]
+websockets.client 2025-08-21 01:26:25,263 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:26:45,176 - DEBUG - send_frame:745 - > PING 50 82 7f 98 [binary, 4 bytes]
+websockets.client 2025-08-21 01:26:45,177 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:26:45,265 - DEBUG - parse:599 - < PONG 50 82 7f 98 [binary, 4 bytes]
+websockets.client 2025-08-21 01:26:45,266 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:27:05,177 - DEBUG - send_frame:745 - > PING 1c d8 c7 ff [binary, 4 bytes]
+websockets.client 2025-08-21 01:27:05,178 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:27:05,267 - DEBUG - parse:599 - < PONG 1c d8 c7 ff [binary, 4 bytes]
+websockets.client 2025-08-21 01:27:05,269 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:27:25,180 - DEBUG - send_frame:745 - > PING e1 71 f5 08 [binary, 4 bytes]
+websockets.client 2025-08-21 01:27:25,180 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:27:25,267 - DEBUG - parse:599 - < PONG e1 71 f5 08 [binary, 4 bytes]
+websockets.client 2025-08-21 01:27:25,267 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:27:45,183 - DEBUG - send_frame:745 - > PING 'n\x03ͬ' [text, 4 bytes]
+websockets.client 2025-08-21 01:27:45,183 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:27:45,270 - DEBUG - parse:599 - < PONG 'n\x03ͬ' [text, 4 bytes]
+websockets.client 2025-08-21 01:27:45,271 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:28:05,187 - DEBUG - send_frame:745 - > PING 95 2f 42 28 [binary, 4 bytes]
+websockets.client 2025-08-21 01:28:05,189 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:28:05,276 - DEBUG - parse:599 - < PONG 95 2f 42 28 [binary, 4 bytes]
+websockets.client 2025-08-21 01:28:05,277 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:28:25,188 - DEBUG - send_frame:745 - > PING '\x14PÄ' [text, 4 bytes]
+websockets.client 2025-08-21 01:28:25,189 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:28:25,331 - DEBUG - parse:599 - < PONG '\x14PÄ' [text, 4 bytes]
+websockets.client 2025-08-21 01:28:25,332 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:28:45,193 - DEBUG - send_frame:745 - > PING '\x16<9\x06' [text, 4 bytes]
+websockets.client 2025-08-21 01:28:45,193 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:28:45,287 - DEBUG - parse:599 - < PONG '\x16<9\x06' [text, 4 bytes]
+websockets.client 2025-08-21 01:28:45,287 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:29:05,195 - DEBUG - send_frame:745 - > PING 11 9d 69 9a [binary, 4 bytes]
+websockets.client 2025-08-21 01:29:05,195 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:29:05,283 - DEBUG - parse:599 - < PONG 11 9d 69 9a [binary, 4 bytes]
+websockets.client 2025-08-21 01:29:05,284 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:29:25,197 - DEBUG - send_frame:745 - > PING 'GKb)' [text, 4 bytes]
+websockets.client 2025-08-21 01:29:25,197 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:29:25,284 - DEBUG - parse:599 - < PONG 'GKb)' [text, 4 bytes]
+websockets.client 2025-08-21 01:29:25,285 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:29:45,198 - DEBUG - send_frame:745 - > PING 3b e7 b8 08 [binary, 4 bytes]
+websockets.client 2025-08-21 01:29:45,200 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:29:45,287 - DEBUG - parse:599 - < PONG 3b e7 b8 08 [binary, 4 bytes]
+websockets.client 2025-08-21 01:29:45,288 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:30:05,200 - DEBUG - send_frame:745 - > PING 43 01 d4 0e [binary, 4 bytes]
+websockets.client 2025-08-21 01:30:05,200 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:30:05,286 - DEBUG - parse:599 - < PONG 43 01 d4 0e [binary, 4 bytes]
+websockets.client 2025-08-21 01:30:05,287 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:30:25,201 - DEBUG - send_frame:745 - > PING 75 ea a4 f1 [binary, 4 bytes]
+websockets.client 2025-08-21 01:30:25,202 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:30:25,289 - DEBUG - parse:599 - < PONG 75 ea a4 f1 [binary, 4 bytes]
+websockets.client 2025-08-21 01:30:25,290 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:30:45,203 - DEBUG - send_frame:745 - > PING 18 b7 f9 d3 [binary, 4 bytes]
+websockets.client 2025-08-21 01:30:45,205 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:30:45,292 - DEBUG - parse:599 - < PONG 18 b7 f9 d3 [binary, 4 bytes]
+websockets.client 2025-08-21 01:30:45,292 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:31:05,205 - DEBUG - send_frame:745 - > PING d5 5b cf 3b [binary, 4 bytes]
+websockets.client 2025-08-21 01:31:05,208 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:31:05,296 - DEBUG - parse:599 - < PONG d5 5b cf 3b [binary, 4 bytes]
+websockets.client 2025-08-21 01:31:05,296 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:31:25,207 - DEBUG - send_frame:745 - > PING 'jLbF' [text, 4 bytes]
+websockets.client 2025-08-21 01:31:25,209 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:31:25,298 - DEBUG - parse:599 - < PONG 'jLbF' [text, 4 bytes]
+websockets.client 2025-08-21 01:31:25,298 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:31:45,208 - DEBUG - send_frame:745 - > PING a0 4e 43 62 [binary, 4 bytes]
+websockets.client 2025-08-21 01:31:45,209 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:31:45,298 - DEBUG - parse:599 - < PONG a0 4e 43 62 [binary, 4 bytes]
+websockets.client 2025-08-21 01:31:45,301 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:32:05,210 - DEBUG - send_frame:745 - > PING e5 86 66 e8 [binary, 4 bytes]
+websockets.client 2025-08-21 01:32:05,211 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:32:05,298 - DEBUG - parse:599 - < PONG e5 86 66 e8 [binary, 4 bytes]
+websockets.client 2025-08-21 01:32:05,299 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:32:25,211 - DEBUG - send_frame:745 - > PING d8 d6 78 71 [binary, 4 bytes]
+websockets.client 2025-08-21 01:32:25,212 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:32:25,299 - DEBUG - parse:599 - < PONG d8 d6 78 71 [binary, 4 bytes]
+websockets.client 2025-08-21 01:32:25,300 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:32:45,213 - DEBUG - send_frame:745 - > PING 7d 51 c3 69 [binary, 4 bytes]
+websockets.client 2025-08-21 01:32:45,213 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:32:45,304 - DEBUG - parse:599 - < PONG 7d 51 c3 69 [binary, 4 bytes]
+websockets.client 2025-08-21 01:32:45,305 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:33:05,215 - DEBUG - send_frame:745 - > PING bf 7f f2 70 [binary, 4 bytes]
+websockets.client 2025-08-21 01:33:05,217 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:33:05,305 - DEBUG - parse:599 - < PONG bf 7f f2 70 [binary, 4 bytes]
+websockets.client 2025-08-21 01:33:05,306 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:33:25,218 - DEBUG - send_frame:745 - > PING 'e`Kv' [text, 4 bytes]
+websockets.client 2025-08-21 01:33:25,219 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:33:25,308 - DEBUG - parse:599 - < PONG 'e`Kv' [text, 4 bytes]
+websockets.client 2025-08-21 01:33:25,308 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:33:45,220 - DEBUG - send_frame:745 - > PING c6 46 a2 35 [binary, 4 bytes]
+websockets.client 2025-08-21 01:33:45,222 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:33:45,310 - DEBUG - parse:599 - < PONG c6 46 a2 35 [binary, 4 bytes]
+websockets.client 2025-08-21 01:33:45,311 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:34:05,222 - DEBUG - send_frame:745 - > PING '*!Ɵ' [text, 4 bytes]
+websockets.client 2025-08-21 01:34:05,222 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:34:05,310 - DEBUG - parse:599 - < PONG '*!Ɵ' [text, 4 bytes]
+websockets.client 2025-08-21 01:34:05,310 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:34:25,222 - DEBUG - send_frame:745 - > PING 7f 82 9f ef [binary, 4 bytes]
+websockets.client 2025-08-21 01:34:25,223 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:34:25,309 - DEBUG - parse:599 - < PONG 7f 82 9f ef [binary, 4 bytes]
+websockets.client 2025-08-21 01:34:25,309 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:34:45,224 - DEBUG - send_frame:745 - > PING 2f 65 e5 87 [binary, 4 bytes]
+websockets.client 2025-08-21 01:34:45,225 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:34:45,312 - DEBUG - parse:599 - < PONG 2f 65 e5 87 [binary, 4 bytes]
+websockets.client 2025-08-21 01:34:45,312 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:35:05,226 - DEBUG - send_frame:745 - > PING d7 3d 75 af [binary, 4 bytes]
+websockets.client 2025-08-21 01:35:05,226 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:35:05,313 - DEBUG - parse:599 - < PONG d7 3d 75 af [binary, 4 bytes]
+websockets.client 2025-08-21 01:35:05,313 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:35:25,227 - DEBUG - send_frame:745 - > PING "'ѹ]" [text, 4 bytes]
+websockets.client 2025-08-21 01:35:25,228 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:35:25,315 - DEBUG - parse:599 - < PONG "'ѹ]" [text, 4 bytes]
+websockets.client 2025-08-21 01:35:25,316 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:35:45,228 - DEBUG - send_frame:745 - > PING 1b 18 1d ab [binary, 4 bytes]
+websockets.client 2025-08-21 01:35:45,230 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:35:45,267 - DEBUG - parse:599 - < CLOSE 1011 (internal error) The service is currently unavailable. [39 bytes]
+websockets.client 2025-08-21 01:35:45,267 - DEBUG - send_frame:745 - > CLOSE 1011 (internal error) The service is currently unavailable. [39 bytes]
+websockets.client 2025-08-21 01:35:45,268 - DEBUG - state:175 - = connection is CLOSING
+websockets.client 2025-08-21 01:35:45,356 - DEBUG - discard:649 - < EOF
+websockets.client 2025-08-21 01:35:45,358 - DEBUG - send_eof:757 - > EOF
+websockets.client 2025-08-21 01:35:45,359 - DEBUG - state:175 - = connection is CLOSED
+websockets.client 2025-08-21 01:35:45,359 - DEBUG - send_data:984 - x closing TCP connection
+livekit.plugins.google 2025-08-21 01:35:45,361 - ERROR - _recv_task:740 - error in receive task: received 1011 (internal error) The service is currently unavailable.; then sent 1011 (internal error) The service is currently unavailable.
+Traceback (most recent call last):
+  File "/Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/livekit/plugins/google/beta/realtime/realtime_api.py", line 703, in _recv_task
+    async for response in session.receive():
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<31 lines>...
+            self._num_retries = 0  # reset the retry counter
+            ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/google/genai/live.py", line 443, in receive
+    while result := await self._receive():
+                    ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/google/genai/live.py", line 524, in _receive
+    raw_response = await self._ws.recv(decode=False)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/websockets/asyncio/connection.py", line 322, in recv
+    raise self.protocol.close_exc from self.recv_exc
+websockets.exceptions.ConnectionClosedError: received 1011 (internal error) The service is currently unavailable.; then sent 1011 (internal error) The service is currently unavailable.
+livekit.plugins.google 2025-08-21 01:35:45,369 - DEBUG - _send_task:691 - send task finished.
+livekit.plugins.google 2025-08-21 01:35:45,361 - ERROR - _recv_task:740 - error in receive task: received 1011 (internal error) The service is currently unavailable.; then sent 1011 (internal error) The service is currently unavailable.
+Traceback (most recent call last):
+  File "/Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/livekit/plugins/google/beta/realtime/realtime_api.py", line 703, in _recv_task
+    async for response in session.receive():
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<31 lines>...
+            self._num_retries = 0  # reset the retry counter
+            ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/google/genai/live.py", line 443, in receive
+    while result := await self._receive():
+                    ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/google/genai/live.py", line 524, in _receive
+    raw_response = await self._ws.recv(decode=False)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/websockets/asyncio/connection.py", line 322, in recv
+    raise self.protocol.close_exc from self.recv_exc
+websockets.exceptions.ConnectionClosedError: received 1011 (internal error) The service is currently unavailable.; then sent 1011 (internal error) The service is currently unavailable.
+livekit.plugins.google 2025-08-21 01:35:45,369 - DEBUG - _send_task:691 - send task finished.
+livekit.plugins.google 2025-08-21 01:35:45,370 - DEBUG - _main_task:590 - connecting to Gemini Realtime API...
+livekit.plugins.google 2025-08-21 01:35:45,370 - DEBUG - _main_task:590 - connecting to Gemini Realtime API...
+websockets.client 2025-08-21 01:35:45,519 - DEBUG - state:175 - = connection is CONNECTING
+websockets.client 2025-08-21 01:35:45,611 - DEBUG - send_request:292 - > GET //ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent HTTP/1.1
+websockets.client 2025-08-21 01:35:45,611 - DEBUG - send_request:294 - > Host: generativelanguage.googleapis.com
+websockets.client 2025-08-21 01:35:45,611 - DEBUG - send_request:294 - > Upgrade: websocket
+websockets.client 2025-08-21 01:35:45,611 - DEBUG - send_request:294 - > Connection: Upgrade
+websockets.client 2025-08-21 01:35:45,611 - DEBUG - send_request:294 - > Sec-WebSocket-Key: E74XO50h4IQvSMD/Xlojgg==
+websockets.client 2025-08-21 01:35:45,611 - DEBUG - send_request:294 - > Sec-WebSocket-Version: 13
+websockets.client 2025-08-21 01:35:45,611 - DEBUG - send_request:294 - > Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
+websockets.client 2025-08-21 01:35:45,611 - DEBUG - send_request:294 - > Content-Type: application/json
+websockets.client 2025-08-21 01:35:45,612 - DEBUG - send_request:294 - > x-goog-api-key: AIzaSyCMhmRvX6U0PjXHNCHeivZQhJLps8-nbQs
+websockets.client 2025-08-21 01:35:45,612 - DEBUG - send_request:294 - > user-agent: google-genai-sdk/1.31.0 gl-python/3.13.5
+websockets.client 2025-08-21 01:35:45,612 - DEBUG - send_request:294 - > x-goog-api-client: google-genai-sdk/1.31.0 gl-python/3.13.5
+websockets.client 2025-08-21 01:35:45,778 - DEBUG - parse:318 - < HTTP/1.1 101 Switching Protocols
+websockets.client 2025-08-21 01:35:45,778 - DEBUG - parse:320 - < X-Client-Wire-Protocol: HTTP/1.1
+websockets.client 2025-08-21 01:35:45,778 - DEBUG - parse:320 - < Connection: Upgrade
+websockets.client 2025-08-21 01:35:45,778 - DEBUG - parse:320 - < Upgrade: websocket
+websockets.client 2025-08-21 01:35:45,778 - DEBUG - parse:320 - < Sec-WebSocket-Accept: mQECN05EgDw5pAFPnm9pwM1qkqw=
+websockets.client 2025-08-21 01:35:45,778 - DEBUG - parse:320 - < Date: Wed, 20 Aug 2025 22:35:45 GMT
+websockets.client 2025-08-21 01:35:45,778 - DEBUG - parse:320 - < Server-Timing: gfet4t7; dur=91
+websockets.client 2025-08-21 01:35:45,778 - DEBUG - parse:320 - < Set-Cookie: S==J8xZ88mnMTBIIlAGqvCKbxyAq29uyIR-oPBIfEHJswM; path=/; priority=low
+websockets.client 2025-08-21 01:35:45,779 - DEBUG - parse:320 - < Alt-Svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+websockets.client 2025-08-21 01:35:45,779 - DEBUG - state:175 - = connection is OPEN
+websockets.client 2025-08-21 01:35:45,779 - DEBUG - send_frame:745 - > TEXT '{"setup": {"model": "models/gemini-2.0-flash-ex...dioTranscription": {}}}' [3101 bytes]
+websockets.client 2025-08-21 01:35:46,005 - DEBUG - parse:599 - < BINARY 7b 0a 20 20 22 73 65 74 75 70 43 6f 6d 70 6c 65 ... 22 3a 20 7b 7d 0a 7d 0a [26 bytes]
+google_genai.live 2025-08-21 01:35:46,006 - INFO - connect:1057 - b'{\n  "setupComplete": {}\n}\n'
+websockets.client 2025-08-21 01:35:46,006 - DEBUG - send_frame:745 - > TEXT '{"client_content": {"turns": [{"parts": [{"text..."turnComplete": false}}' [2005 bytes]
+google_genai.live 2025-08-21 01:35:46,006 - INFO - connect:1057 - b'{\n  "setupComplete": {}\n}\n'
+websockets.client 2025-08-21 01:36:05,780 - DEBUG - send_frame:745 - > PING fa 32 a6 35 [binary, 4 bytes]
+websockets.client 2025-08-21 01:36:05,781 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:36:05,869 - DEBUG - parse:599 - < PONG fa 32 a6 35 [binary, 4 bytes]
+websockets.client 2025-08-21 01:36:05,869 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:36:25,781 - DEBUG - send_frame:745 - > PING 02 f9 00 c9 [binary, 4 bytes]
+websockets.client 2025-08-21 01:36:25,783 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:36:25,872 - DEBUG - parse:599 - < PONG 02 f9 00 c9 [binary, 4 bytes]
+websockets.client 2025-08-21 01:36:25,872 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:36:45,783 - DEBUG - send_frame:745 - > PING c0 82 12 18 [binary, 4 bytes]
+websockets.client 2025-08-21 01:36:45,785 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:36:45,875 - DEBUG - parse:599 - < PONG c0 82 12 18 [binary, 4 bytes]
+websockets.client 2025-08-21 01:36:45,877 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:37:05,785 - DEBUG - send_frame:745 - > PING 20 c5 0a ce [binary, 4 bytes]
+websockets.client 2025-08-21 01:37:05,785 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:37:05,872 - DEBUG - parse:599 - < PONG 20 c5 0a ce [binary, 4 bytes]
+websockets.client 2025-08-21 01:37:05,873 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:37:25,786 - DEBUG - send_frame:745 - > PING ac 73 52 f2 [binary, 4 bytes]
+websockets.client 2025-08-21 01:37:25,787 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:37:25,874 - DEBUG - parse:599 - < PONG ac 73 52 f2 [binary, 4 bytes]
+websockets.client 2025-08-21 01:37:25,874 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:37:45,787 - DEBUG - send_frame:745 - > PING 62 9b 42 b1 [binary, 4 bytes]
+websockets.client 2025-08-21 01:37:45,787 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:37:45,876 - DEBUG - parse:599 - < PONG 62 9b 42 b1 [binary, 4 bytes]
+websockets.client 2025-08-21 01:37:45,876 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:38:05,787 - DEBUG - send_frame:745 - > PING 87 63 5a 0f [binary, 4 bytes]
+websockets.client 2025-08-21 01:38:05,789 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:38:05,875 - DEBUG - parse:599 - < PONG 87 63 5a 0f [binary, 4 bytes]
+websockets.client 2025-08-21 01:38:05,876 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:38:25,789 - DEBUG - send_frame:745 - > PING 6b 8f 23 37 [binary, 4 bytes]
+websockets.client 2025-08-21 01:38:25,790 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:38:25,878 - DEBUG - parse:599 - < PONG 6b 8f 23 37 [binary, 4 bytes]
+websockets.client 2025-08-21 01:38:25,878 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:38:45,791 - DEBUG - send_frame:745 - > PING ed a3 21 dc [binary, 4 bytes]
+websockets.client 2025-08-21 01:38:45,794 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:38:45,882 - DEBUG - parse:599 - < PONG ed a3 21 dc [binary, 4 bytes]
+websockets.client 2025-08-21 01:38:45,883 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:39:05,792 - DEBUG - send_frame:745 - > PING 'fᗨ' [text, 4 bytes]
+websockets.client 2025-08-21 01:39:05,793 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:39:05,881 - DEBUG - parse:599 - < PONG 'fᗨ' [text, 4 bytes]
+websockets.client 2025-08-21 01:39:05,882 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:39:25,793 - DEBUG - send_frame:745 - > PING ac c7 f7 da [binary, 4 bytes]
+websockets.client 2025-08-21 01:39:25,794 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:39:25,881 - DEBUG - parse:599 - < PONG ac c7 f7 da [binary, 4 bytes]
+websockets.client 2025-08-21 01:39:25,882 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:39:45,795 - DEBUG - send_frame:745 - > PING 42 72 52 d8 [binary, 4 bytes]
+websockets.client 2025-08-21 01:39:45,797 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:39:45,885 - DEBUG - parse:599 - < PONG 42 72 52 d8 [binary, 4 bytes]
+websockets.client 2025-08-21 01:39:45,886 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:40:05,797 - DEBUG - send_frame:745 - > PING a0 ee 67 d8 [binary, 4 bytes]
+websockets.client 2025-08-21 01:40:05,799 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:40:05,889 - DEBUG - parse:599 - < PONG a0 ee 67 d8 [binary, 4 bytes]
+websockets.client 2025-08-21 01:40:05,890 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:40:25,799 - DEBUG - send_frame:745 - > PING 'dบ' [text, 4 bytes]
+websockets.client 2025-08-21 01:40:25,800 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:40:25,892 - DEBUG - parse:599 - < PONG 'dบ' [text, 4 bytes]
+websockets.client 2025-08-21 01:40:25,892 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:40:45,800 - DEBUG - send_frame:745 - > PING 86 01 ca e4 [binary, 4 bytes]
+websockets.client 2025-08-21 01:40:45,801 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:40:45,890 - DEBUG - parse:599 - < PONG 86 01 ca e4 [binary, 4 bytes]
+websockets.client 2025-08-21 01:40:45,891 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:41:05,801 - DEBUG - send_frame:745 - > PING d4 d1 ed eb [binary, 4 bytes]
+websockets.client 2025-08-21 01:41:05,802 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:41:05,892 - DEBUG - parse:599 - < PONG d4 d1 ed eb [binary, 4 bytes]
+websockets.client 2025-08-21 01:41:05,892 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:41:25,803 - DEBUG - send_frame:745 - > PING a8 bc 74 0f [binary, 4 bytes]
+websockets.client 2025-08-21 01:41:25,803 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:41:25,893 - DEBUG - parse:599 - < PONG a8 bc 74 0f [binary, 4 bytes]
+websockets.client 2025-08-21 01:41:25,894 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:41:45,805 - DEBUG - send_frame:745 - > PING 2b a4 af f2 [binary, 4 bytes]
+websockets.client 2025-08-21 01:41:45,806 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:41:45,896 - DEBUG - parse:599 - < PONG 2b a4 af f2 [binary, 4 bytes]
+websockets.client 2025-08-21 01:41:45,897 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:42:05,807 - DEBUG - send_frame:745 - > PING 42 d4 b6 e1 [binary, 4 bytes]
+websockets.client 2025-08-21 01:42:05,809 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:42:05,899 - DEBUG - parse:599 - < PONG 42 d4 b6 e1 [binary, 4 bytes]
+websockets.client 2025-08-21 01:42:05,900 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:42:25,809 - DEBUG - send_frame:745 - > PING '[k\t]' [text, 4 bytes]
+websockets.client 2025-08-21 01:42:25,811 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:42:25,901 - DEBUG - parse:599 - < PONG '[k\t]' [text, 4 bytes]
+websockets.client 2025-08-21 01:42:25,902 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:42:45,811 - DEBUG - send_frame:745 - > PING cb 54 85 20 [binary, 4 bytes]
+websockets.client 2025-08-21 01:42:45,812 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:42:45,902 - DEBUG - parse:599 - < PONG cb 54 85 20 [binary, 4 bytes]
+websockets.client 2025-08-21 01:42:45,903 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:43:05,812 - DEBUG - send_frame:745 - > PING 38 9f fb 62 [binary, 4 bytes]
+websockets.client 2025-08-21 01:43:05,812 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:43:05,903 - DEBUG - parse:599 - < PONG 38 9f fb 62 [binary, 4 bytes]
+websockets.client 2025-08-21 01:43:05,903 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:43:25,812 - DEBUG - send_frame:745 - > PING 'J1Ð' [text, 4 bytes]
+websockets.client 2025-08-21 01:43:25,813 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:43:25,902 - DEBUG - parse:599 - < PONG 'J1Ð' [text, 4 bytes]
+websockets.client 2025-08-21 01:43:25,902 - DEBUG - keepalive:834 - % received keepalive pong
+websockets.client 2025-08-21 01:43:45,813 - DEBUG - send_frame:745 - > PING 0f c3 dc fd [binary, 4 bytes]
+websockets.client 2025-08-21 01:43:45,814 - DEBUG - keepalive:824 - % sent keepalive ping
+websockets.client 2025-08-21 01:43:45,902 - DEBUG - parse:599 - < PONG 0f c3 dc fd [binary, 4 bytes]
+websockets.client 2025-08-21 01:43:45,903 - DEBUG - keepalive:834 - % received keepalive pong

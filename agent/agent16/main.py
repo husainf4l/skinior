@@ -227,7 +227,7 @@ async def entrypoint(ctx: JobContext):
 
 
 if __name__ == "__main__":
-    port = int(os.getenv("LIVEKIT_AGENT_PORT", "8016"))
+    port = int(os.getenv("LIVEKIT_AGENT_PORT", "8000"))
     options = agents.WorkerOptions(entrypoint_fnc=entrypoint, port=port)
     logger.info("🔬 Starting %s on port %d - Advanced Skin Analysis Agent", AGENT_NAME, port)
     agents.cli.run_app(options)

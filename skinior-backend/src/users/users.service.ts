@@ -80,7 +80,7 @@ export class UsersService {
 
   async validateUser(email: string, password: string) {
     const user = await this.findByEmail(email);
-    if (!user || !user.isActive) {
+    if (!user || !user.isActive || !user.password) {
       return null;
     }
 
@@ -120,8 +120,8 @@ export class UsersService {
 
   async changePassword(id: string, oldPassword: string, newPassword: string) {
     const user = await this.prisma.user.findUnique({ where: { id } });
-    if (!user) {
-      throw new NotFoundException('User not found');
+    if (!user || !user.password) {
+      throw new NotFoundException('User not found or user has no password');
     }
 
     const isOldPasswordValid = await bcrypt.compare(oldPassword, user.password);

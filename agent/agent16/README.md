@@ -87,7 +87,7 @@ AWS_REGION=your_aws_region
 BACKEND_URL=http://localhost:4005
 
 # Agent port
-LIVEKIT_AGENT_PORT=8016
+LIVEKIT_AGENT_PORT=8000
 ```
 
 ## 🚀 Usage

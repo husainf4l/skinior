@@ -58,6 +58,7 @@ export default function SkinAnalysisRoom({ params }: SkinAnalysisRoomProps) {
     updateResults,
     updateFaceDetection,
     startCapture,
+    completeCapture,
     startAnalysis,
   } = useSkinAnalysisState();
 
@@ -552,20 +553,26 @@ export default function SkinAnalysisRoom({ params }: SkinAnalysisRoomProps) {
       setIsStarting(true);
       console.log("Creating new skin analysis room...");
 
-      const response = await fetch(`${API_CONFIG.API_BASE_URL}/room`, {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/rooms`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.id}`, // Use user.id instead of accessToken
         },
         body: JSON.stringify({
-          name: `Skin Analysis - ${new Date().toISOString()}`,
-          type: "skin-analysis",
-          maxParticipants: 1,
+          type: "skincare_consultation",
+          language: locale === "ar" ? "arabic" : "english",
           metadata: {
+            type: "skin-analysis",
             roomType: "skin-analysis",
             userId: user.id,
             createdAt: new Date().toISOString(),
+            features: [
+              "skin_analysis",
+              "face_detection",
+              "opencv_processing",
+              "personalized_advice",
+            ],
           },
         }),
       });
@@ -578,12 +585,12 @@ export default function SkinAnalysisRoom({ params }: SkinAnalysisRoomProps) {
       console.log("✅ Room created successfully:", roomData);
 
       // Redirect to the new room with connection details
-      if (typeof window !== 'undefined' && window.location) {
+      if (typeof window !== "undefined" && window.location) {
         const currentUrl = window.location.origin + window.location.pathname;
         const roomUrl = new URL(currentUrl);
         roomUrl.searchParams.set("token", roomData.token);
-        roomUrl.searchParams.set("serverUrl", roomData.serverUrl);
-        roomUrl.searchParams.set("roomName", roomData.name);
+        roomUrl.searchParams.set("serverUrl", roomData.liveKitUrl); // Use liveKitUrl from response
+        roomUrl.searchParams.set("roomName", roomData.room.name); // Use room.name from response
 
         console.log("🔄 Redirecting to room with connection details");
         window.location.href = roomUrl.toString();
@@ -776,6 +783,52 @@ export default function SkinAnalysisRoom({ params }: SkinAnalysisRoomProps) {
     );
   }
 
+  // Handle complete capture and analysis flow
+  const handleAnalysisCapture = async () => {
+    if (!processorRef.current || !faceDetected) {
+      updateError("No face detected or processor not ready");
+      return;
+    }
+
+    try {
+      console.log("🎯 Starting capture flow...");
+
+      // Start capturing state
+      startCapture();
+      console.log("📸 Capture state set to true");
+
+      // Add a small delay for UI feedback
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Capture the frame
+      console.log("🖼️ Capturing frame...");
+      const imageData = processorRef.current.captureFrame();
+      if (!imageData) {
+        throw new Error("Failed to capture image");
+      }
+      console.log("✅ Frame captured successfully");
+
+      // Move to analysis phase
+      startAnalysis();
+      console.log("🔬 Analysis state set to true");
+
+      // Perform AI analysis
+      console.log("🤖 Starting AI analysis...");
+      const results = await processorRef.current.analyzeSkin(imageData);
+      console.log("✅ Analysis completed:", results);
+
+      // Update with results (this will set isAnalyzing: false)
+      updateResults(results);
+      console.log("📊 Results updated and states reset");
+    } catch (error) {
+      console.error("❌ Analysis capture failed:", error);
+      updateError("Analysis failed. Please try again.");
+      // Reset states on error
+      completeCapture();
+      console.log("🔄 States reset due to error");
+    }
+  };
+
   // Main analysis interface
   const roomContent = (
     <SkinAnalysisLayout
@@ -787,7 +840,7 @@ export default function SkinAnalysisRoom({ params }: SkinAnalysisRoomProps) {
       analysisResults={analysisResults}
       userId={user?.id}
       roomId={resolvedParams.id}
-      onCapture={startCapture}
+      onCapture={handleAnalysisCapture}
       processor={processorRef.current}
     />
   );

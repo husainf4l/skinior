@@ -93,22 +93,33 @@ export interface Product {
   isInStock: boolean;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4007/api';
+import { API_CONFIG } from '@/lib/config';
 
 export const productsService = {
   async getFeaturedProducts(): Promise<Product[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/products/featured`);
+      console.log('Fetching featured products from:', `${API_CONFIG.API_BASE_URL}/products/featured`);
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/products/featured`);
       
       if (!response.ok) {
+        console.error(`Featured products API error: ${response.status} ${response.statusText}`);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const data: Product[] = await response.json();
+      const data = await response.json();
+      console.log('Featured products response:', data);
+      
+      // Ensure we always return an array
+      if (!Array.isArray(data)) {
+        console.warn('Featured products API returned non-array data:', data);
+        return [];
+      }
+      
       return data;
     } catch (error) {
       console.error('Error fetching featured products:', error);
-      throw error;
+      // Return empty array instead of throwing to prevent component crashes
+      return [];
     }
   },
 
@@ -116,7 +127,7 @@ export const productsService = {
     try {
       // For now, fetch all products and filter for discounted ones
       // Later, the backend can provide a dedicated endpoint
-      const response = await fetch(`${API_BASE_URL}/products`);
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/products`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -146,7 +157,7 @@ export const productsService = {
 
   async getProducts(): Promise<Product[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/products`);
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/products`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -162,7 +173,7 @@ export const productsService = {
 
   async getProductById(id: string | number): Promise<Product | null> {
     try {
-      const response = await fetch(`${API_BASE_URL}/products/${id}`);
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/products/${id}`);
       
       if (!response.ok) {
         if (response.status === 404) {

@@ -6,15 +6,16 @@ import Script from "next/script";
 export default function Room2Layout({ children }: { children: ReactNode }) {
   return (
     <>
-      {/* Load OpenCV.js */}
+      {/* Load OpenCV.js with fallback */}
       <Script
         src="https://docs.opencv.org/4.8.0/opencv.js"
         strategy="beforeInteractive"
         onLoad={() => {
-          console.log("OpenCV.js loaded successfully for skin analysis");
+          console.log("✅ OpenCV.js loaded successfully for skin analysis");
         }}
         onError={(e) => {
-          console.error("Failed to load OpenCV.js:", e);
+          console.warn("⚠️ Failed to load OpenCV.js from CDN:", e);
+          console.log("🔄 Will use simulated face detection as fallback");
         }}
       />
 

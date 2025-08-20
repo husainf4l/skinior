@@ -5,6 +5,7 @@ Provides comprehensive tools for integrating with Skinior.com and checking produ
 
 import logging
 import asyncio
+import os
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 import aiohttp
@@ -19,9 +20,11 @@ class SkiniorIntegrationManager:
     Manages integration with Skinior.com for product availability and data synchronization.
     """
     
-    def __init__(self, skinior_api_url: str = "https://api.skinior.com", backend_url: str = "http://localhost:4005"):
+    def __init__(self, skinior_api_url: str = "https://skinior.com/api", backend_url: str = "http://localhost:4008", auth_token: str = None, api_key: str = None):
         self.skinior_api_url = skinior_api_url
         self.backend_url = backend_url
+        self.auth_token = auth_token or os.getenv("AGENT16_AUTH_TOKEN")
+        self.api_key = api_key or os.getenv("AGENT16_API_KEY")
         self.session = None
     
     async def __aenter__(self):
@@ -65,6 +68,12 @@ class SkiniorIntegrationManager:
         try:
             url = f"{self.backend_url}{endpoint}"
             headers = {"Content-Type": "application/json"}
+            
+            # Add authentication headers
+            if self.auth_token:
+                headers["Authorization"] = f"Bearer {self.auth_token}"
+            if self.api_key:
+                headers["x-api-key"] = self.api_key
             
             if method.upper() == "GET":
                 async with self.session.get(url, headers=headers) as response:

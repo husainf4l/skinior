@@ -182,9 +182,19 @@ const FeaturedProducts = memo(() => {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12">
-          {featuredProducts.map((product: Product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {Array.isArray(featuredProducts) && featuredProducts.length > 0 ? (
+            featuredProducts.map((product: Product) => (
+              <ProductCard key={product.id} product={product} />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-8">
+              <p className={`text-gray-500 ${isRTL ? "font-cairo" : ""}`}>
+                {isRTL
+                  ? "لا توجد منتجات مميزة حاليًا"
+                  : "No featured products available"}
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="text-center">

@@ -125,12 +125,15 @@ model ProductReview {
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
-  password  String
+  password  String?  // Optional for system users
   firstName String?
   lastName  String?
   phone     String?
-  role      String   @default("customer") // customer, admin
+  role      String   @default("customer") // customer, admin, agent
   isActive  Boolean  @default(true)
+  isSystem  Boolean  @default(false) // For agent/system users
+  apiKey    String?  @unique // For agent authentication
+  tokenExpiresAt DateTime? // For long-term tokens
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -230,4 +233,75 @@ model LiveKitRoom {
   createdBy String? // User ID who created the room
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// Analysis Sessions for Agent16 Integration
+model AnalysisSession {
+  id          String   @id @default(uuid())
+  userId      String
+  sessionId   String   @unique
+  language    String   @default("english")
+  status      String   @default("in_progress") // in_progress, completed, cancelled
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  completedAt DateTime?
+
+  // Relations
+  analysisData         AnalysisData[]
+  productRecommendations ProductRecommendation[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([sessionId])
+}
+
+// Analysis Data Storage
+model AnalysisData {
+  id           String   @id @default(uuid())
+  userId       String
+  analysisId   String
+  analysisType String
+  data         Json
+  timestamp    DateTime @default(now())
+
+  // Relations
+  analysisSession AnalysisSession @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([analysisId])
+  @@index([analysisType])
+}
+
+// Product Recommendations from Analysis
+model ProductRecommendation {
+  id                 String   @id @default(uuid())
+  userId             String
+  analysisId         String
+  productId          String
+  productName        String
+  brand              String?
+  category           String?
+  ingredients        String[] // Array of ingredients
+  price              Float?
+  currency           String   @default("USD")
+  rating             Float?
+  reviewCount        Int      @default(0)
+  reason             String?
+  usageInstructions  String?
+  priority           String   @default("medium") // high, medium, low
+  availability       Boolean  @default(true)
+  skiniorUrl         String?
+  status             String   @default("pending") // pending, purchased, tried, not_interested, wishlist
+  userNotes          String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Relations
+  analysisSession AnalysisSession @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([analysisId])
+  @@index([status])
+  @@index([productId])
 }

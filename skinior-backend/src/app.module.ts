@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
@@ -10,9 +11,30 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { RoomModule } from './room/room.module';
 import { LiveKitModule } from './livekit/livekit.module';
+import { AnalysisSessionsModule } from './analysis-sessions/analysis-sessions.module';
+import { AnalysisDataModule } from './analysis-data/analysis-data.module';
+import { ProductRecommendationsModule } from './product-recommendations/product-recommendations.module';
 
 @Module({
-  imports: [PrismaModule, ProductsModule, CheckoutModule, CartModule, WebhookModule, AuthModule, UsersModule, RoomModule, LiveKitModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    PrismaModule,
+    AuthModule,
+    UsersModule,
+    ProductsModule,
+    CheckoutModule,
+    CartModule,
+    WebhookModule,
+    RoomModule,
+    LiveKitModule,
+    // Agent16 Integration Modules
+    AnalysisSessionsModule,
+    AnalysisDataModule,
+    ProductRecommendationsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

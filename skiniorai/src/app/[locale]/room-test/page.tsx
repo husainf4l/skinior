@@ -4,11 +4,13 @@ import React, { useState, useEffect } from "react";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { authService } from "@/services/authService";
+import { ApiService } from "@/services/apiService";
 
 export default function RoomTestPage() {
   const locale = useLocale();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isAuthenticated, logout, loading } = useAuth();
   const isRTL = locale === "ar";
 
   const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
@@ -18,6 +20,41 @@ export default function RoomTestPage() {
     microphone: false,
     testing: true,
   });
+
+  // Authentication check - wait for loading to complete
+  useEffect(() => {
+    if (!loading) {
+      if (!isAuthenticated || !authService.getToken()) {
+        // Redirect to login if not authenticated
+        router.push(`/${locale}/login`);
+        return;
+      }
+    }
+  }, [isAuthenticated, loading, router, locale]);
+
+  // Show loading spinner while auth is loading
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-gray-600">{isRTL ? "جاري التحميل..." : "Loading..."}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated (after loading is complete)
+  if (!isAuthenticated || !authService.getToken()) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-gray-600">{isRTL ? "إعادة توجيه..." : "Redirecting..."}</p>
+        </div>
+      </div>
+    );
+  }
 
   // Test camera and microphone permissions
   const testDevices = async () => {
@@ -76,33 +113,29 @@ export default function RoomTestPage() {
 
     setIsLoading(true);
 
-    // Create room and redirect
+    // Create room with authenticated API service
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user?.id,
-          language: locale === "ar" ? "arabic" : "english",
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create room");
-      }
-
-      const data = await response.json();
-
-      // Redirect to room with the room ID
-      router.push(
-        `/${locale}/room/${data.room.id}?token=${
-          data.token
-        }&serverUrl=${encodeURIComponent(data.liveKitUrl)}`
+      const data = await ApiService.createRoom(
+        locale === "ar" ? "arabic" : "english",
+        "general_analysis"
       );
-    } catch (error) {
+
+      // Redirect to room with the authenticated room data
+      router.push(
+        `/${locale}/room/${data.room.name}?token=${
+          data.token
+        }&serverUrl=${encodeURIComponent(data.liveKitUrl)}&roomName=${data.room.name}`
+      );
+    } catch (error: any) {
       console.error("Failed to create room:", error);
+      
+      if (error.message === 'UNAUTHORIZED') {
+        // Token expired or invalid
+        logout();
+        router.push(`/${locale}/login`);
+        return;
+      }
+      
       alert(isRTL ? "فشل في إنشاء الغرفة" : "Failed to create room");
     } finally {
       setIsLoading(false);

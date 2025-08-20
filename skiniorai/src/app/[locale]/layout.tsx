@@ -4,10 +4,9 @@ import { notFound } from "next/navigation";
 import { ReactNode } from "react";
 import "../globals.css";
 import { setRequestLocale } from "next-intl/server";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
 import { AuthProvider } from "../../contexts/AuthContext";
 import type { Metadata } from "next";
+import ConditionalNavigation from "../../components/ConditionalNavigation";
 
 export const dynamic = "force-static";
 
@@ -128,11 +127,7 @@ export default async function LocaleLayout({
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
-            <div className="flex min-h-screen flex-col">
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
+            <ConditionalNavigation>{children}</ConditionalNavigation>
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

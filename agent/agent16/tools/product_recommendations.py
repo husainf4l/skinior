@@ -5,6 +5,7 @@ Provides comprehensive tools for creating and managing product recommendations w
 
 import logging
 import asyncio
+import os
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 import aiohttp
@@ -18,8 +19,10 @@ class ProductRecommendationsManager:
     Manages product recommendations with Skinior.com integration and personalized suggestions.
     """
     
-    def __init__(self, backend_url: str = "http://localhost:4005"):
+    def __init__(self, backend_url: str = "http://localhost:4008", auth_token: str = None, api_key: str = None):
         self.backend_url = backend_url
+        self.auth_token = auth_token or os.getenv("AGENT16_AUTH_TOKEN")
+        self.api_key = api_key or os.getenv("AGENT16_API_KEY")
         self.session = None
     
     async def __aenter__(self):
@@ -37,6 +40,12 @@ class ProductRecommendationsManager:
         try:
             url = f"{self.backend_url}{endpoint}"
             headers = {"Content-Type": "application/json"}
+            
+            # Add authentication headers
+            if self.auth_token:
+                headers["Authorization"] = f"Bearer {self.auth_token}"
+            if self.api_key:
+                headers["x-api-key"] = self.api_key
             
             if method.upper() == "GET":
                 async with self.session.get(url, headers=headers) as response:
@@ -138,8 +147,8 @@ class ProductRecommendationsManager:
             # Save recommendations to database
             if recommendations:
                 save_data = {
-                    "user_id": user_id,
-                    "analysis_id": analysis_id,
+                    "userId": user_id,
+                    "analysisId": analysis_id,
                     "recommendations": recommendations,
                     "skin_analysis": skin_analysis,
                     "created_at": datetime.utcnow().isoformat()
@@ -321,15 +330,15 @@ class ProductRecommendationsManager:
 
 
 # Utility functions for easy access
-async def get_available_products(skin_type: str, concerns: List[str], budget_range: str = "all") -> List[Dict]:
+async def get_available_products(skin_type: str, concerns: List[str], budget_range: str = "all", auth_token: str = None, api_key: str = None) -> List[Dict]:
     """Get available products from Skinior.com."""
-    async with ProductRecommendationsManager() as manager:
+    async with ProductRecommendationsManager(auth_token=auth_token, api_key=api_key) as manager:
         return await manager.get_available_products(skin_type, concerns, budget_range)
 
 
-async def create_product_recommendations(user_id: str, analysis_id: str, skin_analysis: Dict) -> List[Dict]:
+async def create_product_recommendations(user_id: str, analysis_id: str, skin_analysis: Dict, auth_token: str = None, api_key: str = None) -> List[Dict]:
     """Create personalized product recommendations."""
-    async with ProductRecommendationsManager() as manager:
+    async with ProductRecommendationsManager(auth_token=auth_token, api_key=api_key) as manager:
         return await manager.create_product_recommendations(user_id, analysis_id, skin_analysis)
 
 

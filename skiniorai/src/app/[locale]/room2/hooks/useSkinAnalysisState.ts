@@ -80,6 +80,13 @@ export function useSkinAnalysisState() {
     }));
   }, []);
 
+  const completeCapture = useCallback(() => {
+    setState(prev => ({ 
+      ...prev, 
+      isCapturing: false
+    }));
+  }, []);
+
   const startAnalysis = useCallback(() => {
     setState(prev => ({ 
       ...prev, 
@@ -115,6 +122,7 @@ export function useSkinAnalysisState() {
     updateError,
     updateResults,
     startCapture,
+    completeCapture,
     startAnalysis,
     resetAnalysis,
     updateFaceDetection,

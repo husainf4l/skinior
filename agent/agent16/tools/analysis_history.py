@@ -5,6 +5,7 @@ Provides comprehensive tools for managing user skin analysis history.
 
 import logging
 import asyncio
+import os
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
 import aiohttp
@@ -18,8 +19,10 @@ class AnalysisHistoryManager:
     Manages user skin analysis history with comprehensive tracking and retrieval capabilities.
     """
     
-    def __init__(self, backend_url: str = "http://localhost:4005"):
+    def __init__(self, backend_url: str = "http://localhost:4008", auth_token: str = None, api_key: str = None):
         self.backend_url = backend_url
+        self.auth_token = auth_token or os.getenv("AGENT16_AUTH_TOKEN")
+        self.api_key = api_key or os.getenv("AGENT16_API_KEY")
         self.session = None
     
     async def __aenter__(self):
@@ -37,6 +40,12 @@ class AnalysisHistoryManager:
         try:
             url = f"{self.backend_url}{endpoint}"
             headers = {"Content-Type": "application/json"}
+            
+            # Add authentication headers
+            if self.auth_token:
+                headers["Authorization"] = f"Bearer {self.auth_token}"
+            if self.api_key:
+                headers["x-api-key"] = self.api_key
             
             if method.upper() == "GET":
                 async with self.session.get(url, headers=headers) as response:
@@ -69,8 +78,8 @@ class AnalysisHistoryManager:
         """
         try:
             session_data = {
-                "user_id": user_id,
-                "session_id": session_id,
+                "userId": user_id,
+                "sessionId": session_id,
                 "language": language,
                 "status": "in_progress",
                 "created_at": datetime.utcnow().isoformat(),
@@ -108,9 +117,9 @@ class AnalysisHistoryManager:
         """
         try:
             save_data = {
-                "user_id": user_id,
-                "analysis_id": analysis_id,
-                "analysis_type": analysis_type,
+                "userId": user_id,
+                "analysisId": analysis_id,
+                "analysisType": analysis_type,
                 "data": data,
                 "timestamp": datetime.utcnow().isoformat()
             }
@@ -266,21 +275,21 @@ class AnalysisHistoryManager:
 
 
 # Utility functions for easy access
-async def create_analysis_session(user_id: str, session_id: str, language: str = "english") -> Dict:
+async def create_analysis_session(user_id: str, session_id: str, language: str = "english", auth_token: str = None, api_key: str = None) -> Dict:
     """Create a new analysis session."""
-    async with AnalysisHistoryManager() as manager:
+    async with AnalysisHistoryManager(auth_token=auth_token, api_key=api_key) as manager:
         return await manager.create_analysis_session(user_id, session_id, language)
 
 
-async def save_analysis_data(user_id: str, analysis_id: str, analysis_type: str, data: Dict) -> Dict:
+async def save_analysis_data(user_id: str, analysis_id: str, analysis_type: str, data: Dict, auth_token: str = None, api_key: str = None) -> Dict:
     """Save analysis data."""
-    async with AnalysisHistoryManager() as manager:
+    async with AnalysisHistoryManager(auth_token=auth_token, api_key=api_key) as manager:
         return await manager.save_analysis_data(user_id, analysis_id, analysis_type, data)
 
 
-async def get_user_analysis_history(user_id: str, limit: int = 10, offset: int = 0) -> List[Dict]:
+async def get_user_analysis_history(user_id: str, limit: int = 10, offset: int = 0, auth_token: str = None, api_key: str = None) -> List[Dict]:
     """Get user analysis history."""
-    async with AnalysisHistoryManager() as manager:
+    async with AnalysisHistoryManager(auth_token=auth_token, api_key=api_key) as manager:
         return await manager.get_user_analysis_history(user_id, limit, offset)
 
 
