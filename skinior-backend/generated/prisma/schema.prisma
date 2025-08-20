@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id             Int     @id @default(autoincrement())
+  title          String
+  titleAr        String?
+  slug           String  @unique
+  descriptionEn  String?
+  descriptionAr  String?
+  price          Float
+  compareAtPrice Float? // For discount pricing (was JOD 60.00)
+  currency       String  @default("JOD")
+  sku            String? @unique
+  isActive       Boolean @default(true)
+  isFeatured     Boolean @default(false)
+  isNew          Boolean @default(false)
+
+  // Skincare specific fields
+  activeIngredients String? // "25% Vitamin C", "20% Niacinamide"
+  skinType          String? // "All skin types", "Sensitive", etc.
+  concerns          String? // JSON array of skin concerns this addresses
+  usage             String? // "Morning", "Night", "AM/PM"
+
+  // SEO and content
+  metaTitle       String?
+  metaDescription String?
+
+  // Inventory
+  stockQuantity Int @default(0)
+
+  // Analytics
+  viewCount  Int @default(0)
+  salesCount Int @default(0)
+
+  // Relations
+  images     ProductImage[]
+  reviews    ProductReview[]
+  categoryId Int?
+  category   Category?       @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id          Int        @id @default(autoincrement())
+  name        String
+  nameAr      String?
+  slug        String     @unique
+  description String?
+  parentId    Int?
+  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  products    Product[]
+  createdAt   DateTime   @default(now())
+}
+
+model ProductImage {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  altText   String?
+  isMain    Boolean  @default(false)
+  isHover   Boolean  @default(false) // For hover effect images
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model ProductReview {
+  id           Int      @id @default(autoincrement())
+  productId    Int
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId       Int? // Optional - allow anonymous reviews
+  customerName String? // For anonymous reviews
+  email        String?
+  rating       Int // 1-5 stars
+  title        String?
+  comment      String?
+  isVerified   Boolean  @default(false) // Verified purchase
+  isPublished  Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  firstName String?
+  lastName  String?
+  phone     String?
+  role      String   @default("customer") // customer, admin
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id            Int     @id @default(autoincrement())
+  orderNumber   String  @unique
+  userId        Int?
+  customerEmail String?
+  customerName  String?
+  status        String  @default("pending") // pending, confirmed, shipped, delivered, cancelled
+  subtotal      Float
+  tax           Float   @default(0)
+  shipping      Float   @default(0)
+  total         Float
+  currency      String  @default("JOD")
+
+  // Shipping address
+  shippingAddress String?
+  shippingCity    String?
+  shippingPhone   String?
+
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId Int
+  title     String // Product title at time of order
+  sku       String?
+  price     Float // Price at time of order
+  quantity  Int
+  total     Float
+  createdAt DateTime @default(now())
+}
