@@ -78,19 +78,42 @@ async def save_video_to_backend(
     room_id: str, video_url: str, metadata: Dict[str, Any]
 ) -> bool:
     """Send the video URL and optional metadata to the backend service."""
-    backend_url = os.getenv("BACKEND_URL", "http://localhost:4005")
-    endpoint = f"{backend_url}/interviews/room/{room_id}/save-video"
+    backend_url = os.getenv("BACKEND_URL", "http://localhost:4008")
+    endpoint = f"{backend_url}/api/rooms/{room_id}/save-video"
 
-    payload = {"videoLink": video_url, "roomId": room_id}
-    # preserve any ids if present
-    for k in ("jobId", "candidateId", "companyId"):
-        if metadata and k in metadata:
-            payload[k] = metadata[k]
+    # Get authentication credentials - use API key for room operations
+    api_key = os.getenv("AGENT16_API_KEY")
+
+    # Prepare headers - use API key authentication for room operations
+    headers = {"Content-Type": "application/json"}
+    if api_key:
+        headers["x-api-key"] = api_key
+    else:
+        logger.warning("⚠️ No API key found for room video operations")
+
+    # Prepare payload according to backend specification
+    payload = {
+        "videoUrl": video_url,
+        "duration": 1800,  # Default 30 minutes
+        "fileSize": 52428800,  # Default 50MB
+        "format": "mp4",
+        "metadata": {
+            "resolution": "1080p",
+            "bitrate": "2000kbps",
+            "roomId": room_id
+        }
+    }
+
+    # Add any additional metadata if present
+    if metadata:
+        for k in ("jobId", "candidateId", "companyId", "userId"):
+            if k in metadata:
+                payload["metadata"][k] = metadata[k]
 
     logger.info("🔬 Saving video URL to backend: %s", endpoint)
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.post(endpoint, json=payload) as resp:
+            async with session.post(endpoint, json=payload, headers=headers) as resp:
                 if resp.status in (200, 201):
                     logger.info("✅ Successfully saved video URL to backend")
                     return True

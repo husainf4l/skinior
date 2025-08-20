@@ -18,6 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { RoomService } from './room.service';
 import { CreateRoomDto, JoinRoomDto, LeaveRoomDto, RefreshTokenDto } from './dto/room.dto';
+import { SaveVideoDto, GetVideoDto } from './dto/video.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CombinedAuthGuard } from '../auth/guards/combined-auth.guard';
 
@@ -232,6 +233,86 @@ export class RoomController {
       success: true,
       data: result,
       message: 'Room deleted successfully',
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Post(':roomName/save-video')
+  @ApiOperation({ 
+    summary: 'Save video recording URL',
+    description: 'Save the URL of a LiveKit room recording'
+  })
+  @ApiParam({
+    name: 'roomName',
+    description: 'Name of the room where video was recorded',
+    example: 'skincare-John-1737427200-abc123',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Video URL saved successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Room not found',
+  })
+  async saveVideoUrl(
+    @Param('roomName') roomName: string,
+    @Body() saveVideoDto: SaveVideoDto,
+    @Request() req: any
+  ): Promise<{
+    success: boolean;
+    data: any;
+    message: string;
+    timestamp: string;
+  }> {
+    console.log('🎥 ROOM CONTROLLER: save video URL endpoint called');
+    console.log('👤 Authenticated user:', req.user);
+    console.log('🏠 Room name:', roomName);
+    console.log('📹 Video data:', JSON.stringify(saveVideoDto, null, 2));
+    
+    const result = await this.roomService.saveVideoUrl(roomName, saveVideoDto, req.user.id);
+    
+    return {
+      success: true,
+      data: result,
+      message: 'Video URL saved successfully',
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Get(':roomName/videos')
+  @ApiOperation({ 
+    summary: 'Get room video recordings',
+    description: 'Get all video recordings for a specific room'
+  })
+  @ApiParam({
+    name: 'roomName',
+    description: 'Name of the room to get videos for',
+    example: 'skincare-John-1737427200-abc123',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Videos retrieved successfully',
+  })
+  async getRoomVideos(
+    @Param('roomName') roomName: string,
+    @Request() req: any
+  ): Promise<{
+    success: boolean;
+    data: any;
+    message: string;
+    timestamp: string;
+  }> {
+    console.log('🎥 ROOM CONTROLLER: get room videos endpoint called');
+    console.log('👤 Authenticated user:', req.user);
+    console.log('🏠 Room name:', roomName);
+    
+    const result = await this.roomService.getRoomVideos(roomName, req.user.id);
+    
+    return {
+      success: true,
+      data: result,
+      message: 'Videos retrieved successfully',
       timestamp: new Date().toISOString(),
     };
   }

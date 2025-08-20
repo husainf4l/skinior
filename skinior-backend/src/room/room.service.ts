@@ -2,6 +2,7 @@ import { Injectable, BadRequestException, NotFoundException, ForbiddenException 
 import { PrismaService } from '../prisma/prisma.service';
 import { LiveKitService } from '../livekit/livekit.service';
 import { CreateRoomDto, JoinRoomDto, LeaveRoomDto, RefreshTokenDto } from './dto/room.dto';
+import { SaveVideoDto, GetVideoDto } from './dto/video.dto';
 
 interface AuthenticatedUser {
   id: string;
@@ -360,12 +361,23 @@ Take a holistic approach, considering their lifestyle, budget, and preferences. 
     console.log(`🚪 User ${userId} leaving room: ${roomName}`);
 
     try {
-      // Check if the LiveKit room exists and user has access
+      // Get user details to check if it's a system user
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, role: true, isSystem: true }
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // System agents can leave any room, regular users only their own
+      const whereClause = user.isSystem && user.role === 'agent' 
+        ? { name: roomName } // System agents can leave any room
+        : { name: roomName, createdBy: userId }; // Regular users only their rooms
+
       const liveKitRoom = await this.prisma.liveKitRoom.findFirst({
-        where: {
-          name: roomName,
-          createdBy: userId, // Only allow users to leave their own rooms
-        }
+        where: whereClause
       });
 
       if (!liveKitRoom) {
@@ -396,12 +408,23 @@ Take a holistic approach, considering their lifestyle, budget, and preferences. 
     console.log(`📊 Checking status for room: ${roomName} by user: ${userId}`);
 
     try {
-      // Get room from database - ensure user has access
+      // Get user details to check if it's a system user
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, role: true, isSystem: true }
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // System agents can access any room, regular users only their own
+      const whereClause = user.isSystem && user.role === 'agent' 
+        ? { name: roomName } // System agents can access any room
+        : { name: roomName, createdBy: userId }; // Regular users only their rooms
+
       const liveKitRoom = await this.prisma.liveKitRoom.findFirst({
-        where: {
-          name: roomName,
-          createdBy: userId, // Only show status for user's own rooms
-        }
+        where: whereClause
       });
 
       if (!liveKitRoom) {
@@ -449,12 +472,23 @@ Take a holistic approach, considering their lifestyle, budget, and preferences. 
     console.log(`🔄 Refreshing token for user ${user.id} in room: ${roomName}`);
 
     try {
-      // Check if the LiveKit room exists and user has access
+      // Get user details to check if it's a system user
+      const userDetails = await this.prisma.user.findUnique({
+        where: { id: user.id },
+        select: { id: true, role: true, isSystem: true }
+      });
+
+      if (!userDetails) {
+        throw new NotFoundException('User not found');
+      }
+
+      // System agents can refresh tokens for any room, regular users only their own
+      const whereClause = userDetails.isSystem && userDetails.role === 'agent' 
+        ? { name: roomName } // System agents can refresh any room token
+        : { name: roomName, createdBy: user.id }; // Regular users only their rooms
+
       const liveKitRoom = await this.prisma.liveKitRoom.findFirst({
-        where: {
-          name: roomName,
-          createdBy: user.id, // Only allow token refresh for room creator
-        }
+        where: whereClause
       });
 
       if (!liveKitRoom) {
@@ -502,10 +536,23 @@ Take a holistic approach, considering their lifestyle, budget, and preferences. 
     try {
       console.log(`📋 Fetching rooms for user: ${userId}`);
 
+      // Get user details to check if it's a system user
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, role: true, isSystem: true }
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // System agents can see all rooms, regular users only their own
+      const whereClause = user.isSystem && user.role === 'agent' 
+        ? {} // System agents can see all rooms
+        : { createdBy: userId }; // Regular users only their rooms
+
       const rooms = await this.prisma.liveKitRoom.findMany({
-        where: {
-          createdBy: userId, // Only show user's own rooms
-        },
+        where: whereClause,
         orderBy: {
           createdAt: 'desc'
         }
@@ -545,11 +592,23 @@ Take a holistic approach, considering their lifestyle, budget, and preferences. 
     try {
       console.log(`🗑️ Deleting room: ${roomName} by user: ${userId}`);
 
+      // Get user details to check if it's a system user
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, role: true, isSystem: true }
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // System agents can delete any room, regular users only their own
+      const whereClause = user.isSystem && user.role === 'agent' 
+        ? { name: roomName } // System agents can delete any room
+        : { name: roomName, createdBy: userId }; // Regular users only their rooms
+
       const room = await this.prisma.liveKitRoom.findFirst({
-        where: {
-          name: roomName,
-          createdBy: userId, // Only allow deletion by room creator
-        }
+        where: whereClause
       });
 
       if (!room) {
@@ -579,6 +638,144 @@ Take a holistic approach, considering their lifestyle, budget, and preferences. 
       }
 
       throw new BadRequestException('Failed to delete room');
+    }
+  }
+
+  async saveVideoUrl(roomName: string, saveVideoDto: SaveVideoDto, userId: string) {
+    try {
+      console.log(`🎥 Saving video URL for room: ${roomName} by user: ${userId}`);
+      console.log('📹 Video data:', JSON.stringify(saveVideoDto, null, 2));
+
+      // Get user details to check if it's a system user
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, role: true, isSystem: true }
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // Find the room - system users (like Agent16) can access any room
+      const whereClause = user.isSystem && user.role === 'agent' 
+        ? { name: roomName } // System agents can access any room
+        : { name: roomName, createdBy: userId }; // Regular users only their rooms
+
+      const room = await this.prisma.liveKitRoom.findFirst({
+        where: whereClause
+      });
+
+      if (!room) {
+        throw new NotFoundException('Room not found or access denied');
+      }
+
+      // Get current metadata and add video information
+      const currentMetadata = room.metadata as any || {};
+      
+      // Initialize recordings array if it doesn't exist
+      if (!currentMetadata.recordings) {
+        currentMetadata.recordings = [];
+      }
+
+      // Add new recording
+      const newRecording = {
+        videoUrl: saveVideoDto.videoUrl,
+        duration: saveVideoDto.duration,
+        fileSize: saveVideoDto.fileSize,
+        format: saveVideoDto.format || 'mp4',
+        recordedAt: new Date().toISOString(),
+        recordedBy: userId,
+        metadata: saveVideoDto.metadata || {},
+      };
+
+      currentMetadata.recordings.push(newRecording);
+      currentMetadata.lastRecording = newRecording;
+      currentMetadata.totalRecordings = currentMetadata.recordings.length;
+
+      // Update room with new metadata
+      const updatedRoom = await this.prisma.liveKitRoom.update({
+        where: { id: room.id },
+        data: { metadata: currentMetadata },
+      });
+
+      console.log(`✅ Video URL saved successfully for room: ${roomName}`);
+
+      return {
+        videoUrl: saveVideoDto.videoUrl,
+        roomName,
+        recordingId: currentMetadata.recordings.length,
+        savedAt: new Date().toISOString(),
+        duration: saveVideoDto.duration,
+        fileSize: saveVideoDto.fileSize,
+      };
+
+    } catch (error) {
+      console.error('Error saving video URL:', error);
+
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw new BadRequestException('Failed to save video URL');
+    }
+  }
+
+  async getRoomVideos(roomName: string, userId: string) {
+    try {
+      console.log(`🎥 Getting videos for room: ${roomName} by user: ${userId}`);
+
+      // Get user details to check if it's a system user
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, role: true, isSystem: true }
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // Find the room - system users (like Agent16) can access any room
+      const whereClause = user.isSystem && user.role === 'agent' 
+        ? { name: roomName } // System agents can access any room
+        : { name: roomName, createdBy: userId }; // Regular users only their rooms
+
+      const room = await this.prisma.liveKitRoom.findFirst({
+        where: whereClause
+      });
+
+      if (!room) {
+        throw new NotFoundException('Room not found or access denied');
+      }
+
+      const metadata = room.metadata as any || {};
+      const recordings = metadata.recordings || [];
+
+      const enhancedRecordings = recordings.map((recording: any, index: number) => ({
+        id: index + 1,
+        videoUrl: recording.videoUrl,
+        duration: recording.duration,
+        fileSize: recording.fileSize,
+        format: recording.format || 'mp4',
+        recordedAt: recording.recordedAt,
+        recordedBy: recording.recordedBy,
+        metadata: recording.metadata || {},
+      }));
+
+      return {
+        roomName,
+        recordings: enhancedRecordings,
+        totalRecordings: recordings.length,
+        lastRecording: metadata.lastRecording || null,
+      };
+
+    } catch (error) {
+      console.error('Error getting room videos:', error);
+
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw new BadRequestException('Failed to get room videos');
     }
   }
 }

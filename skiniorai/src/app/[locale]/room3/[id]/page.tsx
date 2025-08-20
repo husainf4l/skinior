@@ -182,60 +182,12 @@ export default function Room3({ params }: Room3Props) {
     }
   }, [hasRoomConnection, isConnected, isConnecting]);
 
-  // Initialize camera when analysis is started
-  useEffect(() => {
-    if (analysisStarted && !isConnected) {
-      console.log("🎥 Initializing local camera...");
-
-      const initializeCamera = async () => {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { width: 1280, height: 720 },
-            audio: true,
-          });
-
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-            videoRef.current.play();
-            updateState({ isActive: true });
-          }
-
-          // Clear timeout
-          if (cameraTimeoutRef.current) {
-            clearTimeout(cameraTimeoutRef.current);
-          }
-        } catch (error) {
-          console.error("Camera initialization failed:", error);
-          updateError(
-            "Camera access failed. Please check permissions and try again."
-          );
-        }
-      };
-
-      initializeCamera();
-
-      // Add timeout to prevent hanging
-      cameraTimeoutRef.current = setTimeout(() => {
-        console.error("Camera initialization timed out");
-        updateError(
-          "Camera initialization timed out. Please check permissions and try again."
-        );
-      }, 15000); // 15 second timeout
-    }
-  }, [analysisStarted, isConnected]);
-
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       // Clear timeout
       if (cameraTimeoutRef.current) {
         clearTimeout(cameraTimeoutRef.current);
-      }
-
-      // Stop video stream
-      if (videoRef.current?.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach((track) => track.stop());
       }
 
       // Disconnect from room
@@ -536,7 +488,7 @@ function RoomContent({
   onViewChange,
 }: {
   roomContent: React.ReactNode;
-  videoRef: React.RefObject<HTMLVideoElement>;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
   isActive: boolean;
   participants: any[];
   messages: any[];

@@ -1,5 +1,5 @@
 """
-AI Agent for beauty consultation and skin analysis.
+AI Agent for general tasks driven by a backend AI prompt (e.g., skin analysis).
 """
 
 import logging
@@ -9,11 +9,11 @@ from livekit.plugins import google, silero
 logger = logging.getLogger(__name__)
 
 
-class BeautyAdvisorAgent(Agent):
+class InterviewAgent(Agent):
     """
-    AI Beauty Advisor Agent that provides expert skin analysis and beauty consultation.
-    The agent analyzes skin condition, provides positive feedback, identifies main concerns,
-    inquires about routine, recommends products, and schedules follow-up appointments.
+    AI Agent that executes a backend-provided prompt. The agent expects metadata
+    to provide an `aiPrompt` (or `interviewPrompt` for backwards compatibility)
+    and an optional `language` field.
     """
 
     def __init__(
@@ -40,7 +40,7 @@ class BeautyAdvisorAgent(Agent):
         instructions = self._build_instructions()
 
         # Log agent configuration
-        logger.info("Creating Beauty Advisor AI agent for skin analysis consultation")
+        logger.info("Creating AI agent for task from backend prompt")
         logger.info(f"Language: {self.interview_language}")
         logger.info(f"Instructions length: {len(instructions)} characters")
 
@@ -55,16 +55,16 @@ class BeautyAdvisorAgent(Agent):
             **kwargs,
         )
 
-        logger.info("✅ BeautyAdvisorAgent initialized with Google Real-time model")
+        logger.info("✅ InterviewAgent initialized with Google Real-time model")
 
     async def on_enter(self):
         """Called when the agent enters the session - generate initial greeting."""
         try:
-            # Create a beauty advisor specific greeting based on language
+            # Optionally create a neutral greeting based on language
             if self.interview_language == "arabic":
-                greeting_instruction = "ابدأ بتحية دافئة ومهنية كمستشار جمال خبير، ثم اطلب من المستخدم أن يظهر وجهه بوضوح لبدء تحليل البشرة بالرؤية الحاسوبية."
+                greeting_instruction = "ابدأ بتحية قصيرة ومهنية واذهب مباشرة إلى مهمة التحليل أو التقييم بناءً على التعليمات المقدمة."
             else:
-                greeting_instruction = "Start with a warm, professional greeting as an expert beauty advisor, then ask the user to show their face clearly so you can begin the skin analysis using your vision capabilities."
+                greeting_instruction = "Start with a brief professional greeting and proceed directly to the analysis or evaluation task described in the prompt."
 
             self.session.generate_reply(instructions=greeting_instruction)
             logger.info("✅ Initial greeting generated")
@@ -75,15 +75,7 @@ class BeautyAdvisorAgent(Agent):
         """Build instructions for the agent from the backend AI prompt."""
         # Normalize prompt_text from possibly-different shapes
         prompt_text = (
-            "You are an expert beauty advisor specializing in skin analysis and skincare consultation. "
-            "Your role is to help Husain with comprehensive beauty advice following this structured approach:\n\n"
-            "1. **Skin Analysis**: Use your advanced vision capabilities to analyze the user's skin condition thoroughly.\n\n"
-            "2. **Positive Feedback**: Start by identifying and highlighting ONE good aspect of their skin to build confidence.\n\n"
-            "3. **Main Concerns**: Identify and explain the 3 main skin issues you observe, providing clear explanations.\n\n"
-            "4. **Routine Inquiry**: Ask about their current skincare routine to understand their habits and products.\n\n"
-            "5. **Product Recommendations**: Based on the analysis and their routine, recommend specific products with detailed usage instructions.\n\n"
-            "6. **Follow-up**: Schedule a follow-up appointment in one week to track progress and make adjustments.\n\n"
-            "Maintain a professional, caring, and encouraging tone throughout the consultation. Be specific with your recommendations and ensure all advice is practical and achievable."
+            "you are a skin analysis expert with advanced computer vision capabilities."
         )
         # If ai_prompt is a dict, select language-specific entry
         if isinstance(self.ai_prompt, dict):
@@ -109,8 +101,8 @@ class BeautyAdvisorAgent(Agent):
                 prompt_text = ""
 
         if not prompt_text:
-            # Fallback minimal instruction for beauty consultation
-            return "Provide expert beauty advice and skin analysis consultation."
+            # Fallback minimal instruction
+            return "Perform a concise analysis according to the task."
 
         # For Arabic prompts, prefer an Arabic wrapper
         if self.interview_language == "arabic":
@@ -124,16 +116,12 @@ class BeautyAdvisorAgent(Agent):
             history = self.get_chat_history()
             if history:
                 last_message = history[-1]
-                # Keep beauty consultation conclusion phrases
+                # Keep some generic conclusion phrases for safety (may be unused)
                 conclusion_phrases = [
                     "thank you for your time",
                     "this concludes",
-                    "the consultation is complete",
-                    "see you in one week",
-                    "follow-up appointment",
+                    "the analysis is complete",
                     "شكراً لوقتك",
-                    "نراك الأسبوع القادم",
-                    "موعد المتابعة",
                 ]
 
                 message_content = last_message.content.lower()
