@@ -1,0 +1,301 @@
+{
+  "greeting": "Hello! Welcome to Skinior.",
+  "description": "Experience the future of skincare with our proprietary AI technology that delivers clinical-grade skin analysis, paired with personalized expert consultations for optimal beauty results.",
+  "navigation": {
+    "home": "Home",
+    "shop": "Shop",
+    "skinAnalysis": "Skin Analysis",
+    "products": "Products", 
+    "routines": "Routines",
+    "blog": "Blog",
+    "about": "About",
+    "dashboard": "Dashboard",
+    "services": "Services",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "AI-Powered Beauty Analysis & Expert Solutions",
+    "subtitle": "Revolutionary artificial intelligence meets dermatological expertise to analyze your skin, identify concerns, and create personalized treatment plans in real-time",
+    "cta": "Analyze  Now",
+    "learnMore": "Discover the Technology",
+    "ctaDescription": "Advanced AI scans your skin in seconds, while our beauty experts provide live consultation for personalized recommendations",
+    "newBadge": "New: AI-Powered Skin Analysis",
+    "beautifulSkin": "Beautiful skin",
+    "startsHere": "starts here.",
+    "subtitle2": "Advanced AI technology meets dermatological expertise to create personalized skincare solutions.",
+    "watchDemo": "Watch Demo",
+    "freeAnalysis": "Free analysis • No signup required • Results in 30 seconds",
+    "accuracyRate": "Accuracy Rate",
+    "analysesDone": "Analyses Done",
+    "averageTime": "Average Time",
+    "skinMetrics": "Skin Metrics",
+    "scroll": "Scroll",
+    "skinAnalysis": "Skin Analysis",
+    "aiProcessing": "AI Processing",
+    "resultsReady": "Results Ready"
+  },
+  "features": {
+    "servicesTitle": "AI-Powered Analysis",
+    "servicesDesc": "Advanced computer vision algorithms analyze 50+ skin parameters including texture, pigmentation, wrinkles, pores, and hydration levels with 98% accuracy.",
+    "aboutTitle": "Expert Dermatologists",
+    "aboutDesc": "Board-certified dermatologists and skincare specialists review every AI analysis to ensure personalized, medically-sound treatment recommendations.",
+    "contactTitle": "Real-Time Consultation",
+    "contactDesc": "Connect instantly with our beauty experts for live video consultations, get immediate answers, and receive your customized skincare regimen."
+  },
+  "footer": {
+    "copyright": "© 2025 Skinior. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Try Again",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "products": {
+    "new": "New",
+    "sale": "Sale",
+    "addToCart": "Add to Cart",
+    "adding": "Adding...",
+    "quickView": "Quick View",
+    "addToWishlist": "Add to Wishlist",
+    "removeFromWishlist": "Remove from Wishlist",
+    "outOfStock": "Out of Stock",
+    "inStock": "In Stock",
+    "reviews": "reviews",
+    "review": "review",
+    "rating": "Rating",
+    "price": "Price",
+    "originalPrice": "Original Price",
+    "discount": "Discount",
+    "description": "Description",
+    "features": "Features",
+    "specifications": "Specifications",
+    "ingredients": "Ingredients",
+    "howToUse": "How to Use",
+    "skinType": "Skin Type",
+    "category": "Category",
+    "brand": "Brand",
+    "size": "Size",
+    "quantity": "Quantity",
+    "selectSize": "Select Size",
+    "buyNow": "Buy Now",
+    "compareProducts": "Compare Products",
+    "shareProduct": "Share Product",
+    "relatedProducts": "Related Products",
+    "recentlyViewed": "Recently Viewed",
+    "customerReviews": "Customer Reviews",
+    "writeReview": "Write a Review",
+    "helpful": "Helpful",
+    "notHelpful": "Not Helpful",
+    "verified": "Verified Purchase",
+    "stockStatus": "Stock Status",
+    "availability": "Availability",
+    "shippingInfo": "Shipping Information",
+    "returnPolicy": "Return Policy",
+    "productDetails": "Product Details"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "emptyDescription": "Add some products to get started",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "tax": "Tax",
+    "shipping": "Shipping",
+    "discount": "Discount",
+    "items": "items",
+    "item": "item",
+    "quantity": "Qty",
+    "price": "Price",
+    "remove": "Remove",
+    "update": "Update",
+    "continueShopping": "Continue Shopping",
+    "proceedToCheckout": "Proceed to Checkout",
+    "addedToCart": "Added to cart",
+    "removedFromCart": "Removed from cart",
+    "updatedCart": "Cart updated",
+    "cartError": "Cart error",
+    "loading": "Loading cart...",
+    "itemsInCart": "items in cart",
+    "viewCart": "View Cart",
+    "startShopping": "Start Shopping",
+    "freeShippingProgress": "Free shipping",
+    "remaining": "remaining",
+    "freeShippingAchieved": "You've earned free shipping!"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "subtitle": "Complete your order",
+    "description": "Secure checkout for your skincare products",
+    "contactInfo": "Contact Information",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "phone": "Phone",
+    "phonePlaceholder": "+962 7X XXX XXXX",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "John",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Doe",
+    "shippingAddress": "Shipping Address",
+    "address": "Address",
+    "addressPlaceholder": "Street address",
+    "city": "City",
+    "cityPlaceholder": "Amman",
+    "postalCode": "Postal Code",
+    "postalCodePlaceholder": "11181",
+    "country": "Country",
+    "orderSummary": "Order Summary",
+    "qty": "Qty",
+    "freeShipping": "Free",
+    "secureCheckout": "Secure SSL checkout",
+    "placeOrder": "Place Order",
+    "processing": "Processing...",
+    "success": "Order placed successfully!",
+    "error": "Failed to place order. Please try again.",
+    "emptyDescription": "You need to add items to your cart before checkout.",
+    "successTitle": "Order Confirmed!",
+    "successDescription": "Your order has been successfully placed",
+    "successMessage": "Thank you for your order! We've received your order and will process it shortly.",
+    "orderDetails": "Order Details",
+    "orderNumber": "Order Number",
+    "estimatedDelivery": "Estimated Delivery",
+    "businessDays": "business days",
+    "emailConfirmation": "A confirmation email has been sent to your email address.",
+    "continueShopping": "Continue Shopping",
+    "viewOrders": "View My Orders",
+    "supportMessage": "Need help with your order?",
+    "contactSupport": "Contact Support"
+  },
+  "featuredProducts": {
+    "title": "Featured Products",
+    "subtitle": "Discover our most popular clinically-tested skincare products recommended by dermatological experts",
+    "viewAll": "Shop All Products"
+  },
+  "aiAnalysis": {
+    "title": "Revolutionary AI Skin Analysis",
+    "subtitle": "3-Second Analysis, Lifetime Results",
+    "howItWorks": "How Our AI Works",
+    "step1": "Capture",
+    "step1Desc": "Take a selfie using our advanced camera technology",
+    "step2": "Analyze", 
+    "step2Desc": "AI processes 50+ skin parameters in real-time",
+    "step3": "Recommend",
+    "step3Desc": "Receive personalized product and treatment recommendations",
+    "step4": "Connect",
+    "step4Desc": "Live consultation with certified beauty experts",
+    "accuracy": "98% Clinical Accuracy",
+    "parameters": "50+ Skin Parameters",
+    "speed": "3-Second Analysis",
+    "experts": "Dermatologist-Verified"
+  },
+  "about": {
+    "hero": {
+      "title": "Revolutionizing Beauty Through AI Innovation",
+      "subtitle": "Where cutting-edge artificial intelligence meets dermatological expertise to transform your skincare journey",
+      "description": "At Skinior, we believe everyone deserves personalized, scientific-backed skincare solutions. Our mission is to democratize professional beauty consultations through revolutionary AI technology."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "description": "To make professional-grade skin analysis and personalized beauty consultations accessible to everyone, anywhere, anytime through the power of artificial intelligence and expert dermatological knowledge."
+    },
+    "story": {
+      "title": "Our Story",
+      "content": "Founded by a team of dermatologists, AI researchers, and beauty experts, Skinior was born from the vision of bridging the gap between advanced technology and personalized skincare. We recognized that millions of people struggle with skin concerns but lack access to professional guidance.",
+      "highlight": "Our breakthrough came when we developed an AI system that could analyze skin with the same accuracy as clinical dermatological assessments, making expert-level analysis available instantly to anyone with a smartphone."
+    },
+    "technology": {
+      "title": "Our Technology",
+      "description": "Our proprietary AI engine uses advanced computer vision and machine learning algorithms trained on millions of dermatological images and clinical data.",
+      "features": [
+        {
+          "title": "98% Clinical Accuracy",
+          "description": "Our AI matches the accuracy of professional dermatological assessments"
+        },
+        {
+          "title": "50+ Skin Parameters",
+          "description": "Comprehensive analysis including texture, pigmentation, wrinkles, pores, and hydration"
+        },
+        {
+          "title": "Real-time Processing",
+          "description": "Instant analysis and recommendations in under 3 seconds"
+        },
+        {
+          "title": "Expert Validation",
+          "description": "Every AI analysis is validated by certified dermatologists"
+        }
+      ]
+    },
+    "team": {
+      "title": "Expert Team",
+      "description": "Our multidisciplinary team combines decades of experience in dermatology, artificial intelligence, and beauty innovation.",
+      "stats": [
+        {
+          "number": "15+",
+          "label": "Board-Certified Dermatologists"
+        },
+        {
+          "number": "10+",
+          "label": "AI Research Scientists"
+        },
+        {
+          "number": "1M+",
+          "label": "Skin Analyses Completed"
+        },
+        {
+          "number": "98%",
+          "label": "User Satisfaction Rate"
+        }
+      ]
+    },
+    "values": {
+      "title": "Our Values",
+      "items": [
+        {
+          "title": "Scientific Excellence",
+          "description": "Every recommendation is backed by clinical research and dermatological expertise"
+        },
+        {
+          "title": "Accessibility",
+          "description": "Making professional skincare guidance available to everyone, everywhere"
+        },
+        {
+          "title": "Privacy First",
+          "description": "Your skin data is encrypted and protected with bank-level security"
+        },
+        {
+          "title": "Continuous Innovation",
+          "description": "Constantly improving our AI to deliver better, more accurate results"
+        }
+      ]
+    },
+    "cta": {
+      "title": "Experience the Future of Skincare",
+      "description": "Join millions who have transformed their skin with our AI-powered analysis",
+      "button": "Try Free Analysis"
+    }
+  },
+  "shop": {
+    "allCategories": "All Categories",
+    "search": "Search",
+    "searchPlaceholder": "Search products, ingredients or SKU...",
+    "category": "Category",
+    "sort": "Sort",
+    "sortRelevance": "Relevance",
+    "sortPriceLow": "Price: Low to High",
+    "sortPriceHigh": "Price: High to Low",
+    "sortNewest": "Newest",
+    "resultsCount": "{count} products found",
+    "noResults": "No products match your search.",
+    "loadingError": "Failed to load products",
+    "prev": "Previous",
+    "next": "Next"
+  },
+  "Metadata": {
+    "description": "Revolutionary AI-powered skin analysis with 98% clinical accuracy. Get personalized skincare recommendations from certified dermatologists in real-time. Transform your beauty routine with cutting-edge artificial intelligence technology.",
+    "keywords": "AI skin analysis, artificial intelligence beauty, dermatologist consultation, personalized skincare, computer vision, skin technology, beauty AI, clinical skin analysis"
+  }
+}

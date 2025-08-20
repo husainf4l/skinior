@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+
+# Allow crawling of all pages
+Allow: /en/
+Allow: /ar/
+Allow: /en/products
+Allow: /ar/products
+Allow: /en/shop
+Allow: /ar/shop
+Allow: /en/blog
+Allow: /ar/blog
+Allow: /en/routines
+Allow: /ar/routines
+Allow: /en/skin-analysis
+Allow: /ar/skin-analysis
+
+# Block crawling of API routes
+Disallow: /api/
+
+# Block crawling of internal Next.js files
+Disallow: /_next/
+
+# Sitemap location
+Sitemap: https://skinior.com/sitemap.xml

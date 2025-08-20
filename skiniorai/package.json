@@ -1,0 +1,53 @@
+{
+  "name": "skiniorai",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbo",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "analyze": "ANALYZE=true next build",
+    "security": "npm audit",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "@livekit/components-react": "^2.9.14",
+    "@livekit/components-styles": "^1.1.6",
+    "livekit-client": "^2.15.5",
+    "next": "15.4.6",
+    "next-intl": "^4.3.4",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "zustand": "^5.0.7"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4.1.12",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.6",
+    "tailwindcss": "^4.1.12",
+    "typescript": "^5"
+  },
+  "browserslist": {
+    "production": [
+      "Chrome >= 88",
+      "Firefox >= 78",
+      "Safari >= 14",
+      "Edge >= 88",
+      "iOS >= 14",
+      "ChromeAndroid >= 88",
+      "not IE 11"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
