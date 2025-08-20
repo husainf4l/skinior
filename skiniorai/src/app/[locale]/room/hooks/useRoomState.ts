@@ -1,41 +1,40 @@
 import { useState, useCallback } from 'react';
 
-interface Room3Message {
+// Room state management hook
+
+interface RoomMessage {
   id: string;
-  sender: string;
   content: string;
+  sender: string;
   timestamp: Date;
 }
 
-interface Room3Participant {
+interface RoomParticipant {
   id: string;
   name: string;
-  role: string;
-  isActive: boolean;
+  isAgent: boolean;
 }
 
-interface Room3State {
+interface RoomState {
   isActive: boolean;
-  participants: Room3Participant[];
-  messages: Room3Message[];
-  currentView: 'camera' | 'screen' | 'gallery';
+  participants: RoomParticipant[];
+  messages: RoomMessage[];
+  currentView: string;
   error: string | null;
-  sessionDuration: number;
-  isRecording: boolean;
+  isRecording?: boolean;
+  sessionDuration?: number;
 }
 
-export function useRoom3State() {
-  const [state, setState] = useState<Room3State>({
+export function useRoomState() {
+  const [state, setState] = useState<RoomState>({
     isActive: false,
     participants: [],
     messages: [],
     currentView: 'camera',
     error: null,
-    sessionDuration: 0,
-    isRecording: false,
   });
 
-  const updateState = useCallback((updates: Partial<Room3State>) => {
+  const updateState = useCallback((updates: Partial<RoomState>) => {
     setState(prev => ({ ...prev, ...updates }));
   }, []);
 
@@ -43,8 +42,8 @@ export function useRoom3State() {
     setState(prev => ({ ...prev, error }));
   }, []);
 
-  const addParticipant = useCallback((participant: Omit<Room3Participant, 'id'>) => {
-    const newParticipant: Room3Participant = {
+  const addParticipant = useCallback((participant: Omit<RoomParticipant, 'id'>) => {
+    const newParticipant: RoomParticipant = {
       ...participant,
       id: `participant-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     };
@@ -63,7 +62,7 @@ export function useRoom3State() {
   }, []);
 
   const sendMessage = useCallback((content: string, sender: string = 'You') => {
-    const newMessage: Room3Message = {
+    const newMessage: RoomMessage = {
       id: `message-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       sender,
       content,

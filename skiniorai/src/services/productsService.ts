@@ -106,16 +106,22 @@ export const productsService = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const data = await response.json();
-      console.log('Featured products response:', data);
+      const responseData = await response.json();
+      console.log('Featured products response:', responseData);
       
-      // Ensure we always return an array
-      if (!Array.isArray(data)) {
-        console.warn('Featured products API returned non-array data:', data);
+      // Handle the API response structure with success/data format
+      let products: Product[] = [];
+      
+      if (responseData.success && Array.isArray(responseData.data)) {
+        products = responseData.data;
+      } else if (Array.isArray(responseData)) {
+        products = responseData;
+      } else {
+        console.warn('Featured products API returned unexpected data structure:', responseData);
         return [];
       }
       
-      return data;
+      return products;
     } catch (error) {
       console.error('Error fetching featured products:', error);
       // Return empty array instead of throwing to prevent component crashes

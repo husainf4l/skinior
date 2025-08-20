@@ -2,10 +2,14 @@
 
 import React from "react";
 import { useLocale } from "next-intl";
-import { TrackReferenceOrPlaceholder, VideoTrack, ParticipantTile } from "@livekit/components-react";
+import {
+  TrackReferenceOrPlaceholder,
+  VideoTrack,
+  ParticipantTile,
+} from "@livekit/components-react";
 import { LocalParticipant, Track } from "livekit-client";
 
-interface Room3LayoutProps {
+interface RoomLayoutProps {
   videoRef: React.RefObject<HTMLVideoElement | null>;
   isActive: boolean;
   participants: any[];
@@ -19,7 +23,7 @@ interface Room3LayoutProps {
   localParticipant?: LocalParticipant;
 }
 
-export function Room3Layout({
+export function RoomLayout({
   videoRef,
   isActive,
   participants,
@@ -31,7 +35,7 @@ export function Room3Layout({
   onViewChange,
   tracks = [],
   localParticipant,
-}: Room3LayoutProps) {
+}: RoomLayoutProps) {
   const locale = useLocale();
   const isRTL = locale === "ar";
 
