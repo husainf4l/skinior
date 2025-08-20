@@ -1,0 +1,88 @@
+livekit.plugins.google 2025-08-20 22:54:14,309 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:54:52,189 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:54:55,378 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:55:23,524 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:55:25,285 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:55:26,627 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:55:37,441 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:55:39,102 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:55:41,052 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:55:45,130 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:56:13,984 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:56:15,489 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:56:37,835 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:56:40,584 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:56:43,365 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:56:48,033 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:56:55,726 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:56:57,779 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:56:59,851 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:57:10,823 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:57:12,255 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:57:14,853 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.plugins.google 2025-08-20 22:57:16,680 - WARNING - truncate:555 - truncate is not supported by the Google Realtime API.
+livekit.agents 2025-08-20 22:57:21,332 - INFO - _on_participant_disconnected:430 - closing agent session due to participant disconnect (disable via `RoomInputOptions.close_on_disconnect=False`)
+livekit.agents 2025-08-20 22:57:21,333 - DEBUG - _forward_task:148 - stream closed
+livekit.agents 2025-08-20 22:57:21,337 - DEBUG - on_detached:78 - input stream detached
+livekit.agents 2025-08-20 22:57:21,337 - DEBUG - on_detached:78 - input stream detached
+livekit.plugins.google 2025-08-20 22:57:21,337 - DEBUG - _send_task:691 - send task finished.
+livekit.agents 2025-08-20 22:57:21,430 - DEBUG - _aclose_impl:654 - session closed
+livekit 2025-08-20 22:57:42,676 - WARNING - ffi_event_callback:167 - livekit::rtc_engine:453:livekit::rtc_engine - received session close: "signal client closed: \"stream closed\"" UnknownReason Resume
+livekit.agents 2025-08-20 22:57:42,680 - DEBUG - _run_job_task:278 - shutting down job task
+livekit.agents 2025-08-20 22:57:42,680 - INFO - _read_ipc_task:318 - process exiting
+utils.recording 2025-08-20 22:57:42,680 - INFO - log_session_end:93 - Session ended for room: playground-gfea-c0y0
+utils.recording 2025-08-20 22:57:42,680 - INFO - log_session_end:94 - Job ID: AJ_wCqccWkXFYTM
+utils.recording 2025-08-20 22:57:42,681 - INFO - log_session_end:95 - Recording URL: https://4wk-garage-media.s3.amazonaws.com/recordings/playground-gfea-c0y0_AJ_wCqccWkXFYTM.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA46ALPORV5VMEIW63%2F20250820%2Fme-central-1%2Fs3%2Faws4_request&X-Amz-Date=20250820T195235Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=b8817b8477cf53d694e0816d871da6da96e88f8d1d89b5ab8a72cc0847ca80a5
+utils.recording 2025-08-20 22:57:42,681 - INFO - log_session_end:96 - Session history logged (no local file saving)
+agent16.main 2025-08-20 22:57:42,681 - INFO - on_shutdown:202 - Shutdown callback invoked; cleaning up
+utils.transcript_saver 2025-08-20 22:57:42,681 - INFO - cleanup:258 - TranscriptSaver cleanup - saving any remaining transcripts
+utils.transcript_saver 2025-08-20 22:57:43,183 - INFO - cleanup:266 - TranscriptSaver cleanup completed
+agent16.main 2025-08-20 22:57:43,183 - INFO - save_video_to_backend:88 - Saving video URL to backend: https://rolevate.com/api/interviews/room/playground-gfea-c0y0/save-video
+agent16.main 2025-08-20 22:57:43,299 - ERROR - save_video_to_backend:96 - Failed to save video URL: 400 {"message":"Invalid room ID format: playground-gfea-c0y0","error":"Bad Request","statusCode":400}
+agent16.main 2025-08-20 22:57:43,299 - INFO - entrypoint:222 - Session completed
+livekit.agents 2025-08-20 22:57:43,300 - DEBUG - _close_http_ctx:57 - http_session(): closing the httpclient ctx
+livekit.agents 2025-08-20 22:57:43,300 - DEBUG - _new_session:20 - http_session(): creating a new httpclient ctx
+livekit.agents 2025-08-20 23:00:04,174 - INFO - aclose:576 - shutting down worker
+agent16.main 2025-08-20 23:41:46,658 - INFO - <module>:232 - 🔬 Starting agent16 on port 8008 - Advanced Skin Analysis Agent
+asyncio 2025-08-20 23:41:46,663 - DEBUG - __init__:64 - Using selector: KqueueSelector
+livekit.agents 2025-08-20 23:41:46,664 - DEV - run:84 - Watching /Users/al-husseinabdullah/Desktop/skinior/agent/agent16
+asyncio 2025-08-20 23:41:47,389 - DEBUG - __init__:64 - Using selector: KqueueSelector
+livekit.agents 2025-08-20 23:41:47,392 - INFO - run:390 - starting worker
+livekit.agents 2025-08-20 23:41:47,394 - ERROR - _worker_run:81 - worker failed
+Traceback (most recent call last):
+  File "/Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/livekit/agents/cli/_run.py", line 79, in _worker_run
+    await worker.run()
+  File "/Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/livekit/agents/worker.py", line 412, in run
+    await self._http_server.start()
+  File "/Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/livekit/agents/utils/http_server.py", line 27, in start
+    self._server = await self._loop.create_server(handler, self._host, self._port)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1622, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 48] error while attempting to bind on address ('0.0.0.0', 8008): [errno 48] address already in use
+livekit.agents 2025-08-20 23:41:47,398 - INFO - aclose:576 - shutting down worker
+agent16.main 2025-08-20 23:42:08,360 - INFO - <module>:232 - 🔬 Starting agent16 on port 8008 - Advanced Skin Analysis Agent
+asyncio 2025-08-20 23:42:08,364 - DEBUG - __init__:64 - Using selector: KqueueSelector
+livekit.agents 2025-08-20 23:42:08,365 - DEV - run:84 - Watching /Users/al-husseinabdullah/Desktop/skinior/agent/agent16
+asyncio 2025-08-20 23:42:09,128 - DEBUG - __init__:64 - Using selector: KqueueSelector
+livekit.agents 2025-08-20 23:42:09,131 - INFO - run:390 - starting worker
+livekit.agents 2025-08-20 23:42:09,134 - ERROR - _worker_run:81 - worker failed
+Traceback (most recent call last):
+  File "/Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/livekit/agents/cli/_run.py", line 79, in _worker_run
+    await worker.run()
+  File "/Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/livekit/agents/worker.py", line 412, in run
+    await self._http_server.start()
+  File "/Users/al-husseinabdullah/Desktop/skinior/agent/.venv/lib/python3.13/site-packages/livekit/agents/utils/http_server.py", line 27, in start
+    self._server = await self._loop.create_server(handler, self._host, self._port)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 1622, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 48] error while attempting to bind on address ('::', 8008, 0, 0): [errno 48] address already in use
+livekit.agents 2025-08-20 23:42:09,138 - INFO - aclose:576 - shutting down worker
+agent16.main 2025-08-20 23:47:05,747 - INFO - <module>:232 - 🔬 Starting agent16 on port 8016 - Advanced Skin Analysis Agent
+asyncio 2025-08-20 23:47:05,752 - DEBUG - __init__:64 - Using selector: KqueueSelector
+livekit.agents 2025-08-20 23:47:05,753 - DEV - run:84 - Watching /Users/al-husseinabdullah/Desktop/skinior/agent/agent16
+asyncio 2025-08-20 23:47:06,478 - DEBUG - __init__:64 - Using selector: KqueueSelector
+livekit.agents 2025-08-20 23:47:06,481 - INFO - run:390 - starting worker
+livekit.agents 2025-08-20 23:47:07,069 - INFO - _handle_register:801 - registered worker
+livekit.agents 2025-08-20 23:49:00,057 - INFO - aclose:576 - shutting down worker

@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { productsService, type Product } from "@/services/productsService";
 import ProductCard from "./ProductCard";
 
@@ -10,6 +11,8 @@ const PAGE_SIZE = 12;
 export default function ShopProductList({ locale }: { locale: string }) {
   const t = useTranslations();
   const isRTL = locale === "ar";
+  const searchParams = useSearchParams();
+  const isDealsPage = searchParams.get("deals") === "true";
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -80,6 +83,13 @@ export default function ShopProductList({ locale }: { locale: string }) {
   const filtered = useMemo(() => {
     let list = products.slice();
 
+    // Filter for deals if on deals page
+    if (isDealsPage) {
+      list = list.filter(
+        (p) => p.compareAtPrice && p.compareAtPrice > p.price && p.isActive
+      );
+    }
+
     if (query.trim()) {
       const q = query.trim().toLowerCase();
       list = list.filter((p) => {
@@ -122,7 +132,7 @@ export default function ShopProductList({ locale }: { locale: string }) {
     }
 
     return list;
-  }, [products, query, selectedCategory, sort]);
+  }, [products, query, selectedCategory, sort, isDealsPage]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
 
@@ -218,7 +228,13 @@ export default function ShopProductList({ locale }: { locale: string }) {
             id="sort"
             value={sort}
             onChange={(e) => {
-              setSort(e.target.value as "relevance" | "price_asc" | "price_desc" | "newest");
+              setSort(
+                e.target.value as
+                  | "relevance"
+                  | "price_asc"
+                  | "price_desc"
+                  | "newest"
+              );
               setPage(1);
             }}
             className="border border-gray-200 rounded-lg px-3 py-2 bg-white"
@@ -238,10 +254,28 @@ export default function ShopProductList({ locale }: { locale: string }) {
         </div>
       </div>
 
+      {/* Deals indicator */}
+      {isDealsPage && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-center gap-2">
+            <span className="text-red-600 font-medium">🔥</span>
+            <span className="text-red-800 font-medium">
+              {isRTL
+                ? "عرض المنتجات المخفضة فقط"
+                : "Showing discounted products only"}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Results info */}
       <div className="mb-4 text-sm text-gray-600">
-        {t("shop.resultsCount", { count: filtered.length }) ??
-          `${filtered.length} products found`}
+        {isDealsPage
+          ? isRTL
+            ? `${filtered.length} منتج مخفض`
+            : `${filtered.length} deals found`
+          : t("shop.resultsCount", { count: filtered.length }) ??
+            `${filtered.length} products found`}
       </div>
 
       {/* Grid */}

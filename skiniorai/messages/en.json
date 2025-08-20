@@ -175,6 +175,13 @@
     "subtitle": "Discover our most popular clinically-tested skincare products recommended by dermatological experts",
     "viewAll": "Shop All Products"
   },
+  "dealsForYou": {
+    "title": "Deals for You",
+    "subtitle": "Don't miss out on our exclusive discounts and special offers on premium skincare products",
+    "viewAll": "View All Deals",
+    "save": "Save",
+    "discount": "OFF"
+  },
   "aiAnalysis": {
     "title": "Revolutionary AI Skin Analysis",
     "subtitle": "3-Second Analysis, Lifetime Results",

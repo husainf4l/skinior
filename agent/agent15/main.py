@@ -3,7 +3,8 @@ Agent15 Main Entry Point
 
 Provides a clean, well-structured entrypoint for Agent15. Uses the
 simplified metadata format (aiPrompt + language) and starts a realtime
-AgentSession using the InterviewAgent implementation.
+AgentSession using the BeautyAdvisorAgent implementation for skin analysis
+and beauty consultation.
 """
 
 import asyncio
@@ -22,7 +23,7 @@ from livekit.agents import JobContext, AgentSession, RoomInputOptions, RoomOutpu
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, current_dir)
 
-from agent import InterviewAgent
+from agent import BeautyAdvisorAgent
 from utils.metadata import MetadataExtractor
 from utils.recording import RecordingManager
 from utils.transcript_saver import create_transcript_saver
@@ -164,7 +165,7 @@ async def entrypoint(ctx: JobContext):
         video_url_to_save = f"https://{bucket_name}.s3.{region}.amazonaws.com/recordings/{ctx.room.name}_{ctx.job.id}.mp4"
 
     # create agent
-    agent = InterviewAgent(
+    agent = BeautyAdvisorAgent(
         ctx=ctx,
         ai_prompt=metadata.get("aiPrompt", ""),
         interview_language=metadata.get(

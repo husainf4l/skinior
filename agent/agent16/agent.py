@@ -1,340 +1,459 @@
 """
-Agent16 - Computer Vision Skin Analysis Agent
-
-This agent provides real-time video processing with OpenCV for skin analysis,
-face detection, and overlay rendering.
+Advanced AI Agent for comprehensive skin analysis and beauty consultation.
+Agent16 provides outstanding, strong, and useful skin recommendations with user history integration.
 """
 
-import asyncio
 import logging
-import cv2
-import numpy as np
-from typing import Dict, Any, List, Tuple
+import json
+import asyncio
+from typing import Dict, List, Optional, Any
+from datetime import datetime
 from livekit.agents import Agent, JobContext
 from livekit.plugins import google, silero
-from livekit import rtc
+
+# Import Agent16 tools
+from tools.analysis_history import (
+    create_analysis_session,
+    save_analysis_data,
+    get_user_analysis_history
+)
+from tools.product_recommendations import (
+    create_product_recommendations,
+    get_available_products
+)
+from tools.skinior_integration import (
+    check_product_availability,
+    get_product_details_from_skinior
+)
 
 logger = logging.getLogger(__name__)
 
 
-class SkinAnalysisAgent(Agent):
+class AdvancedSkinAnalysisAgent(Agent):
     """
-    Computer Vision agent that performs real-time skin analysis with OpenCV.
-    Processes video frames, detects faces, analyzes skin, and overlays markers.
+    Advanced AI Skin Analysis Agent that provides comprehensive skin assessment,
+    detailed analysis, and outstanding personalized recommendations with user history integration.
+    
+    Features:
+    - Advanced vision-based skin condition analysis
+    - User metadata and history tracking
+    - Analysis history management
+    - Product recommendations with Skinior.com integration
+    - Personalized routine design with progress tracking
+    - Multi-language support with cultural considerations
     """
 
     def __init__(
         self,
         ctx: JobContext,
-        analysis_config: Dict[str, Any] = None,
+        ai_prompt: object = "",
+        interview_language: str = "english",
+        transcript_saver=None,
+        metadata: dict = None,
         **kwargs,
     ):
-        """Initialize the vision agent with OpenCV processors."""
+        """Initialize agent state and LLM instructions."""
         self.ctx = ctx
-        self.analysis_config = analysis_config or {}
+        self.ai_prompt = ai_prompt or ""
+        self.interview_language = (interview_language or "english").lower()
+        self.transcript_saver = transcript_saver
+        self.metadata = metadata or {}
+        
+        # User metadata extraction
+        self.user_id = self.metadata.get("userId") or self.metadata.get("user_id")
+        self.session_id = self.metadata.get("sessionId") or self.metadata.get("session_id")
+        self.analysis_id = None
+        
+        # Analysis tracking
+        self.analysis_data = {
+            "user_id": self.user_id,
+            "session_id": self.session_id,
+            "timestamp": datetime.utcnow().isoformat(),
+            "language": self.interview_language,
+            "skin_analysis": {},
+            "recommendations": [],
+            "routine": {},
+            "progress_tracking": {}
+        }
 
-        # Initialize OpenCV components
-        self.face_cascade = cv2.CascadeClassifier(
-            cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
-        )
-        self.skin_analyzer = SkinAnalyzer()
+        # Debug logging for metadata keys
+        logger.info(f"🔍 DEBUG - metadata keys: {list(self.metadata.keys())}")
+        logger.info(f"👤 User ID: {self.user_id}")
+        logger.info(f"🆔 Session ID: {self.session_id}")
 
-        # Video processing state
-        self.current_analysis = {}
-        self.frame_count = 0
-        self.analysis_interval = 5  # Analyze every 5 frames for performance
+        # Generate instructions from ai_prompt
+        instructions = self._build_instructions()
 
-        logger.info("Initializing SkinAnalysisAgent with OpenCV")
+        # Log agent configuration
+        logger.info("Creating Advanced Skin Analysis AI agent for comprehensive consultation")
+        logger.info(f"Language: {self.interview_language}")
+        logger.info(f"Instructions length: {len(instructions)} characters")
 
-        # Initialize base agent (without LLM for pure vision processing)
+        # Initialize parent Agent with real-time model
         super().__init__(
-            instructions="Process video frames for skin analysis",
+            instructions=instructions,
+            llm=google.beta.realtime.RealtimeModel(
+                model="gemini-2.0-flash-exp",
+                temperature=0.7,  # Slightly higher for more creative recommendations
+            ),
+            vad=silero.VAD.load(),
             **kwargs,
         )
 
+        logger.info("✅ AdvancedSkinAnalysisAgent initialized with Google Real-time model")
+
     async def on_enter(self):
-        """Set up video processing when agent enters the session."""
-        logger.info("SkinAnalysisAgent entering session - setting up video processing")
+        """Called when the agent enters the session - generate initial greeting."""
+        try:
+            # Create analysis session
+            await self._create_analysis_session()
+            
+            # Create an advanced skin analysis specific greeting based on language
+            if self.interview_language == "arabic":
+                greeting_instruction = f"""
+                ابدأ بتحية دافئة ومهنية كخبير تحليل البشرة المتقدم، ثم اشرح أنك ستقوم بتحليل شامل للبشرة يشمل:
+                1. تحديد نوع البشرة بدقة
+                2. تحليل المشاكل الرئيسية والثانوية
+                3. تقييم العوامل البيئية والوراثية
+                4. تقديم توصيات مخصصة ومتطورة
+                5. خطة متابعة شاملة
+                
+                اطلب من المستخدم أن يظهر وجهه بوضوح في إضاءة جيدة لبدء التحليل المتقدم.
+                
+                ملاحظة: هذا التحليل سيتم حفظه في سجل المستخدم للمتابعة المستقبلية.
+                """
+            else:
+                greeting_instruction = f"""
+                Start with a warm, professional greeting as an advanced skin analysis expert, then explain that you will conduct a comprehensive skin analysis including:
+                1. Precise skin type identification
+                2. Analysis of primary and secondary concerns
+                3. Assessment of environmental and genetic factors
+                4. Personalized and advanced recommendations
+                5. Comprehensive follow-up plan
+                
+                Ask the user to show their face clearly in good lighting to begin the advanced analysis.
+                
+                Note: This analysis will be saved to the user's history for future tracking.
+                """
 
-        # Subscribe to video track
-        async def on_track_subscribed(track: rtc.Track, participant: rtc.Participant):
-            if track.kind == rtc.TrackKind.KIND_VIDEO:
-                logger.info(f"Subscribed to video track from {participant.identity}")
-                await self._process_video_track(track)
+            self.session.generate_reply(instructions=greeting_instruction)
+            logger.info("✅ Initial greeting generated for advanced skin analysis")
+        except Exception as e:
+            logger.error(f"❌ Failed to generate initial greeting: {e}")
 
-        self.ctx.room.on("track_subscribed", on_track_subscribed)
+    async def _create_analysis_session(self):
+        """Create a new analysis session in the database."""
+        try:
+            if not self.user_id:
+                logger.warning("⚠️ No user ID provided, skipping analysis session creation")
+                return
+                
+            # Create analysis session using the tools
+            result = await create_analysis_session(
+                user_id=self.user_id,
+                session_id=self.session_id,
+                language=self.interview_language
+            )
+            
+            if "error" not in result:
+                self.analysis_id = result.get("id")
+                logger.info(f"✅ Analysis session created for user {self.user_id}")
+            else:
+                logger.error(f"❌ Failed to create analysis session: {result['error']}")
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to create analysis session: {e}")
 
-    async def _process_video_track(self, track: rtc.VideoTrack):
-        """Process incoming video frames with skin analysis."""
-        async for frame in track:
-            try:
-                # Convert LiveKit frame to OpenCV format
-                cv_frame = self._livekit_to_opencv(frame)
+    async def _save_analysis_data(self, analysis_type: str, data: Dict[str, Any]):
+        """Save analysis data to the database."""
+        try:
+            if not self.user_id or not self.analysis_id:
+                return
+                
+            # Save analysis data using the tools
+            result = await save_analysis_data(
+                user_id=self.user_id,
+                analysis_id=self.analysis_id,
+                analysis_type=analysis_type,
+                data=data
+            )
+            
+            if "error" not in result:
+                logger.info(f"✅ Analysis data saved: {analysis_type}")
+            else:
+                logger.error(f"❌ Failed to save analysis data: {result['error']}")
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to save analysis data: {e}")
 
-                # Perform analysis (throttled for performance)
-                if self.frame_count % self.analysis_interval == 0:
-                    analysis_results = await self._analyze_frame(cv_frame)
-                    self.current_analysis = analysis_results
+    async def _get_user_analysis_history(self) -> List[Dict[str, Any]]:
+        """Retrieve user's analysis history."""
+        try:
+            if not self.user_id:
+                return []
+                
+            # Get user analysis history using the tools
+            history = await get_user_analysis_history(user_id=self.user_id, limit=5)
+            
+            logger.info(f"✅ Retrieved {len(history)} analysis records for user {self.user_id}")
+            return history
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to get analysis history: {e}")
+            return []
 
-                # Apply overlays with current analysis
-                processed_frame = self._apply_overlays(cv_frame, self.current_analysis)
+    async def _get_available_products(self, skin_type: str, concerns: List[str]) -> List[Dict[str, Any]]:
+        """Get available products from Skinior.com based on analysis."""
+        try:
+            # Get available products using the tools
+            products = await get_available_products(
+                skin_type=skin_type,
+                concerns=concerns,
+                budget_range="all"
+            )
+            
+            logger.info(f"✅ Retrieved {len(products)} available products for {skin_type} skin")
+            return products
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to get available products: {e}")
+            return []
 
-                # Convert back and publish
-                output_frame = self._opencv_to_livekit(processed_frame)
-                await self._publish_frame(output_frame)
+    async def _create_product_recommendations(self, skin_analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Create personalized product recommendations."""
+        try:
+            if not self.user_id or not self.analysis_id:
+                return []
+                
+            # Create product recommendations using the tools
+            recommendations = await create_product_recommendations(
+                user_id=self.user_id,
+                analysis_id=self.analysis_id,
+                skin_analysis=skin_analysis
+            )
+            
+            logger.info(f"✅ Created {len(recommendations)} product recommendations for user {self.user_id}")
+            return recommendations
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to create product recommendations: {e}")
+            return []
 
-                self.frame_count += 1
-
-            except Exception as e:
-                logger.error(f"Error processing video frame: {e}")
-
-    async def _analyze_frame(self, frame: np.ndarray) -> Dict[str, Any]:
-        """Perform comprehensive skin analysis on a frame."""
-        analysis = {
-            "faces": [],
-            "skin_health": {},
-            "recommendations": [],
-            "timestamp": asyncio.get_event_loop().time(),
-        }
-
-        # Detect faces
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = self.face_cascade.detectMultiScale(gray, 1.1, 4)
-
-        for x, y, w, h in faces:
-            face_roi = frame[y : y + h, x : x + w]
-
-            # Analyze skin in face region
-            skin_analysis = await self.skin_analyzer.analyze_skin_region(face_roi)
-
-            face_data = {
-                "bbox": (x, y, w, h),
-                "skin_tone": skin_analysis.get("skin_tone"),
-                "texture_score": skin_analysis.get("texture_score", 0),
-                "hydration_level": skin_analysis.get("hydration_level", 0),
-                "problem_areas": skin_analysis.get("problem_areas", []),
-                "landmarks": self._detect_face_landmarks(face_roi),
-            }
-
-            analysis["faces"].append(face_data)
-
-        return analysis
-
-    def _apply_overlays(
-        self, frame: np.ndarray, analysis: Dict[str, Any]
-    ) -> np.ndarray:
-        """Apply analysis overlays and markers to the frame."""
-        overlay_frame = frame.copy()
-
-        for face in analysis.get("faces", []):
-            x, y, w, h = face["bbox"]
-
-            # Draw face bounding box
-            cv2.rectangle(overlay_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-            # Draw skin analysis nodes
-            landmarks = face.get("landmarks", [])
-            for point in landmarks:
-                cv2.circle(overlay_frame, point, 3, (255, 0, 0), -1)
-
-            # Draw problem areas
-            for problem in face.get("problem_areas", []):
-                px, py, pw, ph = problem.get("region", (0, 0, 0, 0))
-                cv2.rectangle(
-                    overlay_frame,
-                    (x + px, y + py),
-                    (x + px + pw, y + py + ph),
-                    (0, 0, 255),
-                    1,
-                )
-
-            # Add text overlays
-            self._add_text_overlays(overlay_frame, face, (x, y))
-
-        return overlay_frame
-
-    def _add_text_overlays(
-        self, frame: np.ndarray, face_data: Dict, position: Tuple[int, int]
-    ):
-        """Add text information overlays."""
-        x, y = position
-
-        # Skin tone
-        skin_tone = face_data.get("skin_tone", "Unknown")
-        cv2.putText(
-            frame,
-            f"Tone: {skin_tone}",
-            (x, y - 10),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
-            (255, 255, 255),
-            1,
+    def _build_instructions(self) -> str:
+        """Build comprehensive instructions for advanced skin analysis."""
+        # Enhanced prompt for outstanding skin analysis with user history
+        prompt_text = (
+            "You are an EXPERT dermatologist and advanced skin analysis specialist with 20+ years of experience. "
+            "Your mission is to provide OUTSTANDING, STRONG, and USEFUL skin recommendations that transform the user's skin health.\n\n"
+            
+            "COMPREHENSIVE ANALYSIS FRAMEWORK:\n"
+            "1. **ADVANCED VISION ANALYSIS**: Use your superior vision capabilities to analyze:\n"
+            "   - Skin type (oily, dry, combination, sensitive, normal, or mixed)\n"
+            "   - Texture and pore size\n"
+            "   - Pigmentation patterns and sun damage\n"
+            "   - Fine lines, wrinkles, and aging signs\n"
+            "   - Acne, inflammation, and blemishes\n"
+            "   - Skin tone and undertones\n"
+            "   - Environmental damage indicators\n\n"
+            
+            "2. **DETAILED CONCERN MAPPING**: Identify and prioritize:\n"
+            "   - Primary concerns (most urgent)\n"
+            "   - Secondary concerns (important but less urgent)\n"
+            "   - Preventive concerns (future issues to address)\n"
+            "   - Root causes (genetic, environmental, lifestyle)\n\n"
+            
+            "3. **OUTSTANDING RECOMMENDATIONS**: Provide:\n"
+            "   - **Scientifically-backed products** with specific ingredients\n"
+            "   - **Application techniques** and timing\n"
+            "   - **Lifestyle modifications** (diet, sleep, stress management)\n"
+            "   - **Environmental protection** strategies\n"
+            "   - **Professional treatments** to consider\n"
+            "   - **Expected timeline** for results\n\n"
+            
+            "4. **PERSONALIZED ROUTINE DESIGN**: Create:\n"
+            "   - Morning routine (cleansing, treatment, protection)\n"
+            "   - Evening routine (cleansing, treatment, repair)\n"
+            "   - Weekly treatments and exfoliation\n"
+            "   - Monthly maintenance and adjustments\n\n"
+            
+            "5. **PROGRESS TRACKING**: Establish:\n"
+            "   - 2-week check-in for initial results\n"
+            "   - 1-month comprehensive review\n"
+            "   - 3-month transformation assessment\n"
+            "   - 6-month maintenance plan\n\n"
+            
+            "USER HISTORY INTEGRATION:\n"
+            "   - Reference previous analyses if available\n"
+            "   - Track progress over time\n"
+            "   - Adjust recommendations based on history\n"
+            "   - Provide continuity in care\n\n"
+            
+            "PRODUCT RECOMMENDATIONS:\n"
+            "   - Suggest specific products from Skinior.com\n"
+            "   - Include ingredient analysis\n"
+            "   - Provide usage instructions\n"
+            "   - Consider budget and availability\n\n"
+            
+            "COMMUNICATION STYLE:\n"
+            "   - Be encouraging and positive while being honest about concerns\n"
+            "   - Use scientific terminology but explain in simple terms\n"
+            "   - Provide specific, actionable advice\n"
+            "   - Address both immediate and long-term skin health\n"
+            "   - Consider cultural and regional factors\n"
+            "   - Be thorough but concise in explanations\n\n"
+            
+            "RECOMMENDATION QUALITY STANDARDS:\n"
+            "   - Every recommendation must be evidence-based\n"
+            "   - Include specific product categories and key ingredients\n"
+            "   - Provide clear usage instructions and frequency\n"
+            "   - Consider budget and accessibility\n"
+            "   - Address potential side effects and precautions\n"
+            "   - Include alternatives for different skin sensitivities\n\n"
+            
+            "Your goal is to provide such outstanding advice that the user feels confident and excited about their skin transformation journey."
         )
-
-        # Texture score
-        texture = face_data.get("texture_score", 0)
-        cv2.putText(
-            frame,
-            f"Texture: {texture:.1f}/10",
-            (x, y - 25),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
-            (255, 255, 255),
-            1,
-        )
-
-        # Hydration level
-        hydration = face_data.get("hydration_level", 0)
-        cv2.putText(
-            frame,
-            f"Hydration: {hydration:.1f}%",
-            (x, y - 40),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
-            (255, 255, 255),
-            1,
-        )
-
-    def _detect_face_landmarks(self, face_roi: np.ndarray) -> List[Tuple[int, int]]:
-        """Detect facial landmarks for analysis points."""
-        # Simplified landmark detection - in production, use dlib or mediapipe
-        gray = cv2.cvtColor(face_roi, cv2.COLOR_BGR2GRAY)
-        h, w = gray.shape
-
-        # Generate analysis points grid
-        landmarks = []
-        for i in range(3, 8):  # rows
-            for j in range(3, 8):  # cols
-                x = int(w * j / 10)
-                y = int(h * i / 10)
-                landmarks.append((x, y))
-
-        return landmarks
-
-    def _livekit_to_opencv(self, frame) -> np.ndarray:
-        """Convert LiveKit video frame to OpenCV format."""
-        # This is a placeholder - actual implementation depends on LiveKit frame format
-        # You'll need to handle the specific format conversion
-        return np.array(frame)  # Simplified
-
-    def _opencv_to_livekit(self, frame: np.ndarray):
-        """Convert OpenCV frame to LiveKit format."""
-        # This is a placeholder - actual implementation depends on LiveKit frame format
-        return frame  # Simplified
-
-    async def _publish_frame(self, frame):
-        """Publish processed frame back to the room."""
-        # Implement frame publishing to LiveKit room
-        pass
-
-
-class SkinAnalyzer:
-    """Dedicated skin analysis processor using computer vision techniques."""
-
-    def __init__(self):
-        self.color_analyzer = ColorAnalyzer()
-        self.texture_analyzer = TextureAnalyzer()
-
-    async def analyze_skin_region(self, roi: np.ndarray) -> Dict[str, Any]:
-        """Perform comprehensive skin analysis on a region of interest."""
-
-        # Color analysis
-        skin_tone = self.color_analyzer.detect_skin_tone(roi)
-
-        # Texture analysis
-        texture_score = self.texture_analyzer.calculate_texture_score(roi)
-
-        # Hydration estimation (simplified)
-        hydration_level = self._estimate_hydration(roi)
-
-        # Problem area detection
-        problem_areas = self._detect_problem_areas(roi)
-
-        return {
-            "skin_tone": skin_tone,
-            "texture_score": texture_score,
-            "hydration_level": hydration_level,
-            "problem_areas": problem_areas,
-        }
-
-    def _estimate_hydration(self, roi: np.ndarray) -> float:
-        """Estimate skin hydration based on visual characteristics."""
-        # Simplified hydration estimation based on brightness and contrast
-        gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-        brightness = np.mean(gray)
-        contrast = np.std(gray)
-
-        # Basic hydration score (0-100)
-        hydration = min(100, max(0, (brightness / 255) * 100 - (contrast / 255) * 50))
-        return hydration
-
-    def _detect_problem_areas(self, roi: np.ndarray) -> List[Dict[str, Any]]:
-        """Detect potential skin problem areas."""
-        problems = []
-
-        # Convert to different color spaces for analysis
-        hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
-
-        # Detect dark spots (simplified)
-        lower_dark = np.array([0, 0, 0])
-        upper_dark = np.array([180, 255, 50])
-        dark_mask = cv2.inRange(hsv, lower_dark, upper_dark)
-
-        contours, _ = cv2.findContours(
-            dark_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-        )
-
-        for contour in contours:
-            if cv2.contourArea(contour) > 50:  # Filter small areas
-                x, y, w, h = cv2.boundingRect(contour)
-                problems.append(
-                    {
-                        "type": "dark_spot",
-                        "region": (x, y, w, h),
-                        "severity": min(100, cv2.contourArea(contour) / 10),
-                    }
-                )
-
-        return problems
-
-
-class ColorAnalyzer:
-    """Analyzes skin color and tone."""
-
-    def detect_skin_tone(self, roi: np.ndarray) -> str:
-        """Detect skin tone category."""
-        # Convert to LAB color space for better skin tone analysis
-        lab = cv2.cvtColor(roi, cv2.COLOR_BGR2LAB)
-
-        # Calculate average L, A, B values
-        l_mean = np.mean(lab[:, :, 0])
-        a_mean = np.mean(lab[:, :, 1])
-        b_mean = np.mean(lab[:, :, 2])
-
-        # Simplified skin tone classification
-        if l_mean > 180:
-            return "Very Light"
-        elif l_mean > 150:
-            return "Light"
-        elif l_mean > 120:
-            return "Medium"
-        elif l_mean > 90:
-            return "Dark"
+        
+        # If ai_prompt is a dict, select language-specific entry
+        if isinstance(self.ai_prompt, dict):
+            lang = self.interview_language
+            if lang in self.ai_prompt and isinstance(self.ai_prompt[lang], str):
+                prompt_text = self.ai_prompt[lang].strip()
+            elif "english" in self.ai_prompt and isinstance(
+                self.ai_prompt["english"], str
+            ):
+                prompt_text = self.ai_prompt["english"].strip()
+            else:
+                for v in self.ai_prompt.values():
+                    if isinstance(v, str) and v.strip():
+                        prompt_text = v.strip()
+                        break
         else:
-            return "Very Dark"
+            try:
+                prompt_text = str(self.ai_prompt or "").strip()
+            except Exception:
+                prompt_text = ""
 
+        if not prompt_text:
+            # Use comprehensive advanced skin analysis instructions by default
+            prompt_text = (
+                "You are an EXPERT dermatologist and advanced skin analysis specialist with 20+ years of experience. "
+                "Your mission is to provide OUTSTANDING, STRONG, and USEFUL skin recommendations that transform the user's skin health.\n\n"
+                
+                "COMPREHENSIVE ANALYSIS FRAMEWORK:\n"
+                "1. **ADVANCED VISION ANALYSIS**: Use your superior vision capabilities to analyze:\n"
+                "   - Skin type (oily, dry, combination, sensitive, normal, or mixed)\n"
+                "   - Texture and pore size\n"
+                "   - Pigmentation patterns and sun damage\n"
+                "   - Fine lines, wrinkles, and aging signs\n"
+                "   - Acne, inflammation, and blemishes\n"
+                "   - Skin tone and undertones\n"
+                "   - Environmental damage indicators\n\n"
+                
+                "2. **DETAILED CONCERN MAPPING**: Identify and prioritize:\n"
+                "   - Primary concerns (most urgent)\n"
+                "   - Secondary concerns (important but less urgent)\n"
+                "   - Preventive concerns (future issues to address)\n"
+                "   - Root causes (genetic, environmental, lifestyle)\n\n"
+                
+                "3. **OUTSTANDING RECOMMENDATIONS**: Provide:\n"
+                "   - **Scientifically-backed products** with specific ingredients\n"
+                "   - **Application techniques** and timing\n"
+                "   - **Lifestyle modifications** (diet, sleep, stress management)\n"
+                "   - **Environmental protection** strategies\n"
+                "   - **Professional treatments** to consider\n"
+                "   - **Expected timeline** for results\n\n"
+                
+                "4. **PERSONALIZED ROUTINE DESIGN**: Create:\n"
+                "   - Morning routine (cleansing, treatment, protection)\n"
+                "   - Evening routine (cleansing, treatment, repair)\n"
+                "   - Weekly treatments and exfoliation\n"
+                "   - Monthly maintenance and adjustments\n\n"
+                
+                "5. **PROGRESS TRACKING**: Establish:\n"
+                "   - 2-week check-in for initial results\n"
+                "   - 1-month comprehensive review\n"
+                "   - 3-month transformation assessment\n"
+                "   - 6-month maintenance plan\n\n"
+                
+                "USER HISTORY INTEGRATION:\n"
+                "   - Reference previous analyses if available\n"
+                "   - Track progress over time\n"
+                "   - Adjust recommendations based on history\n"
+                "   - Provide continuity in care\n\n"
+                
+                "PRODUCT RECOMMENDATIONS:\n"
+                "   - Suggest specific products from Skinior.com\n"
+                "   - Include ingredient analysis\n"
+                "   - Provide usage instructions\n"
+                "   - Consider budget and availability\n\n"
+                
+                "COMMUNICATION STYLE:\n"
+                "   - Be encouraging and positive while being honest about concerns\n"
+                "   - Use scientific terminology but explain in simple terms\n"
+                "   - Provide specific, actionable advice\n"
+                "   - Address both immediate and long-term skin health\n"
+                "   - Consider cultural and regional factors\n"
+                "   - Be thorough but concise in explanations\n\n"
+                
+                "RECOMMENDATION QUALITY STANDARDS:\n"
+                "   - Every recommendation must be evidence-based\n"
+                "   - Include specific product categories and key ingredients\n"
+                "   - Provide clear usage instructions and frequency\n"
+                "   - Consider budget and accessibility\n"
+                "   - Address potential side effects and precautions\n"
+                "   - Include alternatives for different skin sensitivities\n\n"
+                
+                "Your goal is to provide such outstanding advice that the user feels confident and excited about their skin transformation journey."
+            )
 
-class TextureAnalyzer:
-    """Analyzes skin texture and smoothness."""
+        # For Arabic prompts, prefer an Arabic wrapper
+        if self.interview_language == "arabic":
+            return f"التعليمات المتقدمة:\n{prompt_text}"
 
-    def calculate_texture_score(self, roi: np.ndarray) -> float:
-        """Calculate skin texture quality score (0-10)."""
-        gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+        return f"ADVANCED INSTRUCTIONS:\n{prompt_text}"
 
-        # Use Laplacian variance to measure texture
-        laplacian_var = cv2.Laplacian(gray, cv2.CV_64F).var()
+    async def _on_llm_becoming_idle(self):
+        """Hook to check for natural conclusion and end session if detected."""
+        try:
+            history = self.get_chat_history()
+            if history:
+                last_message = history[-1]
+                # Enhanced conclusion phrases for skin analysis
+                conclusion_phrases = [
+                    "thank you for your time",
+                    "this concludes our analysis",
+                    "your comprehensive skin analysis is complete",
+                    "see you in two weeks",
+                    "follow-up appointment scheduled",
+                    "your transformation journey begins",
+                    "remember to track your progress",
+                    "شكراً لوقتك",
+                    "تحليل البشرة الشامل مكتمل",
+                    "نراك خلال أسبوعين",
+                    "موعد المتابعة محدد",
+                ]
 
-        # Normalize to 0-10 scale (lower variance = smoother = higher score)
-        texture_score = max(0, min(10, 10 - (laplacian_var / 100)))
+                message_content = last_message.content.lower()
+                if any(phrase in message_content for phrase in conclusion_phrases):
+                    logger.info(
+                        f"Agent detected conclusion - ending session. Last message: {last_message.content[:100]}..."
+                    )
+                    
+                    # Save final analysis data
+                    await self._save_analysis_data("session_complete", {
+                        "conclusion": last_message.content,
+                        "session_duration": "completed"
+                    })
+                    
+                    import asyncio
+                    await asyncio.sleep(1)
+                    try:
+                        self.ctx.task.set_result("Advanced skin analysis completed")
+                    except Exception:
+                        pass
+                    await self.ctx.disconnect()
+                    return
+        except Exception as e:
+            logger.error(f"Error checking for conclusion: {e}")
 
-        return texture_score
+        return await super()._on_llm_becoming_idle()

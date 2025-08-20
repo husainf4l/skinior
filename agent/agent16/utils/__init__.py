@@ -1,3 +1,3 @@
 """
-Init file for utils package
+Utils package for agent10.
 """

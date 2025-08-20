@@ -112,6 +112,38 @@ export const productsService = {
     }
   },
 
+  async getDiscountedProducts(): Promise<Product[]> {
+    try {
+      // For now, fetch all products and filter for discounted ones
+      // Later, the backend can provide a dedicated endpoint
+      const response = await fetch(`${API_BASE_URL}/products`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data: Product[] = await response.json();
+      // Filter products that have compareAtPrice (indicating a discount)
+      const discountedProducts = data.filter(product => 
+        product.compareAtPrice && 
+        product.compareAtPrice > product.price &&
+        product.isActive
+      );
+      
+      // Sort by discount percentage (highest first) and limit to 4
+      return discountedProducts
+        .sort((a, b) => {
+          const discountA = a.compareAtPrice ? ((a.compareAtPrice - a.price) / a.compareAtPrice) * 100 : 0;
+          const discountB = b.compareAtPrice ? ((b.compareAtPrice - b.price) / b.compareAtPrice) * 100 : 0;
+          return discountB - discountA;
+        })
+        .slice(0, 4);
+    } catch (error) {
+      console.error('Error fetching discounted products:', error);
+      throw error;
+    }
+  },
+
   async getProducts(): Promise<Product[]> {
     try {
       const response = await fetch(`${API_BASE_URL}/products`);
