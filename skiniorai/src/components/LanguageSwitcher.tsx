@@ -15,7 +15,25 @@ export default function LanguageSwitcher() {
     if (locale === currentLocale) return;
 
     startTransition(() => {
-      router.push(pathname, { locale });
+      try {
+        // Special handling for blog post pages
+        if (pathname.includes('/blog/') && params.id) {
+          // For blog posts, explicitly construct the path with the ID
+          const blogId = params.id as string;
+          router.push(`/blog/${blogId}`, { locale });
+        } else {
+          // Use the pathname directly for other routes
+          router.push(pathname, { locale });
+        }
+      } catch (error) {
+        console.error('Language switch error:', error);
+        // Fallback: try to navigate to the blog listing page
+        if (pathname.includes('/blog/')) {
+          router.push('/blog', { locale });
+        } else {
+          router.push('/', { locale });
+        }
+      }
     });
   };
 

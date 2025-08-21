@@ -22,9 +22,13 @@ interface StreamResponse {
 
 interface ChatInterfaceProps {
   onClose: () => void;
+  isFloating?: boolean;
 }
 
-export default function ChatInterface({ onClose }: ChatInterfaceProps) {
+export default function ChatInterface({
+  onClose,
+  isFloating = false,
+}: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +38,7 @@ export default function ChatInterface({ onClose }: ChatInterfaceProps) {
 
   // Load thread_id from localStorage on component mount
   useEffect(() => {
-    const savedThreadId = localStorage.getItem('chat_thread_id');
+    const savedThreadId = localStorage.getItem("chat_thread_id");
     if (savedThreadId) {
       setThreadId(savedThreadId);
     }
@@ -43,7 +47,7 @@ export default function ChatInterface({ onClose }: ChatInterfaceProps) {
   // Save thread_id to localStorage when it changes
   useEffect(() => {
     if (threadId) {
-      localStorage.setItem('chat_thread_id', threadId);
+      localStorage.setItem("chat_thread_id", threadId);
     }
   }, [threadId]);
 
@@ -57,7 +61,7 @@ export default function ChatInterface({ onClose }: ChatInterfaceProps) {
 
   const handleStreamResponse = (data: StreamResponse, event: string) => {
     console.log("Stream event:", event, "Data:", data);
-    
+
     if (event === "start") {
       if (data.thread_id) {
         setThreadId(data.thread_id);
@@ -89,7 +93,7 @@ export default function ChatInterface({ onClose }: ChatInterfaceProps) {
         ...prev,
         {
           id: Date.now().toString(),
-          content: `Error: ${data.error || 'An error occurred'}`,
+          content: `Error: ${data.error || "An error occurred"}`,
           isUser: false,
           timestamp: new Date(),
         },
@@ -156,7 +160,7 @@ export default function ChatInterface({ onClose }: ChatInterfaceProps) {
 
         for (const line of lines) {
           const trimmedLine = line.trim();
-          
+
           if (trimmedLine === "" || trimmedLine === "data: [DONE]") {
             continue;
           }
@@ -173,7 +177,7 @@ export default function ChatInterface({ onClose }: ChatInterfaceProps) {
                 setIsLoading(false);
                 break;
               }
-              
+
               const data = JSON.parse(dataStr);
               handleStreamResponse(data, currentEvent || "content");
             } catch (e) {
@@ -207,7 +211,7 @@ export default function ChatInterface({ onClose }: ChatInterfaceProps) {
   const clearConversation = () => {
     setMessages([]);
     setThreadId(null);
-    localStorage.removeItem('chat_thread_id');
+    localStorage.removeItem("chat_thread_id");
     currentAssistantMessageRef.current = "";
   };
 
@@ -236,12 +240,12 @@ export default function ChatInterface({ onClose }: ChatInterfaceProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {process.env.NODE_ENV === 'development' && threadId && (
+        {process.env.NODE_ENV === "development" && threadId && (
           <div className="text-xs text-gray-400 border-b pb-2">
             Thread ID: {threadId}
           </div>
         )}
-        
+
         {messages.length === 0 && (
           <div className="text-gray-500 text-center">
             Start a conversation with the AI assistant

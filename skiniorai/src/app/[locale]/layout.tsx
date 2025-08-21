@@ -7,7 +7,7 @@ import { setRequestLocale } from "next-intl/server";
 import { AuthProvider } from "../../contexts/AuthContext";
 import type { Metadata } from "next";
 import ConditionalNavigation from "../../components/ConditionalNavigation";
-import FloatingLayer from "../../components/FloatingLayer";
+import FloatingChatWidget from "@/components/chat/FloatingChatWidget";
 
 export const dynamic = "force-static";
 
@@ -107,11 +107,14 @@ export default async function LocaleLayout({
           content="width=device-width, initial-scale=1, viewport-fit=cover"
         />
 
+        {/* Floating Chat Widget - Independent Script */}
+        {/* <script async src="/floating-chat.js"></script> */}
+
         {/* Critical CSS inline for LCP and mobile Speed Index */}
         <style
           dangerouslySetInnerHTML={{
             __html: `
-            .hero-section{min-height:85vh;contain:layout;}
+            .hero-section{min-height:85vh;}
             @media (max-width: 768px) {
               .hero-section{min-height:90vh;padding:1rem;}
               *{animation-duration:0.3s!important;transition-duration:0.3s!important;}
@@ -129,9 +132,11 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
             <ConditionalNavigation>{children}</ConditionalNavigation>
-            <FloatingLayer />
           </AuthProvider>
         </NextIntlClientProvider>
+        {/* Ensure a body-level container exists so the floating widget cannot be nested in other layout nodes */}
+        <div id="skinior-floating-widget" />
+        <FloatingChatWidget />
       </body>
     </html>
   );

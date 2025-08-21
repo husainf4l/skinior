@@ -24,6 +24,7 @@ const Navbar = () => {
     { name: t("navigation.skinAnalysis"), href: "/skin-analysis" },
     { name: t("navigation.products"), href: "/products" },
     { name: t("navigation.routines"), href: "/routines" },
+    { name: t("navigation.blog"), href: "/blog" },
   ];
 
   const toggleMobileMenu = useCallback(() => {
