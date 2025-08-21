@@ -1,0 +1,38 @@
+# FastAPI and web server
+fastapi==0.116.1
+uvicorn[standard]==0.35.0
+pydantic==2.11.7
+
+# LangChain and AI
+langchain==0.3.27
+langchain-core==0.3.72
+langchain-openai==0.3.28
+langchain-experimental==0.3.4
+langchain-community==0.3.27
+langgraph==0.6.1
+
+# HTTP client
+aiohttp==3.12.15
+httpx==0.28.1
+
+# JWT Authentication
+PyJWT==2.10.0
+
+# Configuration and environment
+pydantic-settings==2.10.1
+python-dotenv==1.1.1
+
+# Logging and monitoring
+structlog==25.4.0
+
+# Data science and analysis
+pandas==2.2.2
+numpy==1.26.4
+
+# PostgreSQL support
+psycopg2-binary==2.9.10
+langgraph-checkpoint-postgres==2.0.23
+
+# Development and testing
+pytest==8.4.1
+pytest-asyncio==1.1.0

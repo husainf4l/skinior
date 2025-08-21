@@ -7,6 +7,7 @@ import { setRequestLocale } from "next-intl/server";
 import { AuthProvider } from "../../contexts/AuthContext";
 import type { Metadata } from "next";
 import ConditionalNavigation from "../../components/ConditionalNavigation";
+import FloatingLayer from "../../components/FloatingLayer";
 
 export const dynamic = "force-static";
 
@@ -128,6 +129,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
             <ConditionalNavigation>{children}</ConditionalNavigation>
+            <FloatingLayer />
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

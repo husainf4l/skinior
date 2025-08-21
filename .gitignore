@@ -9,6 +9,3 @@ dist/
 .env.test
 .env.production
 .env*.local
-
-# LiveKit Server (self-hosted)
-livekit-server/

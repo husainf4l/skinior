@@ -254,3 +254,46 @@ img, picture, video, canvas, svg {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* Floating Chat Button Styles */
+#floating-ui-layer {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none !important;
+  z-index: 999999 !important;
+}
+
+#floating-chat-portal {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none !important;
+  z-index: 999999 !important;
+}
+
+.floating-chat-button {
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  z-index: 999999 !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure the floating chat is always visible above everything */
+.floating-chat-button button {
+  position: relative !important;
+  z-index: 1000000 !important;
+}
+
+/* Mobile responsive positioning */
+@media (max-width: 768px) {
+  .floating-chat-button {
+    bottom: 20px !important;
+    right: 20px !important;
+  }
+}
