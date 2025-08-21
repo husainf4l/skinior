@@ -12,10 +12,9 @@ import {
 } from "@livekit/components-react";
 import { Track } from "livekit-client";
 import { RoomLayout } from "../components/RoomLayout";
-import { useRoomState } from "../hooks/useRoomState";
 import { useAuth } from "@/contexts/AuthContext";
 import { authService } from "@/services/authService";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 interface RoomProps {
   params: Promise<{
@@ -32,8 +31,8 @@ export default function Room({ params }: RoomProps) {
   const { user, isAuthenticated, logout } = useAuth();
   const locale = useLocale();
   const isRTL = locale === "ar";
+  const t = useTranslations('room');
   const videoRef = useRef<HTMLVideoElement>(null);
-  const cameraTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Permission testing states
   const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
@@ -51,17 +50,9 @@ export default function Room({ params }: RoomProps) {
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
 
-  const {
-    isActive,
-    participants,
-    messages,
-    currentView,
-    error,
-    updateState,
-    updateError,
-    sendMessage,
-    setCurrentView,
-  } = useRoomState();
+  // Simplified room state for AI session
+  const [currentView, setCurrentView] = useState("camera");
+  const [error, setError] = useState<string | null>(null);
 
   // Check if room has been created (has token/connection details)
   const hasRoomConnection =
@@ -133,409 +124,416 @@ export default function Room({ params }: RoomProps) {
       return;
     }
 
+    // Prevent multiple connection attempts
+    if (isConnecting || isConnected) {
+      console.log("Connection already in progress or established");
+      return;
+    }
+
     try {
       setIsConnecting(true);
       setConnectionError(null);
       console.log("Connecting to room...");
 
-      // Setup room event listeners
-      room.removeAllListeners();
+      // Setup room event listeners (only if not already set)
+      if (room.listenerCount("connected") === 0) {
+        room.on("connected", () => {
+          console.log("Room connected");
+          setIsConnected(true);
+          setIsConnecting(false);
+          setAnalysisStarted(true);
+        });
 
-      room.on("connected", () => {
-        console.log("✅ Room connected");
-        setIsConnected(true);
-        setIsConnecting(false);
-        updateState({ isActive: true });
-      });
+        room.on("disconnected", (reason) => {
+          console.log("Room disconnected:", reason);
+          // Only update state if it wasn't a manual disconnect
+          if (reason?.toString() !== "CLIENT_INITIATED") {
+            setIsConnected(false);
+            setIsConnecting(false);
+          }
+        });
 
-      room.on("disconnected", () => {
-        console.log("❌ Room disconnected");
-        setIsConnected(false);
-        setIsConnecting(false);
-        updateState({ isActive: false });
-      });
+        room.on("reconnecting", () => {
+          console.log("Reconnecting to room...");
+          setIsConnecting(true);
+        });
 
-      room.on("reconnecting", () => {
-        console.log("🔄 Reconnecting to room...");
-        setIsConnecting(true);
-      });
+        room.on("reconnected", () => {
+          console.log("Room reconnected");
+          setIsConnected(true);
+          setIsConnecting(false);
+        });
+      }
 
-      room.on("reconnected", () => {
-        console.log("✅ Room reconnected");
-        setIsConnected(true);
-        setIsConnecting(false);
-      });
-
-      // Connect to the room
+      // Connect to the room with proper error handling
       await room.connect(serverUrl, token, {
         autoSubscribe: true,
+        maxRetries: 3,
       });
     } catch (error) {
       console.error("Failed to connect to room:", error);
-      setConnectionError("Failed to connect to room");
+      setConnectionError("Failed to connect to room. Please check your connection.");
       setIsConnecting(false);
     }
   };
 
-  // Initialize room connection if available
+  // Auto-test devices on page load
+  useEffect(() => {
+    testDevices();
+  }, []);
+
+  // Auto-connect when we have connection details
   useEffect(() => {
     if (hasRoomConnection && !isConnected && !isConnecting) {
       connectToRoom();
     }
   }, [hasRoomConnection, isConnected, isConnecting]);
 
-  // Cleanup on unmount
+  // Cleanup function
   useEffect(() => {
     return () => {
-      // Clear timeout
-      if (cameraTimeoutRef.current) {
-        clearTimeout(cameraTimeoutRef.current);
-      }
-
-      // Disconnect from room
       if (room) {
+        room.removeAllListeners();
         room.disconnect();
       }
     };
   }, [room]);
 
-  // Handle starting the session
   const handleStartSession = async () => {
     if (!hasAcceptedTerms) {
-      alert(
-        isRTL
-          ? "يرجى الموافقة على الشروط والأحكام"
-          : "Please accept the terms and conditions"
-      );
+      alert("Please accept the terms and conditions");
+      return;
+    }
+
+    if (!devicePermissions.camera || !devicePermissions.microphone) {
+      alert("Please allow camera and microphone access");
       return;
     }
 
     setIsStarting(true);
-
-    try {
-      // Test devices first
-      const devicesOk = await testDevices();
-
-      if (!devicesOk) {
-        alert(isRTL ? "فشل في الوصول للأجهزة" : "Failed to access devices");
-        setIsStarting(false);
-        return;
-      }
-
-      // Start the analysis
-      setAnalysisStarted(true);
-      setIsStarting(false);
-    } catch (error) {
-      console.error("Session start failed:", error);
-      updateError("Failed to start session");
-      setIsStarting(false);
-    }
+    setAnalysisStarted(true);
   };
 
-  // Show permission testing screen before analysis (only if no room connection exists)
-  if (!analysisStarted && !hasRoomConnection) {
+  // If no room connection details, show permission screen
+  if (!hasRoomConnection) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-        {/* Navigation Header */}
-        <nav className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center space-x-4">
-                <h1 className="text-xl font-semibold text-gray-900">
-                  {isRTL ? "غرفة التحليل الذكي" : "Smart Analysis Room"}
-                </h1>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div
-                  className={`w-2 h-2 rounded-full ${
-                    isConnected ? "bg-green-500" : "bg-gray-400"
-                  }`}
-                />
-                <span className="text-sm text-gray-600">
-                  {isRTL ? "غير متصل" : "Offline"}
-                </span>
-              </div>
-            </div>
-          </div>
-        </nav>
+      <div className="min-h-screen bg-white relative overflow-hidden">
+        {/* Subtle Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-rose-50 to-pink-50 rounded-full blur-3xl opacity-60" />
+          <div className="absolute -bottom-48 -left-48 w-96 h-96 bg-gradient-to-tr from-orange-50 to-rose-50 rounded-full blur-3xl opacity-40" />
+        </div>
 
-        {/* Permission Testing Content */}
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-4 shadow-lg">
-              <svg
-                className="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                />
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {isRTL ? "إعداد الجلسة" : "Session Setup"}
-            </h2>
-            <p className="text-gray-600">
-              {isRTL
-                ? "تحقق من الأذونات قبل البدء"
-                : "Check permissions before starting"}
+        <div className="relative z-10 max-w-lg mx-auto px-6 py-16 min-h-screen flex flex-col justify-center">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <h1 className="text-3xl font-light text-gray-900 mb-4 tracking-tight">
+              {t('title')}
+            </h1>
+            <p className="text-gray-500 leading-relaxed">
+              {t('subtitle')}
             </p>
           </div>
 
-          {/* Device Permissions */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6 mb-6">
+          {/* Device Permissions Card */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              {isRTL ? "فحص الأجهزة" : "Device Check"}
+              {t('deviceCheck')}
             </h3>
-
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+            <div className="space-y-4">
+              {/* Camera Permission */}
+              <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div
-                    className={`w-3 h-3 rounded-full ${
+                  <div className={`w-2 h-2 rounded-full ${
                       devicePermissions.testing
-                        ? "bg-yellow-500 animate-pulse"
+                        ? "bg-orange-400 animate-pulse"
                         : devicePermissions.camera
                         ? "bg-green-500"
                         : "bg-red-500"
-                    }`}
-                  />
-                  <span className="font-medium text-gray-700">
-                    {isRTL ? "الكاميرا" : "Camera"}
+                    }`} />
+                  <span className="text-gray-900 font-medium">
+                    {t('camera')}
                   </span>
                 </div>
-                <span className="text-sm text-gray-500">
-                  {devicePermissions.testing
-                    ? isRTL
-                      ? "جاري الفحص..."
-                      : "Testing..."
+                <span className={`text-sm px-2 py-1 rounded-md ${
+                  devicePermissions.testing
+                    ? "text-orange-700 bg-orange-50"
                     : devicePermissions.camera
-                    ? isRTL
-                      ? "جاهز"
-                      : "Ready"
-                    : isRTL
-                    ? "مرفوض"
-                    : "Blocked"}
+                    ? "text-green-700 bg-green-50"
+                    : "text-red-700 bg-red-50"
+                }`}>
+                  {devicePermissions.testing
+                    ? t('testing')
+                    : devicePermissions.camera
+                    ? t('ready')
+                    : t('blocked')}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+              {/* Microphone Permission */}
+              <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div
-                    className={`w-3 h-3 rounded-full ${
+                  <div className={`w-2 h-2 rounded-full ${
                       devicePermissions.testing
-                        ? "bg-yellow-500 animate-pulse"
+                        ? "bg-orange-400 animate-pulse"
                         : devicePermissions.microphone
                         ? "bg-green-500"
                         : "bg-red-500"
-                    }`}
-                  />
-                  <span className="font-medium text-gray-700">
-                    {isRTL ? "الميكروفون" : "Microphone"}
+                    }`} />
+                  <span className="text-gray-900 font-medium">
+                    {t('microphone')}
                   </span>
                 </div>
-                <span className="text-sm text-gray-500">
-                  {devicePermissions.testing
-                    ? isRTL
-                      ? "جاري الفحص..."
-                      : "Testing..."
+                <span className={`text-sm px-2 py-1 rounded-md ${
+                  devicePermissions.testing
+                    ? "text-orange-700 bg-orange-50"
                     : devicePermissions.microphone
-                    ? isRTL
-                      ? "جاهز"
-                      : "Ready"
-                    : isRTL
-                    ? "مرفوض"
-                    : "Blocked"}
+                    ? "text-green-700 bg-green-50"
+                    : "text-red-700 bg-red-50"
+                }`}>
+                  {devicePermissions.testing
+                    ? t('testing')
+                    : devicePermissions.microphone
+                    ? t('ready')
+                    : t('blocked')}
                 </span>
               </div>
             </div>
+
+            {/* Retry Button for Failed Permissions */}
+            {!devicePermissions.testing &&
+              (!devicePermissions.camera || !devicePermissions.microphone) && (
+                <div className="mt-6 pt-6 border-t border-gray-100">
+                  <button
+                    onClick={testDevices}
+                    className="w-full py-3 text-orange-600 hover:text-orange-700 font-medium transition-colors"
+                  >
+                    {t('retryDevices')}
+                  </button>
+                </div>
+              )}
           </div>
 
           {/* Terms and Conditions */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6 mb-6">
-            <label className="flex items-start space-x-3 cursor-pointer">
+          <div className="mb-8">
+            <label htmlFor="terms" className="flex items-start space-x-3 cursor-pointer">
               <input
                 type="checkbox"
+                id="terms"
                 checked={hasAcceptedTerms}
                 onChange={(e) => setHasAcceptedTerms(e.target.checked)}
-                className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
               />
-              <span className="text-sm text-gray-700 leading-relaxed">
-                {isRTL
-                  ? "أوافق على الشروط والأحكام وسياسة الخصوصية"
-                  : "I agree to the terms and conditions and privacy policy"}
+              <span className="text-sm text-gray-600 leading-relaxed">
+                {t('termsAgreement')}
               </span>
             </label>
           </div>
 
           {/* Error Display */}
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-              <p className="text-sm text-red-700">{error}</p>
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
+              <div className="flex items-center space-x-3">
+                <div className="w-4 h-4 bg-red-500 rounded-full flex-shrink-0 animate-pulse" />
+                <p className="text-lg text-red-800 font-medium">{error}</p>
+              </div>
             </div>
           )}
 
           {/* Start Button */}
-          <div className="text-center">
-            <button
-              onClick={handleStartSession}
-              disabled={
-                isStarting ||
-                !hasAcceptedTerms ||
-                !devicePermissions.camera ||
-                !devicePermissions.microphone ||
-                devicePermissions.testing
-              }
-              className={`inline-flex items-center px-8 py-3 text-base font-medium rounded-xl transition-all duration-200 ${
-                isStarting ||
-                !hasAcceptedTerms ||
-                !devicePermissions.camera ||
-                !devicePermissions.microphone ||
-                devicePermissions.testing
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl"
-              }`}
-            >
-              {isStarting ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                  {isRTL ? "جاري البدء..." : "Starting..."}
-                </>
-              ) : (
-                <>{isRTL ? "بدء الجلسة" : "Start Session"}</>
-              )}
-            </button>
+          <button
+            onClick={handleStartSession}
+            disabled={
+              isStarting ||
+              !hasAcceptedTerms ||
+              !devicePermissions.camera ||
+              !devicePermissions.microphone ||
+              devicePermissions.testing
+            }
+            className={`w-full py-4 rounded-xl font-medium transition-all duration-200 ${
+              isStarting ||
+              !hasAcceptedTerms ||
+              !devicePermissions.camera ||
+              !devicePermissions.microphone ||
+              devicePermissions.testing
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-orange-500 hover:bg-orange-600 text-white shadow-sm hover:shadow-md"
+            }`}
+          >
+            {isStarting ? (
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>{t('starting')}</span>
+              </div>
+            ) : (
+              t('startAnalysisSession')
+            )}
+          </button>
+
+          {/* Privacy Note */}
+          <div className="text-center mt-6">
+            <p className="text-xs text-gray-400">
+              {t('secureEncrypted')}
+            </p>
           </div>
         </div>
       </div>
     );
   }
 
-  // Main room interface
-  const roomContent = (
-    <RoomLayout
-      videoRef={videoRef}
-      isActive={isActive}
-      participants={participants}
-      messages={messages}
-      currentView={currentView}
-      userId={user?.id}
-      roomId={resolvedParams.id}
-      onSendMessage={sendMessage}
-      onViewChange={setCurrentView}
-    />
-  );
+  // Show connection error if there's one
+  if (connectionError) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-sm border border-gray-100 p-6 text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.35 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            {t('connectionError')}
+          </h3>
+          <p className="text-gray-600 mb-6">{connectionError}</p>
+          <button
+            onClick={() => {
+              setConnectionError(null);
+              setIsConnected(false);
+              setIsConnecting(false);
+              connectToRoom();
+            }}
+            className="w-full px-6 py-3 bg-orange-500 text-white font-medium rounded-2xl hover:bg-orange-600 transition-colors"
+          >
+            {t('tryAgain')}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-  // Render with or without LiveKit wrapper
-  return hasRoomConnection && isConnected ? (
-    <LiveKitRoom
-      room={room}
-      serverUrl={searchParams.get("serverUrl") || ""}
-      token={searchParams.get("token") || ""}
-      connectOptions={{
-        autoSubscribe: true,
-      }}
-      options={{
-        // Enable camera and microphone by default
-        videoCaptureDefaults: {
-          resolution: {
-            width: 1280,
-            height: 720,
-          },
-          facingMode: "user",
-        },
-        audioCaptureDefaults: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-        },
-      }}
-      className="min-h-screen"
-    >
-      <RoomContent
-        roomContent={roomContent}
-        videoRef={videoRef}
-        isActive={isActive}
-        participants={participants}
-        messages={messages}
-        currentView={currentView}
-        userId={user?.id}
-        roomId={resolvedParams.id}
-        onSendMessage={sendMessage}
-        onViewChange={setCurrentView}
-      />
-      <RoomAudioRenderer />
-    </LiveKitRoom>
-  ) : (
-    <div className="min-h-screen">{roomContent}</div>
-  );
+  // Show connecting state
+  if (isConnecting) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin mx-auto mb-4"></div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            {t('connecting')}
+          </h3>
+          <p className="text-gray-500">
+            {t('connectingToServer')}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Once connected, show the LiveKit room
+  if (isConnected) {
+    return (
+      <LiveKitRoom
+        video={true}
+        audio={true}
+        token={searchParams.get("token")!}
+        serverUrl={searchParams.get("serverUrl")!}
+        connect={true}
+        room={room}
+      >
+        <RoomContent
+          videoRef={videoRef}
+          isConnected={isConnected}
+          currentView={currentView}
+          setCurrentView={setCurrentView}
+          roomId={resolvedParams.id}
+          userId={user?.id}
+        />
+        <RoomAudioRenderer />
+      </LiveKitRoom>
+    );
+  }
+
+  return null;
 }
 
-// Component that uses LiveKit hooks inside LiveKitRoom context
+// Separate component for the room content inside LiveKitRoom
 function RoomContent({
-  roomContent,
   videoRef,
-  isActive,
-  participants,
-  messages,
+  isConnected,
   currentView,
-  userId,
+  setCurrentView,
   roomId,
-  onSendMessage,
-  onViewChange,
+  userId,
 }: {
-  roomContent: React.ReactNode;
   videoRef: React.RefObject<HTMLVideoElement | null>;
-  isActive: boolean;
-  participants: any[];
-  messages: any[];
+  isConnected: boolean;
   currentView: string;
-  userId?: string;
+  setCurrentView: (view: string) => void;
   roomId: string;
-  onSendMessage: (message: string) => void;
-  onViewChange: (view: string) => void;
+  userId?: string;
 }) {
-  const { localParticipant } = useLocalParticipant();
-  const tracks = useTracks([
-    { source: Track.Source.Camera, withPlaceholder: true },
-    { source: Track.Source.ScreenShare, withPlaceholder: false },
-  ]);
+  const tracks = useTracks(
+    [
+      { source: Track.Source.Camera, withPlaceholder: true },
+      { source: Track.Source.ScreenShare, withPlaceholder: false },
+    ],
+    { onlySubscribed: false }
+  );
 
-  // Enable camera and microphone when component mounts
+  const { localParticipant } = useLocalParticipant();
+
+  // Auto-enable camera and microphone when connected
   useEffect(() => {
+    let mounted = true;
+
     const enableMedia = async () => {
+      if (!localParticipant || !mounted) return;
+
       try {
-        // Enable camera
-        await localParticipant.setCameraEnabled(true);
-        // Enable microphone
-        await localParticipant.setMicrophoneEnabled(true);
-        console.log("✅ Camera and microphone enabled");
+        // Check if participant exists and is ready before enabling devices
+        if (localParticipant && localParticipant.identity) {
+          // Enable camera
+          if (!localParticipant.isCameraEnabled) {
+            await localParticipant.setCameraEnabled(true);
+          }
+          // Enable microphone
+          if (!localParticipant.isMicrophoneEnabled) {
+            await localParticipant.setMicrophoneEnabled(true);
+          }
+          console.log("Camera and microphone enabled");
+        }
       } catch (error) {
-        console.error("❌ Failed to enable media devices:", error);
+        // Don't log errors if component is unmounted
+        if (mounted) {
+          console.error("Failed to enable media devices:", error);
+        }
       }
     };
 
     if (localParticipant) {
-      enableMedia();
+      // Add a small delay to ensure connection is established
+      const timer = setTimeout(enableMedia, 1000);
+      return () => {
+        mounted = false;
+        clearTimeout(timer);
+      };
     }
+
+    return () => {
+      mounted = false;
+    };
   }, [localParticipant]);
 
   return (
     <RoomLayout
       videoRef={videoRef}
-      isActive={isActive}
-      participants={participants}
-      messages={messages}
+      isActive={isConnected}
+      participants={[]}
+      messages={[]}
       currentView={currentView}
       userId={userId}
       roomId={roomId}
-      onSendMessage={onSendMessage}
-      onViewChange={onViewChange}
+      onSendMessage={() => {}}
+      onViewChange={setCurrentView}
       tracks={tracks}
       localParticipant={localParticipant}
     />

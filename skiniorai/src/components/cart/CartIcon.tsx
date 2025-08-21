@@ -39,9 +39,8 @@ export default function CartIcon({
 
   // Variant styles
   const variantStyles = {
-    filled: "bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl",
-    outline:
-      "border-2 border-black/20 text-black hover:border-black hover:bg-black/5",
+    filled: "bg-gray-900 text-white hover:bg-gray-800",
+    outline: "text-gray-500 hover:text-gray-900 hover:bg-gray-50",
   };
 
   return (
@@ -49,8 +48,7 @@ export default function CartIcon({
       onClick={toggle}
       className={`
         relative ${config.button} rounded-full transition-all duration-200 
-        transform active:scale-95 focus:outline-none focus:ring-2 
-        focus:ring-black/20 focus:ring-offset-2 ${variantStyles[variant]} ${className}
+        ${variantStyles[variant]} ${className}
       `}
       aria-label={`Shopping cart with ${itemCount} items`}
       type="button"
@@ -75,8 +73,8 @@ export default function CartIcon({
         <span
           className={`
             absolute ${config.badge} bg-red-500 text-white rounded-full 
-            flex items-center justify-center font-bold shadow-lg 
-            ring-2 ring-white transition-all duration-200
+            flex items-center justify-center font-medium
+            ring-1 ring-white transition-all duration-200
           `}
         >
           {itemCount > 99 ? "99+" : itemCount}
