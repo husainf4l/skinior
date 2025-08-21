@@ -4,6 +4,9 @@ export * from './user';
 // Cart types (if you have them)
 export * from './cart';
 
+// Blog types
+export * from './blog';
+
 // Add other type exports here as you create them
 // export * from './product';
 // export * from './order';

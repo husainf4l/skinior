@@ -2,6 +2,7 @@ import { use } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { routing } from "../../i18n/routing";
 import HeroSection from "../../components/HeroSection";
+import TodaysDeals from "../../components/TodaysDeals";
 import FeaturedProducts from "../../components/FeaturedProducts";
 import DealsSection from "../../components/DealsSection";
 
@@ -26,6 +27,7 @@ export default function HomePage({
   return (
     <>
       <HeroSection />
+      <TodaysDeals />
       <FeaturedProducts />
       <DealsSection />
     </>

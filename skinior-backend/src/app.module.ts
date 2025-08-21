@@ -14,6 +14,7 @@ import { LiveKitModule } from './livekit/livekit.module';
 import { AnalysisSessionsModule } from './analysis-sessions/analysis-sessions.module';
 import { AnalysisDataModule } from './analysis-data/analysis-data.module';
 import { ProductRecommendationsModule } from './product-recommendations/product-recommendations.module';
+import { BlogModule } from './blog/blog.module';
 
 @Module({
   imports: [
@@ -34,6 +35,8 @@ import { ProductRecommendationsModule } from './product-recommendations/product-
     AnalysisSessionsModule,
     AnalysisDataModule,
     ProductRecommendationsModule,
+    // Blog Module
+    BlogModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -305,3 +305,146 @@ model ProductRecommendation {
   @@index([status])
   @@index([productId])
 }
+
+// Blog Models
+model BlogPost {
+  id                String   @id @default(uuid())
+  titleEn           String
+  titleAr           String
+  slugEn            String
+  slugAr            String
+  excerptEn         String
+  excerptAr         String
+  contentEn         String   @db.Text
+  contentAr         String   @db.Text
+  featuredImage     String
+  images            String[] // Array of image URLs
+  publishedAt       DateTime?
+  readTimeEn        String   // e.g., "5 min read"
+  readTimeAr        String   // e.g., "5 دقائق قراءة"
+  featured          Boolean  @default(false)
+  published         Boolean  @default(false)
+  seoTitleEn        String?
+  seoTitleAr        String?
+  seoDescriptionEn  String?
+  seoDescriptionAr  String?
+  views             Int      @default(0)
+  likes             Int      @default(0)
+  commentsCount     Int      @default(0)
+  
+  // Relations
+  categoryId        String
+  category          BlogCategory @relation(fields: [categoryId], references: [id])
+  authorId          String
+  author            BlogAuthor   @relation(fields: [authorId], references: [id])
+  tags              BlogPostTag[]
+  comments          BlogComment[]
+  likes_relation    BlogPostLike[]
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@unique([slugEn])
+  @@unique([slugAr])
+  @@index([published])
+  @@index([featured])
+  @@index([publishedAt])
+  @@index([categoryId])
+  @@index([authorId])
+}
+
+model BlogCategory {
+  id            String     @id @default(uuid())
+  nameEn        String
+  nameAr        String
+  slugEn        String     @unique
+  slugAr        String     @unique
+  descriptionEn String?
+  descriptionAr String?
+  color         String?    // hex color for UI
+  posts         BlogPost[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model BlogAuthor {
+  id            String     @id @default(uuid())
+  nameEn        String
+  nameAr        String
+  avatar        String     // URL to image
+  bioEn         String
+  bioAr         String
+  email         String?
+  socialLinks   Json?      // JSON object for social media links
+  posts         BlogPost[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model BlogTag {
+  id        String        @id @default(uuid())
+  nameEn    String
+  nameAr    String
+  slugEn    String        @unique
+  slugAr    String        @unique
+  posts     BlogPostTag[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model BlogPostTag {
+  id     String   @id @default(uuid())
+  postId String
+  tagId  String
+  post   BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    BlogTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@unique([postId, tagId])
+  @@index([postId])
+  @@index([tagId])
+}
+
+model BlogComment {
+  id          String        @id @default(uuid())
+  content     String        @db.Text
+  authorName  String
+  authorAvatar String?
+  authorEmail String?
+  postId      String
+  parentId    String?
+  likes       Int           @default(0)
+  
+  // Relations
+  post        BlogPost      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent      BlogComment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies     BlogComment[] @relation("CommentReplies")
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  @@index([postId])
+  @@index([parentId])
+}
+
+model BlogPostLike {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+}
+
+model BlogNewsletterSubscriber {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  locale       String   // 'en' or 'ar'
+  active       Boolean  @default(true)
+  subscribedAt DateTime @default(now())
+  
+  @@index([email])
+  @@index([active])
+}

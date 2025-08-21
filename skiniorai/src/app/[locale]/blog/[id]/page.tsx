@@ -1,251 +1,270 @@
-import { use } from "react";
-import { setRequestLocale } from "next-intl/server";
-import { routing } from "../../../../i18n/routing";
+'use client';
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
+import { BlogService } from "../../../../services/blogService";
+import { BlogPost, BlogComment } from "../../../../types/blog";
+import OptimizedImage from "../../../../components/OptimizedImage";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
-// Blog data - Simple example with one post
-const blogPosts = [
-  {
-    id: 1,
-    title: {
-      en: "The Science Behind Vitamin C in Skincare",
-      ar: "العلم وراء فيتامين C في العناية بالبشرة"
-    },
-    excerpt: {
-      en: "Discover how vitamin C transforms your skin at the cellular level and why it's considered the gold standard in anti-aging skincare.",
-      ar: "اكتشف كيف يحول فيتامين C بشرتك على المستوى الخلوي ولماذا يعتبر المعيار الذهبي في العناية المضادة للشيخوخة."
-    },
-    content: {
-      en: `
-<p>Vitamin C is one of the most researched and scientifically proven ingredients in skincare. As a potent antioxidant, it plays a crucial role in collagen synthesis, skin protection, and cellular repair.</p>
+interface BlogPostPageProps {
+  params: Promise<{ locale: string; id: string }>;
+}
 
-<h2>How Vitamin C Works at the Cellular Level</h2>
-<p>At the molecular level, vitamin C (L-ascorbic acid) serves as a cofactor for collagen synthesis. It helps convert proline and lysine into hydroxyproline and hydroxylysine, which are essential building blocks for strong, healthy collagen.</p>
+export default function BlogPostPage({ params }: BlogPostPageProps) {
+  const [locale, setLocale] = useState<string>('en');
+  const [postId, setPostId] = useState<string>('');
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
+  const [comments, setComments] = useState<BlogComment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
+  const [commentText, setCommentText] = useState('');
+  const [commentLoading, setCommentLoading] = useState(false);
 
-<h2>The Antioxidant Powerhouse</h2>
-<p>Free radicals from UV exposure, pollution, and stress damage skin cells daily. Vitamin C neutralizes these harmful molecules, preventing oxidative stress that leads to premature aging, dark spots, and inflammation.</p>
+  // Get params
+  useEffect(() => {
+    params.then(({ locale: paramLocale, id }) => {
+      setLocale(paramLocale);
+      setPostId(id);
+    });
+  }, [params]);
 
-<h2>Benefits You Can See</h2>
-<ul>
-<li><strong>Brightening:</strong> Inhibits tyrosinase enzyme, reducing melanin production</li>
-<li><strong>Anti-aging:</strong> Stimulates collagen production for firmer skin</li>
-<li><strong>Protection:</strong> Guards against environmental damage</li>
-<li><strong>Healing:</strong> Accelerates skin repair and reduces inflammation</li>
-</ul>
+  // Fetch post data
+  useEffect(() => {
+    if (!postId) return;
 
-<h2>Choosing the Right Form</h2>
-<p>Not all vitamin C is created equal. L-ascorbic acid is the most potent but also the most unstable. Stable derivatives like magnesium ascorbyl phosphate and sodium ascorbyl phosphate offer gentler alternatives with longer shelf life.</p>
+    const fetchPostData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch post
+        const postData = await BlogService.getPostById(postId);
+        setPost(postData);
+        setLikesCount(postData.likes || 0);
 
-<h2>Application Tips</h2>
-<p>Apply vitamin C serum to clean skin in the morning, followed by moisturizer and broad-spectrum SPF. Start with lower concentrations (10-15%) and gradually increase as your skin builds tolerance.</p>
+        // Increment views
+        BlogService.incrementViews(postId);
 
-<p>Remember: consistency is key. With regular use, most people see noticeable improvements in skin brightness and texture within 4-6 weeks.</p>
-      `,
-      ar: `
-<p>فيتامين C هو أحد أكثر المكونات بحثاً وإثباتاً علمياً في العناية بالبشرة. كمضاد أكسدة قوي، يلعب دوراً حاسماً في تكوين الكولاجين وحماية البشرة وإصلاح الخلايا.</p>
+        // Fetch related posts
+        const related = await BlogService.getRelatedPosts(postId, 3);
+        setRelatedPosts(related);
 
-<h2>كيف يعمل فيتامين C على المستوى الخلوي</h2>
-<p>على المستوى الجزيئي، يعمل فيتامين C (حمض الأسكوربيك) كعامل مساعد لتكوين الكولاجين. يساعد في تحويل البرولين والليسين إلى هيدروكسي برولين وهيدروكسي ليسين، وهي اللبنات الأساسية للكولاجين القوي والصحي.</p>
+        // Fetch comments
+        const postComments = await BlogService.getComments(postId);
+        setComments(postComments);
 
-<h2>قوة مضادات الأكسدة</h2>
-<p>الجذور الحرة من التعرض للأشعة فوق البنفسجية والتلوث والإجهاد تضر خلايا البشرة يومياً. فيتامين C يعادل هذه الجزيئات الضارة، مما يمنع الإجهاد التأكسدي الذي يؤدي إلى الشيخوخة المبكرة والبقع الداكنة والالتهاب.</p>
-
-<h2>الفوائد التي يمكنك رؤيتها</h2>
-<ul>
-<li><strong>الإشراق:</strong> يثبط إنزيم التيروزيناز، مما يقلل إنتاج الميلانين</li>
-<li><strong>مكافحة الشيخوخة:</strong> يحفز إنتاج الكولاجين للحصول على بشرة أكثر شداً</li>
-<li><strong>الحماية:</strong> يحمي من الأضرار البيئية</li>
-<li><strong>الشفاء:</strong> يسرع إصلاح البشرة ويقلل الالتهاب</li>
-</ul>
-
-<h2>اختيار الشكل المناسب</h2>
-<p>ليس كل فيتامين C متساوياً. حمض الأسكوربيك هو الأقوى ولكنه أيضاً الأكثر عدم استقراراً. المشتقات المستقرة مثل فوسفات الأسكوربيل المغنيسيوم وفوسفات الأسكوربيل الصوديوم تقدم بدائل أكثر لطفاً مع عمر أطول.</p>
-
-<h2>نصائح للتطبيق</h2>
-<p>ضع سيروم فيتامين C على البشرة النظيفة في الصباح، متبوعاً بالمرطب وواقي الشمس واسع الطيف. ابدأ بتراكيز أقل (10-15%) وزد تدريجياً مع تطوير تحمل بشرتك.</p>
-
-<p>تذكر: الاستمرارية هي المفتاح. مع الاستخدام المنتظم، يرى معظم الناس تحسناً ملحوظاً في إشراق البشرة وملمسها خلال 4-6 أسابيع.</p>
-      `
-    },
-    image: "/hero/hero1.webp",
-    date: "2024-01-15",
-    readTime: { en: "5 min read", ar: "5 دقائق قراءة" },
-    category: { en: "Science", ar: "العلوم" },
-    author: { 
-      name: { en: "Dr. Sarah Johnson", ar: "د. سارة جونسون" },
-      avatar: "/hero/hero2.webp",
-      bio: { 
-        en: "Dermatologist and skincare researcher with 15 years of experience",
-        ar: "طبيبة جلدية وباحثة في العناية بالبشرة مع 15 عاماً من الخبرة"
+        setError(null);
+      } catch (err: any) {
+        console.error('Error fetching post:', err);
+        if (err.message === 'BLOG_POST_NOT_FOUND') {
+          notFound();
+        }
+        setError('Failed to load blog post');
+      } finally {
+        setLoading(false);
       }
-    },
-    featured: true,
-    tags: {
-      en: ["Vitamin C", "Anti-aging", "Skincare Science", "Antioxidants"],
-      ar: ["فيتامين C", "مكافحة الشيخوخة", "علوم العناية بالبشرة", "مضادات الأكسدة"]
-    }
-  }
-];
-
-// Generate static params for all blog posts and locales
-export function generateStaticParams() {
-  const params = [];
-  for (const locale of routing.locales) {
-    for (const post of blogPosts) {
-      params.push({ locale, id: post.id.toString() });
-    }
-  }
-  return params;
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string; id: string }>;
-}): Promise<Metadata> {
-  const { locale, id } = await params;
-  const post = blogPosts.find(p => p.id.toString() === id);
-
-  if (!post) {
-    return {
-      title: 'Post Not Found',
-      description: 'The requested blog post could not be found.',
     };
-  }
 
-  const title = post.title[locale as keyof typeof post.title];
-  const excerpt = post.excerpt[locale as keyof typeof post.excerpt];
+    fetchPostData();
+  }, [postId]);
 
-  return {
-    title: `${title} | Skinior Blog`,
-    description: excerpt,
-    openGraph: {
-      title: `${title} | Skinior Blog`,
-      description: excerpt,
-      type: 'article',
-      locale: locale,
-      publishedTime: post.date,
-      authors: [post.author.name[locale as keyof typeof post.author.name]],
-      images: [
-        {
-          url: post.image,
-          width: 1200,
-          height: 630,
-          alt: title,
-        },
-      ],
-    },
-    alternates: {
-      canonical: `/${locale}/blog/${id}`,
-      languages: {
-        en: `/en/blog/${id}`,
-        ar: `/ar/blog/${id}`,
-      },
-    },
-    keywords: post.tags[locale as keyof typeof post.tags].join(', '),
-  };
-}
-
-export default function BlogPostPage({
-  params,
-}: {
-  params: Promise<{ locale: string; id: string }>;
-}) {
-  const { locale, id } = use(params);
-
-  // Enable static rendering
-  setRequestLocale(locale);
-
-  const post = blogPosts.find(p => p.id.toString() === id);
-
-  if (!post) {
-    notFound();
-  }
-
-  // Ensure we have valid locale and content
-  if (!post.title[locale as keyof typeof post.title] || 
-      !post.content[locale as keyof typeof post.content]) {
-    console.warn(`Missing content for locale ${locale} on post ${id}`);
-    // Fallback to English if current locale content is missing
-    const fallbackLocale = 'en';
-    if (!post.title[fallbackLocale as keyof typeof post.title]) {
-      notFound();
+  // Handle like
+  const handleLike = async () => {
+    try {
+      const result = await BlogService.likePost(postId);
+      setIsLiked(result.liked);
+      setLikesCount(result.likesCount);
+    } catch (err: any) {
+      if (err.message === 'UNAUTHORIZED') {
+        console.log('Please login to like posts');
+      }
     }
+  };
+
+  // Handle comment submission
+  const handleCommentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+
+    try {
+      setCommentLoading(true);
+      const newComment = await BlogService.addComment(postId, commentText);
+      setComments(prev => [newComment, ...prev]);
+      setCommentText('');
+    } catch (err: any) {
+      console.error('Failed to add comment:', err);
+      if (err.message === 'UNAUTHORIZED') {
+        console.log('Please login to comment');
+      }
+    } finally {
+      setCommentLoading(false);
+    }
+  };
+
+  // Share functions
+  const shareOnFacebook = () => {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+  };
+
+  const shareOnTwitter = () => {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(post ? getText(post.title) : '');
+    window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+  };
+
+  const shareOnLinkedIn = () => {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+  };
+
+  // Format date
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  // Get text by locale
+  const getText = (textObj: { en: string; ar: string }) => {
+    return textObj[locale as keyof typeof textObj] || textObj.en;
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
   }
 
-  // Since we only have one post, no navigation needed
+  if (error || !post) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            {locale === 'ar' ? 'المقال غير موجود' : 'Post not found'}
+          </h2>
+          <p className="text-gray-600 mb-8">{error}</p>
+          <Link 
+            href={`/${locale}/blog`}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            {locale === 'ar' ? 'العودة للمدونة' : 'Back to Blog'}
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div key={`blog-post-${locale}-${id}`} className="min-h-screen bg-white">
-      {/* Article Schema JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": post.title[locale as keyof typeof post.title],
-            "description": post.excerpt[locale as keyof typeof post.excerpt],
-            "image": post.image,
-            "datePublished": post.date,
-            "dateModified": post.date,
-            "author": {
-              "@type": "Person",
-              "name": post.author.name[locale as keyof typeof post.author.name]
-            },
-            "publisher": {
-              "@type": "Organization",
-              "name": "Skinior",
-              "logo": {
-                "@type": "ImageObject",
-                "url": "/logo.png"
-              }
-            },
-            "mainEntityOfPage": {
-              "@type": "WebPage",
-              "@id": `/${locale}/blog/${id}`
-            }
-          })
-        }}
-      />
+    <div className="min-h-screen bg-white">
+      {/* Breadcrumb */}
+      <nav className="bg-gray-50 border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center space-x-2 text-sm text-gray-500" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+            <Link href={`/${locale}`} className="hover:text-gray-900 transition-colors">
+              {locale === 'ar' ? 'الرئيسية' : 'Home'}
+            </Link>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <Link href={`/${locale}/blog`} className="hover:text-gray-900 transition-colors">
+              {locale === 'ar' ? 'المدونة' : 'Blog'}
+            </Link>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <span className="text-gray-900 font-medium truncate">
+              {getText(post.title)}
+            </span>
+          </div>
+        </div>
+      </nav>
 
-      {/* Hero Section - Apple Style */}
+      {/* Hero Section */}
       <section className="bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-6">
-              <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-                {post.category[locale as keyof typeof post.category]}
+              <span className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold">
+                {getText(post.category.name)}
               </span>
               <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
               <time className="text-sm text-gray-500">
-                {new Date(post.date).toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
+                {formatDate(post.publishedAt)}
               </time>
               <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
               <span className="text-sm text-gray-500">
-                {post.readTime[locale as keyof typeof post.readTime]}
+                {getText(post.readTime)}
               </span>
             </div>
             <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight tracking-tight">
-              {post.title[locale as keyof typeof post.title]}
+              {getText(post.title)}
             </h1>
-            <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed font-light max-w-3xl mx-auto">
-              {post.excerpt[locale as keyof typeof post.excerpt]}
+            <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed font-light max-w-3xl mx-auto mb-8">
+              {getText(post.excerpt)}
             </p>
+            
+            {/* Author & Stats */}
+            <div className="flex items-center justify-center gap-8 mb-8">
+              <div className="flex items-center gap-4">
+                <OptimizedImage
+                  src={post.author.avatar}
+                  alt={getText(post.author.name)}
+                  width={56}
+                  height={56}
+                  className="rounded-full object-cover"
+                />
+                <div className="text-left">
+                  <h3 className="font-semibold text-gray-900 text-lg">
+                    {getText(post.author.name)}
+                  </h3>
+                  <p className="text-gray-600 font-light">
+                    {getText(post.author.bio)}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-6 text-sm text-gray-500">
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  <span>{post.views || 0}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                  <span>{likesCount}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  <span>{comments.length}</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="relative overflow-hidden rounded-2xl">
-            <img
-              src={post.image}
-              alt={post.title[locale as keyof typeof post.title]}
+          
+          <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+            <OptimizedImage
+              src={post.featuredImage}
+              alt={getText(post.title)}
+              width={1200}
+              height={600}
               className="w-full h-96 lg:h-[500px] object-cover"
+              priority
             />
           </div>
         </div>
@@ -253,76 +272,215 @@ export default function BlogPostPage({
 
       {/* Article Content */}
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Author Info - Apple Style */}
-        <div className="flex items-center gap-6 mb-16 pb-12 border-b border-gray-100">
-          <img
-            src={post.author.avatar}
-            alt={post.author.name[locale as keyof typeof post.author.name]}
-            className="w-16 h-16 rounded-full object-cover"
-          />
-          <div>
-            <h3 className="font-semibold text-gray-900 text-lg">
-              {post.author.name[locale as keyof typeof post.author.name]}
-            </h3>
-            <p className="text-gray-600 font-light">
-              {post.author.bio[locale as keyof typeof post.author.bio]}
-            </p>
-          </div>
-        </div>
-
-        {/* Article Content - Enhanced Typography */}
+        {/* Article Content */}
         <div 
-          className="prose prose-xl max-w-none prose-gray prose-headings:font-bold prose-headings:tracking-tight prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h3:text-2xl prose-h3:mt-10 prose-h3:mb-4 prose-p:text-lg prose-p:leading-relaxed prose-p:font-light prose-p:mb-6 prose-li:text-lg prose-li:font-light prose-strong:font-semibold prose-strong:text-gray-900"
+          className="prose prose-xl max-w-none prose-gray prose-headings:font-bold prose-headings:tracking-tight prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h3:text-2xl prose-h3:mt-10 prose-h3:mb-4 prose-p:text-lg prose-p:leading-relaxed prose-p:font-light prose-p:mb-6 prose-li:text-lg prose-li:font-light prose-strong:font-semibold prose-strong:text-gray-900 prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline"
           dangerouslySetInnerHTML={{ 
-            __html: post.content[locale as keyof typeof post.content] 
+            __html: getText(post.content)
           }}
+          dir={locale === 'ar' ? 'rtl' : 'ltr'}
         />
 
-        {/* Tags - Apple Style */}
+        {/* Tags */}
         <div className="mt-16 pt-12 border-t border-gray-100">
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">
+            {locale === 'ar' ? 'المواضيع' : 'Topics'}
+          </h4>
           <div className="flex flex-wrap gap-3">
-            {post.tags[locale as keyof typeof post.tags].map((tag, index) => (
+            {post.tags.map((tag) => (
               <span
-                key={index}
-                className="bg-gray-50 text-gray-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200"
+                key={tag.id}
+                className="bg-gray-50 text-gray-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200 cursor-pointer"
               >
-                {tag}
+                {getText(tag.name)}
               </span>
             ))}
           </div>
         </div>
 
-        {/* Share Buttons - Apple Style */}
+        {/* Share Buttons */}
         <div className="mt-12 pt-12 border-t border-gray-100">
           <h4 className="text-lg font-semibold text-gray-900 mb-6">
             {locale === 'ar' ? 'شارك المقال' : 'Share this article'}
           </h4>
-          <div className="flex gap-4">
-            <button className="bg-gray-900 text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-colors font-medium">
+          <div className="flex gap-4 justify-center">
+            <button 
+              onClick={handleLike}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all ${
+                isLiked 
+                  ? 'bg-red-100 text-red-600 border border-red-200' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-red-100 hover:text-red-600'
+              }`}
+            >
+              <svg className="w-5 h-5" fill={isLiked ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              {likesCount}
+            </button>
+            <button 
+              onClick={shareOnFacebook}
+              className="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition-colors font-medium"
+            >
               {locale === 'ar' ? 'فيسبوك' : 'Facebook'}
             </button>
-            <button className="bg-gray-900 text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-colors font-medium">
+            <button 
+              onClick={shareOnTwitter}
+              className="bg-sky-500 text-white px-6 py-3 rounded-full hover:bg-sky-600 transition-colors font-medium"
+            >
               {locale === 'ar' ? 'تويتر' : 'Twitter'}
             </button>
-            <button className="bg-gray-900 text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-colors font-medium">
+            <button 
+              onClick={shareOnLinkedIn}
+              className="bg-blue-700 text-white px-6 py-3 rounded-full hover:bg-blue-800 transition-colors font-medium"
+            >
               {locale === 'ar' ? 'لينكد إن' : 'LinkedIn'}
             </button>
           </div>
         </div>
       </article>
 
+      {/* Comments Section */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-gray-100">
+        <h3 className="text-2xl font-bold text-gray-900 mb-8">
+          {locale === 'ar' ? `التعليقات (${comments.length})` : `Comments (${comments.length})`}
+        </h3>
+        
+        {/* Comment Form */}
+        <form onSubmit={handleCommentSubmit} className="mb-12">
+          <textarea
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder={locale === 'ar' ? 'اكتب تعليقك...' : 'Write your comment...'}
+            className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            rows={4}
+            dir={locale === 'ar' ? 'rtl' : 'ltr'}
+          />
+          <div className="flex justify-end mt-4">
+            <button
+              type="submit"
+              disabled={commentLoading || !commentText.trim()}
+              className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {commentLoading 
+                ? (locale === 'ar' ? 'جاري النشر...' : 'Posting...') 
+                : (locale === 'ar' ? 'نشر التعليق' : 'Post Comment')
+              }
+            </button>
+          </div>
+        </form>
 
-      {/* Back to Blog - Apple Style */}
+        {/* Comments List */}
+        <div className="space-y-6">
+          {comments.map((comment) => (
+            <div key={comment.id} className="bg-gray-50 rounded-xl p-6">
+              <div className="flex items-start gap-4">
+                {comment.author.avatar && (
+                  <OptimizedImage
+                    src={comment.author.avatar}
+                    alt={comment.author.name}
+                    width={48}
+                    height={48}
+                    className="rounded-full object-cover"
+                  />
+                )}
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h4 className="font-semibold text-gray-900">{comment.author.name}</h4>
+                    <time className="text-sm text-gray-500">
+                      {formatDate(comment.createdAt)}
+                    </time>
+                  </div>
+                  <p className="text-gray-700 leading-relaxed" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+                    {comment.content}
+                  </p>
+                  <div className="flex items-center gap-4 mt-4">
+                    <button className="text-sm text-gray-500 hover:text-blue-600 transition-colors">
+                      <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                      {comment.likes}
+                    </button>
+                    <button className="text-sm text-gray-500 hover:text-blue-600 transition-colors">
+                      {locale === 'ar' ? 'رد' : 'Reply'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {comments.length === 0 && (
+          <div className="text-center py-12">
+            <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <h4 className="text-xl font-semibold text-gray-900 mb-2">
+              {locale === 'ar' ? 'لا توجد تعليقات بعد' : 'No comments yet'}
+            </h4>
+            <p className="text-gray-600">
+              {locale === 'ar' ? 'كن أول من يعلق على هذا المقال' : 'Be the first to comment on this article'}
+            </p>
+          </div>
+        )}
+      </section>
+
+      {/* Related Posts */}
+      {relatedPosts.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-gray-100">
+          <h3 className="text-3xl font-bold text-gray-900 mb-12 text-center">
+            {locale === 'ar' ? 'مقالات ذات صلة' : 'Related Articles'}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {relatedPosts.map((relatedPost) => (
+              <Link
+                key={relatedPost.id}
+                href={`/${locale}/blog/${relatedPost.id}`}
+                className="group block bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100"
+              >
+                <div className="relative overflow-hidden">
+                  <OptimizedImage
+                    src={relatedPost.featuredImage}
+                    alt={getText(relatedPost.title)}
+                    width={400}
+                    height={240}
+                    className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-xs font-medium text-blue-600 uppercase tracking-wider">
+                      {getText(relatedPost.category.name)}
+                    </span>
+                    <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                    <time className="text-xs text-gray-500">
+                      {formatDate(relatedPost.publishedAt)}
+                    </time>
+                  </div>
+                  <h4 className="text-lg font-bold text-gray-900 mb-2 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
+                    {getText(relatedPost.title)}
+                  </h4>
+                  <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
+                    {getText(relatedPost.excerpt)}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Back to Blog */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <div className="text-center">
           <Link
             href={`/${locale}/blog`}
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 font-medium transition-colors group"
+            className="inline-flex items-center text-gray-600 hover:text-gray-900 font-medium transition-colors group bg-gray-50 px-6 py-3 rounded-xl hover:bg-gray-100"
           >
-            <svg className={`w-4 h-4 ${locale === 'ar' ? 'ml-2 rotate-180' : 'mr-2'} transition-transform group-hover:-translate-x-1`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-5 h-5 ${locale === 'ar' ? 'ml-2 rotate-180' : 'mr-2'} transition-transform group-hover:-translate-x-1`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            {locale === 'ar' ? 'العودة إلى النصائح' : 'Back to Blog'}
+            {locale === 'ar' ? 'العودة إلى المدونة' : 'Back to Blog'}
           </Link>
         </div>
       </div>

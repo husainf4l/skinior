@@ -496,6 +496,52 @@ export class ProductsService {
     };
   }
 
+  /**
+   * Returns products that are on deal today. We consider a product on deal
+   * when `compareAtPrice` is set and greater than `price`.
+   */
+  async getTodayDeals(limit = 20, offset = 0) {
+    const products = await this.prismaService.product.findMany({
+      where: {
+        isActive: true,
+        compareAtPrice: {
+          gt: 0,
+        },
+        AND: [
+          {
+            price: {
+              lt: undefined, // placeholder - Prisma doesn't support comparing two fields directly here
+            },
+          },
+        ],
+      },
+      include: {
+        images: { orderBy: { sortOrder: 'asc' } },
+        category: true,
+        brand: true,
+        reviews: { where: { isPublished: true } },
+      },
+      orderBy: [{ createdAt: 'desc' }],
+      take: limit,
+      skip: offset,
+    });
+
+    // Filter server-side to ensure compareAtPrice > price since Prisma can't compare two columns directly
+    const filtered = products.filter(p => (p.compareAtPrice ?? 0) > (p.price ?? 0));
+
+    return this.addProductStats(filtered).map(p => ({
+      id: p.id,
+      name: p.title,
+      price: p.price,
+      compareAtPrice: p.compareAtPrice,
+      discountPercentage: p.compareAtPrice && p.price ? Math.round(((p.compareAtPrice - p.price) / p.compareAtPrice) * 100) : 0,
+      images: p.images?.map((i: any) => i.url) || [],
+      brand: p.brand?.name,
+      category: p.category?.name,
+      availability: p.isInStock,
+    }));
+  }
+
   async syncSkiniorProducts(syncDto: SyncSkiniorProductsDto) {
     try {
       let syncedCount = 0;

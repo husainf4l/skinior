@@ -59,6 +59,48 @@ export class ProductsController {
     };
   }
 
+  @Get('deals/today')
+  @Public()
+  @ApiOperation({
+    summary: "Get today's deals",
+    description: "Retrieves products that are currently on deal (discounted)"
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Maximum number of deals to return',
+    example: 20,
+  })
+  @ApiQuery({
+    name: 'offset',
+    required: false,
+    description: 'Pagination offset',
+    example: 0,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Today's deals retrieved successfully",
+  })
+  async getTodaysDeals(
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
+  ): Promise<{
+    success: boolean;
+    data: any[];
+    message: string;
+    timestamp: string;
+  }> {
+    const l = Number(limit) || 20;
+    const o = Number(offset) || 0;
+    const products = await this.productsService.getTodayDeals(l, o);
+    return {
+      success: true,
+      data: products,
+      message: "Today's deals retrieved successfully",
+      timestamp: new Date().toISOString(),
+    };
+  }
+
   @Get('search/simple')
   @Public()
   @ApiOperation({ 
