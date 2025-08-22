@@ -1,5 +1,4 @@
 import { Cart, CartItem, AddToCartRequest, UpdateCartItemRequest } from '@/types/cart';
-import { Product } from './productsService';
 
 // Mock cart data for development
 let mockCart: Cart = {

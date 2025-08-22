@@ -31,7 +31,7 @@ export default function Room({ params }: RoomProps) {
   const { user, isAuthenticated, logout } = useAuth();
   const locale = useLocale();
   const isRTL = locale === "ar";
-  const t = useTranslations('room');
+  const t = useTranslations("room");
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Permission testing states
@@ -67,6 +67,130 @@ export default function Room({ params }: RoomProps) {
       return;
     }
   }, [isAuthenticated, router, locale, logout]);
+
+  // Auto-test devices on page load
+  useEffect(() => {
+    const testDevices = async () => {
+      try {
+        setDevicePermissions((prev) => ({ ...prev, testing: true }));
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+
+        setDevicePermissions({
+          camera: true,
+          microphone: true,
+          testing: false,
+        });
+
+        // Stop the stream after testing
+        stream.getTracks().forEach((track) => track.stop());
+
+        return true;
+      } catch (error) {
+        console.error("Device access error:", error);
+        setDevicePermissions({
+          camera: false,
+          microphone: false,
+          testing: false,
+        });
+        return false;
+      }
+    };
+
+    testDevices();
+  }, []);
+
+  // Auto-connect when we have connection details
+  useEffect(() => {
+    if (hasRoomConnection && !isConnected && !isConnecting) {
+      const connectToRoom = async () => {
+        const token = searchParams.get("token");
+        const serverUrl = searchParams.get("serverUrl");
+        const roomName = searchParams.get("roomName") || resolvedParams.id;
+
+        if (!token || !serverUrl) {
+          console.log("No connection details available");
+          return;
+        }
+
+        // Prevent multiple connection attempts
+        if (isConnecting || isConnected) {
+          console.log("Connection already in progress or established");
+          return;
+        }
+
+        try {
+          setIsConnecting(true);
+          setConnectionError(null);
+          console.log("Connecting to room...");
+
+          // Setup room event listeners (only if not already set)
+          if (room.listenerCount("connected") === 0) {
+            room.on("connected", () => {
+              console.log("Room connected");
+              setIsConnected(true);
+              setIsConnecting(false);
+              setAnalysisStarted(true);
+            });
+
+            room.on("disconnected", (reason) => {
+              console.log("Room disconnected:", reason);
+              // Only update state if it wasn't a manual disconnect
+              if (reason?.toString() !== "CLIENT_INITIATED") {
+                setIsConnected(false);
+                setIsConnecting(false);
+              }
+            });
+
+            room.on("reconnecting", () => {
+              console.log("Reconnecting to room...");
+              setIsConnecting(true);
+            });
+
+            room.on("reconnected", () => {
+              console.log("Room reconnected");
+              setIsConnected(true);
+              setIsConnecting(false);
+            });
+          }
+
+          // Connect to the room with proper error handling
+          await room.connect(serverUrl, token, {
+            autoSubscribe: true,
+            maxRetries: 3,
+          });
+        } catch (error) {
+          console.error("Failed to connect to room:", error);
+          setConnectionError(
+            "Failed to connect to room. Please check your connection."
+          );
+          setIsConnecting(false);
+        }
+      };
+
+      connectToRoom();
+    }
+  }, [
+    hasRoomConnection,
+    isConnected,
+    isConnecting,
+    searchParams,
+    resolvedParams.id,
+    room,
+  ]);
+
+  // Cleanup function
+  useEffect(() => {
+    return () => {
+      if (room) {
+        room.removeAllListeners();
+        room.disconnect();
+      }
+    };
+  }, [room]);
 
   // Don't render anything if not authenticated
   if (!isAuthenticated || !authService.getToken()) {
@@ -172,32 +296,12 @@ export default function Room({ params }: RoomProps) {
       });
     } catch (error) {
       console.error("Failed to connect to room:", error);
-      setConnectionError("Failed to connect to room. Please check your connection.");
+      setConnectionError(
+        "Failed to connect to room. Please check your connection."
+      );
       setIsConnecting(false);
     }
   };
-
-  // Auto-test devices on page load
-  useEffect(() => {
-    testDevices();
-  }, []);
-
-  // Auto-connect when we have connection details
-  useEffect(() => {
-    if (hasRoomConnection && !isConnected && !isConnecting) {
-      connectToRoom();
-    }
-  }, [hasRoomConnection, isConnected, isConnecting]);
-
-  // Cleanup function
-  useEffect(() => {
-    return () => {
-      if (room) {
-        room.removeAllListeners();
-        room.disconnect();
-      }
-    };
-  }, [room]);
 
   const handleStartSession = async () => {
     if (!hasAcceptedTerms) {
@@ -228,74 +332,80 @@ export default function Room({ params }: RoomProps) {
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-3xl font-light text-gray-900 mb-4 tracking-tight">
-              {t('title')}
+              {t("title")}
             </h1>
-            <p className="text-gray-500 leading-relaxed">
-              {t('subtitle')}
-            </p>
+            <p className="text-gray-500 leading-relaxed">{t("subtitle")}</p>
           </div>
 
           {/* Device Permissions Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              {t('deviceCheck')}
+              {t("deviceCheck")}
             </h3>
             <div className="space-y-4">
               {/* Camera Permission */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className={`w-2 h-2 rounded-full ${
+                  <div
+                    className={`w-2 h-2 rounded-full ${
                       devicePermissions.testing
                         ? "bg-orange-400 animate-pulse"
                         : devicePermissions.camera
                         ? "bg-green-500"
                         : "bg-red-500"
-                    }`} />
+                    }`}
+                  />
                   <span className="text-gray-900 font-medium">
-                    {t('camera')}
+                    {t("camera")}
                   </span>
                 </div>
-                <span className={`text-sm px-2 py-1 rounded-md ${
-                  devicePermissions.testing
-                    ? "text-orange-700 bg-orange-50"
-                    : devicePermissions.camera
-                    ? "text-green-700 bg-green-50"
-                    : "text-red-700 bg-red-50"
-                }`}>
+                <span
+                  className={`text-sm px-2 py-1 rounded-md ${
+                    devicePermissions.testing
+                      ? "text-orange-700 bg-orange-50"
+                      : devicePermissions.camera
+                      ? "text-green-700 bg-green-50"
+                      : "text-red-700 bg-red-50"
+                  }`}
+                >
                   {devicePermissions.testing
-                    ? t('testing')
+                    ? t("testing")
                     : devicePermissions.camera
-                    ? t('ready')
-                    : t('blocked')}
+                    ? t("ready")
+                    : t("blocked")}
                 </span>
               </div>
 
               {/* Microphone Permission */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className={`w-2 h-2 rounded-full ${
+                  <div
+                    className={`w-2 h-2 rounded-full ${
                       devicePermissions.testing
                         ? "bg-orange-400 animate-pulse"
                         : devicePermissions.microphone
                         ? "bg-green-500"
                         : "bg-red-500"
-                    }`} />
+                    }`}
+                  />
                   <span className="text-gray-900 font-medium">
-                    {t('microphone')}
+                    {t("microphone")}
                   </span>
                 </div>
-                <span className={`text-sm px-2 py-1 rounded-md ${
-                  devicePermissions.testing
-                    ? "text-orange-700 bg-orange-50"
-                    : devicePermissions.microphone
-                    ? "text-green-700 bg-green-50"
-                    : "text-red-700 bg-red-50"
-                }`}>
+                <span
+                  className={`text-sm px-2 py-1 rounded-md ${
+                    devicePermissions.testing
+                      ? "text-orange-700 bg-orange-50"
+                      : devicePermissions.microphone
+                      ? "text-green-700 bg-green-50"
+                      : "text-red-700 bg-red-50"
+                  }`}
+                >
                   {devicePermissions.testing
-                    ? t('testing')
+                    ? t("testing")
                     : devicePermissions.microphone
-                    ? t('ready')
-                    : t('blocked')}
+                    ? t("ready")
+                    : t("blocked")}
                 </span>
               </div>
             </div>
@@ -308,7 +418,7 @@ export default function Room({ params }: RoomProps) {
                     onClick={testDevices}
                     className="w-full py-3 text-orange-600 hover:text-orange-700 font-medium transition-colors"
                   >
-                    {t('retryDevices')}
+                    {t("retryDevices")}
                   </button>
                 </div>
               )}
@@ -316,7 +426,10 @@ export default function Room({ params }: RoomProps) {
 
           {/* Terms and Conditions */}
           <div className="mb-8">
-            <label htmlFor="terms" className="flex items-start space-x-3 cursor-pointer">
+            <label
+              htmlFor="terms"
+              className="flex items-start space-x-3 cursor-pointer"
+            >
               <input
                 type="checkbox"
                 id="terms"
@@ -325,7 +438,7 @@ export default function Room({ params }: RoomProps) {
                 className="mt-1 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
               />
               <span className="text-sm text-gray-600 leading-relaxed">
-                {t('termsAgreement')}
+                {t("termsAgreement")}
               </span>
             </label>
           </div>
@@ -363,18 +476,16 @@ export default function Room({ params }: RoomProps) {
             {isStarting ? (
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>{t('starting')}</span>
+                <span>{t("starting")}</span>
               </div>
             ) : (
-              t('startAnalysisSession')
+              t("startAnalysisSession")
             )}
           </button>
 
           {/* Privacy Note */}
           <div className="text-center mt-6">
-            <p className="text-xs text-gray-400">
-              {t('secureEncrypted')}
-            </p>
+            <p className="text-xs text-gray-400">{t("secureEncrypted")}</p>
           </div>
         </div>
       </div>
@@ -387,12 +498,22 @@ export default function Room({ params }: RoomProps) {
       <div className="min-h-screen bg-white flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white rounded-3xl shadow-sm border border-gray-100 p-6 text-center">
           <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.35 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            <svg
+              className="w-8 h-8 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.35 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            {t('connectionError')}
+            {t("connectionError")}
           </h3>
           <p className="text-gray-600 mb-6">{connectionError}</p>
           <button
@@ -404,7 +525,7 @@ export default function Room({ params }: RoomProps) {
             }}
             className="w-full px-6 py-3 bg-orange-500 text-white font-medium rounded-2xl hover:bg-orange-600 transition-colors"
           >
-            {t('tryAgain')}
+            {t("tryAgain")}
           </button>
         </div>
       </div>
@@ -418,11 +539,9 @@ export default function Room({ params }: RoomProps) {
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin mx-auto mb-4"></div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            {t('connecting')}
+            {t("connecting")}
           </h3>
-          <p className="text-gray-500">
-            {t('connectingToServer')}
-          </p>
+          <p className="text-gray-500">{t("connectingToServer")}</p>
         </div>
       </div>
     );

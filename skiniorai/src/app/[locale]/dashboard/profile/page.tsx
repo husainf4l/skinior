@@ -26,7 +26,7 @@ export default function ProfilePage() {
   const commonAllergies = ['Fragrances', 'Sulfates', 'Parabens', 'Alcohol', 'Essential Oils', 'Retinoids'];
   const skinGoals = ['Clear Skin', 'Anti-Aging', 'Hydration', 'Brightening', 'Pore Minimizing', 'Oil Control'];
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | string[]) => {
     setFormData(prev => ({
       ...prev,
       [field]: value

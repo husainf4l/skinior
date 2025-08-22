@@ -2,14 +2,15 @@
 
 import React, { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { useCart } from "@/lib/store/cart-store";
+import { useCart, useCartStore } from "@/lib/store/cart-store";
 import Image from "next/image";
 import Link from "next/link";
 
 const CheckoutPage: React.FC = () => {
   const t = useTranslations();
   const locale = useLocale();
-  const { cart, clearCart } = useCart();
+  const cart = useCart();
+  const { clearCart } = useCartStore();
   const isRTL = locale === "ar";
 
   const [formData, setFormData] = useState({
@@ -29,11 +30,13 @@ const CheckoutPage: React.FC = () => {
     return isRTL ? `${price.toFixed(2)} د.أ` : `JOD ${price.toFixed(2)}`;
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -43,11 +46,11 @@ const CheckoutPage: React.FC = () => {
 
     // Simulate checkout process
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // Clear cart after successful checkout
       await clearCart();
-      
+
       // Redirect to success page or show success message
       alert(t("checkout.success"));
       window.location.href = `/${locale}/checkout/success`;
@@ -79,14 +82,22 @@ const CheckoutPage: React.FC = () => {
                 />
               </svg>
             </div>
-            <h1 className={`text-xl font-semibold text-gray-900 mb-2 ${isRTL ? "font-cairo" : ""}`}>
+            <h1
+              className={`text-xl font-semibold text-gray-900 mb-2 ${
+                isRTL ? "font-cairo" : ""
+              }`}
+            >
               {t("cart.empty")}
             </h1>
             <p className={`text-gray-600 mb-6 ${isRTL ? "font-cairo" : ""}`}>
               {t("checkout.emptyDescription")}
             </p>
             <Link href={`/${locale}/shop`}>
-              <button className={`bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors ${isRTL ? "font-cairo" : ""}`}>
+              <button
+                className={`bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors ${
+                  isRTL ? "font-cairo" : ""
+                }`}
+              >
                 {t("cart.continueShopping")}
               </button>
             </Link>
@@ -100,10 +111,18 @@ const CheckoutPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50 py-8" dir={isRTL ? "rtl" : "ltr"}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className={`text-3xl font-bold text-gray-900 ${isRTL ? "font-cairo text-right" : ""}`}>
+          <h1
+            className={`text-3xl font-bold text-gray-900 ${
+              isRTL ? "font-cairo text-right" : ""
+            }`}
+          >
             {t("checkout.title")}
           </h1>
-          <p className={`text-gray-600 mt-2 ${isRTL ? "font-cairo text-right" : ""}`}>
+          <p
+            className={`text-gray-600 mt-2 ${
+              isRTL ? "font-cairo text-right" : ""
+            }`}
+          >
             {t("checkout.subtitle")}
           </p>
         </div>
@@ -112,7 +131,11 @@ const CheckoutPage: React.FC = () => {
           {/* Checkout Form */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className={`text-xl font-semibold text-gray-900 mb-6 ${isRTL ? "font-cairo" : ""}`}>
+              <h2
+                className={`text-xl font-semibold text-gray-900 mb-6 ${
+                  isRTL ? "font-cairo" : ""
+                }`}
+              >
                 {t("checkout.contactInfo")}
               </h2>
 
@@ -120,7 +143,11 @@ const CheckoutPage: React.FC = () => {
                 {/* Contact Information */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "font-cairo text-right" : ""}`}>
+                    <label
+                      className={`block text-sm font-medium text-gray-700 mb-2 ${
+                        isRTL ? "font-cairo text-right" : ""
+                      }`}
+                    >
                       {t("checkout.email")}
                     </label>
                     <input
@@ -134,7 +161,11 @@ const CheckoutPage: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "font-cairo text-right" : ""}`}>
+                    <label
+                      className={`block text-sm font-medium text-gray-700 mb-2 ${
+                        isRTL ? "font-cairo text-right" : ""
+                      }`}
+                    >
                       {t("checkout.phone")}
                     </label>
                     <input
@@ -151,7 +182,11 @@ const CheckoutPage: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "font-cairo text-right" : ""}`}>
+                    <label
+                      className={`block text-sm font-medium text-gray-700 mb-2 ${
+                        isRTL ? "font-cairo text-right" : ""
+                      }`}
+                    >
                       {t("checkout.firstName")}
                     </label>
                     <input
@@ -165,7 +200,11 @@ const CheckoutPage: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "font-cairo text-right" : ""}`}>
+                    <label
+                      className={`block text-sm font-medium text-gray-700 mb-2 ${
+                        isRTL ? "font-cairo text-right" : ""
+                      }`}
+                    >
                       {t("checkout.lastName")}
                     </label>
                     <input
@@ -182,13 +221,21 @@ const CheckoutPage: React.FC = () => {
 
                 {/* Shipping Address */}
                 <div className="pt-6 border-t border-gray-200">
-                  <h3 className={`text-lg font-semibold text-gray-900 mb-4 ${isRTL ? "font-cairo" : ""}`}>
+                  <h3
+                    className={`text-lg font-semibold text-gray-900 mb-4 ${
+                      isRTL ? "font-cairo" : ""
+                    }`}
+                  >
                     {t("checkout.shippingAddress")}
                   </h3>
 
                   <div className="space-y-4">
                     <div>
-                      <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "font-cairo text-right" : ""}`}>
+                      <label
+                        className={`block text-sm font-medium text-gray-700 mb-2 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
                         {t("checkout.address")}
                       </label>
                       <input
@@ -204,7 +251,11 @@ const CheckoutPage: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "font-cairo text-right" : ""}`}>
+                        <label
+                          className={`block text-sm font-medium text-gray-700 mb-2 ${
+                            isRTL ? "font-cairo text-right" : ""
+                          }`}
+                        >
                           {t("checkout.city")}
                         </label>
                         <input
@@ -218,7 +269,11 @@ const CheckoutPage: React.FC = () => {
                         />
                       </div>
                       <div>
-                        <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "font-cairo text-right" : ""}`}>
+                        <label
+                          className={`block text-sm font-medium text-gray-700 mb-2 ${
+                            isRTL ? "font-cairo text-right" : ""
+                          }`}
+                        >
                           {t("checkout.postalCode")}
                         </label>
                         <input
@@ -231,7 +286,11 @@ const CheckoutPage: React.FC = () => {
                         />
                       </div>
                       <div>
-                        <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "font-cairo text-right" : ""}`}>
+                        <label
+                          className={`block text-sm font-medium text-gray-700 mb-2 ${
+                            isRTL ? "font-cairo text-right" : ""
+                          }`}
+                        >
                           {t("checkout.country")}
                         </label>
                         <select
@@ -255,7 +314,9 @@ const CheckoutPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isProcessing}
-                    className={`w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${isRTL ? "font-cairo" : ""}`}
+                    className={`w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                      isRTL ? "font-cairo" : ""
+                    }`}
                   >
                     {isProcessing ? (
                       <div className="flex items-center justify-center gap-2">
@@ -274,7 +335,11 @@ const CheckoutPage: React.FC = () => {
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
-              <h2 className={`text-xl font-semibold text-gray-900 mb-6 ${isRTL ? "font-cairo" : ""}`}>
+              <h2
+                className={`text-xl font-semibold text-gray-900 mb-6 ${
+                  isRTL ? "font-cairo" : ""
+                }`}
+              >
                 {t("checkout.orderSummary")}
               </h2>
 
@@ -284,23 +349,39 @@ const CheckoutPage: React.FC = () => {
                   <div key={item.id} className="flex gap-3">
                     <div className="relative w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                       <Image
-                        src={item.product.image}
-                        alt={isRTL ? item.product.titleAr : item.product.title}
+                        src={item.image}
+                        alt={isRTL ? item.titleAr || item.title : item.title}
                         fill
                         className="object-cover"
                         sizes="48px"
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className={`font-medium text-gray-900 text-sm ${isRTL ? "font-cairo text-right" : ""}`}>
-                        {isRTL ? item.product.titleAr : item.product.title}
+                      <h4
+                        className={`font-medium text-gray-900 text-sm ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
+                        {isRTL ? item.titleAr || item.title : item.title}
                       </h4>
-                      <div className={`flex justify-between items-center mt-1 ${isRTL ? "flex-row-reverse" : ""}`}>
-                        <span className={`text-sm text-gray-500 ${isRTL ? "font-cairo" : ""}`}>
+                      <div
+                        className={`flex justify-between items-center mt-1 ${
+                          isRTL ? "flex-row-reverse" : ""
+                        }`}
+                      >
+                        <span
+                          className={`text-sm text-gray-500 ${
+                            isRTL ? "font-cairo" : ""
+                          }`}
+                        >
                           {t("checkout.qty")}: {item.quantity}
                         </span>
-                        <span className={`font-semibold text-gray-900 text-sm ${isRTL ? "font-cairo" : ""}`}>
-                          {formatPrice(item.totalPrice)}
+                        <span
+                          className={`font-semibold text-gray-900 text-sm ${
+                            isRTL ? "font-cairo" : ""
+                          }`}
+                        >
+                          {formatPrice(item.price * item.quantity)}
                         </span>
                       </div>
                     </div>
@@ -310,8 +391,14 @@ const CheckoutPage: React.FC = () => {
 
               {/* Order Totals */}
               <div className="border-t border-gray-200 pt-4 space-y-2">
-                <div className={`flex justify-between text-sm ${isRTL ? "flex-row-reverse" : ""}`}>
-                  <span className={`text-gray-600 ${isRTL ? "font-cairo" : ""}`}>
+                <div
+                  className={`flex justify-between text-sm ${
+                    isRTL ? "flex-row-reverse" : ""
+                  }`}
+                >
+                  <span
+                    className={`text-gray-600 ${isRTL ? "font-cairo" : ""}`}
+                  >
                     {t("cart.subtotal")}
                   </span>
                   <span className={`font-medium ${isRTL ? "font-cairo" : ""}`}>
@@ -319,21 +406,37 @@ const CheckoutPage: React.FC = () => {
                   </span>
                 </div>
 
-                <div className={`flex justify-between text-sm ${isRTL ? "flex-row-reverse" : ""}`}>
-                  <span className={`text-gray-600 ${isRTL ? "font-cairo" : ""}`}>
+                <div
+                  className={`flex justify-between text-sm ${
+                    isRTL ? "flex-row-reverse" : ""
+                  }`}
+                >
+                  <span
+                    className={`text-gray-600 ${isRTL ? "font-cairo" : ""}`}
+                  >
                     {t("cart.shipping")}
                   </span>
                   <span className={`font-medium ${isRTL ? "font-cairo" : ""}`}>
-                    {cart.shipping > 0 ? formatPrice(cart.shipping) : t("checkout.freeShipping")}
+                    {cart.shipping > 0
+                      ? formatPrice(cart.shipping)
+                      : t("checkout.freeShipping")}
                   </span>
                 </div>
 
                 {cart.tax > 0 && (
-                  <div className={`flex justify-between text-sm ${isRTL ? "flex-row-reverse" : ""}`}>
-                    <span className={`text-gray-600 ${isRTL ? "font-cairo" : ""}`}>
+                  <div
+                    className={`flex justify-between text-sm ${
+                      isRTL ? "flex-row-reverse" : ""
+                    }`}
+                  >
+                    <span
+                      className={`text-gray-600 ${isRTL ? "font-cairo" : ""}`}
+                    >
                       {t("cart.tax")}
                     </span>
-                    <span className={`font-medium ${isRTL ? "font-cairo" : ""}`}>
+                    <span
+                      className={`font-medium ${isRTL ? "font-cairo" : ""}`}
+                    >
                       {formatPrice(cart.tax)}
                     </span>
                   </div>
@@ -341,11 +444,19 @@ const CheckoutPage: React.FC = () => {
 
                 <hr className="my-3" />
 
-                <div className={`flex justify-between text-lg font-semibold ${isRTL ? "flex-row-reverse" : ""}`}>
-                  <span className={`text-gray-900 ${isRTL ? "font-cairo" : ""}`}>
+                <div
+                  className={`flex justify-between text-lg font-semibold ${
+                    isRTL ? "flex-row-reverse" : ""
+                  }`}
+                >
+                  <span
+                    className={`text-gray-900 ${isRTL ? "font-cairo" : ""}`}
+                  >
                     {t("cart.total")}
                   </span>
-                  <span className={`text-gray-900 ${isRTL ? "font-cairo" : ""}`}>
+                  <span
+                    className={`text-gray-900 ${isRTL ? "font-cairo" : ""}`}
+                  >
                     {formatPrice(cart.total)}
                   </span>
                 </div>
@@ -354,8 +465,18 @@ const CheckoutPage: React.FC = () => {
               {/* Security Info */}
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
                   </svg>
                   <span className={isRTL ? "font-cairo" : ""}>
                     {t("checkout.secureCheckout")}

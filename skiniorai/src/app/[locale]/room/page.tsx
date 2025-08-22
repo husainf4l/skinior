@@ -10,8 +10,7 @@ import { ApiService } from "@/services/apiService";
 export default function RoomPage() {
   const locale = useLocale();
   const router = useRouter();
-  const { user, logout, isAuthenticated, loading } = useAuth();
-  const isRTL = locale === "ar";
+  const { logout, isAuthenticated, loading } = useAuth();
   const t = useTranslations("room");
   const tCommon = useTranslations("common");
 
@@ -120,10 +119,10 @@ export default function RoomPage() {
       // Redirect to room with the authenticated room data
       const roomUrl = `/${locale}/room/${data.room.name}?token=${data.token}&serverUrl=${data.liveKitUrl}&roomName=${data.room.name}`;
       router.push(roomUrl);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error creating room:", error);
 
-      if (error.message === "UNAUTHORIZED") {
+      if (error instanceof Error && error.message === "UNAUTHORIZED") {
         // Token expired or invalid
         logout();
         router.push(`/${locale}/login`);

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { getUserDisplayName } from '@/types/user';
+import { getUserDisplayName, User } from '@/types/user';
 import { useRouter } from 'next/navigation';
 import LanguageSwitcher from '../LanguageSwitcher';
 
@@ -168,7 +168,7 @@ interface SidebarContentProps {
     icon: React.ReactNode;
   }>;
   isRTL: boolean;
-  user: any;
+  user: User | null;
   onLogout: () => void;
 }
 

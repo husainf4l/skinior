@@ -5,15 +5,14 @@ import { useLocale } from "next-intl";
 import {
   TrackReferenceOrPlaceholder,
   VideoTrack,
-  ParticipantTile,
 } from "@livekit/components-react";
-import { LocalParticipant, Track } from "livekit-client";
+import { LocalParticipant } from "livekit-client";
 
 interface RoomLayoutProps {
   videoRef: React.RefObject<HTMLVideoElement | null>;
   isActive: boolean;
-  participants: any[];
-  messages: any[];
+  participants: unknown[];
+  messages: unknown[];
   currentView: string;
   userId?: string;
   roomId: string;

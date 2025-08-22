@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { BlogComment } from '../../types/blog';
-import OptimizedImage from '../OptimizedImage';
+import { useState, useEffect, useRef } from "react";
+import { BlogComment } from "../../types/blog";
+import OptimizedImage from "../OptimizedImage";
 
 interface EnhancedCommentsProps {
   postId: string;
@@ -19,27 +19,29 @@ export default function EnhancedComments({
   comments,
   onAddComment,
   onLikeComment,
-  locale = 'en',
+  locale = "en",
   currentUserId,
   loading = false,
-  maxDepth = 3
+  maxDepth = 3,
 }: EnhancedCommentsProps) {
   // Ensure comments is always an array
   const safeComments = Array.isArray(comments) ? comments : [];
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  const [replyText, setReplyText] = useState('');
-  const [newCommentText, setNewCommentText] = useState('');
+  const [replyText, setReplyText] = useState("");
+  const [newCommentText, setNewCommentText] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
-  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'likes'>('newest');
-  
+  const [expandedComments, setExpandedComments] = useState<Set<string>>(
+    new Set()
+  );
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "likes">("newest");
+
   const newCommentRef = useRef<HTMLTextAreaElement>(null);
   const replyRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-resize textarea
   const autoResize = (textarea: HTMLTextAreaElement) => {
-    textarea.style.height = 'auto';
-    textarea.style.height = textarea.scrollHeight + 'px';
+    textarea.style.height = "auto";
+    textarea.style.height = textarea.scrollHeight + "px";
   };
 
   useEffect(() => {
@@ -55,12 +57,12 @@ export default function EnhancedComments({
     try {
       setSubmitting(true);
       await onAddComment(newCommentText.trim());
-      setNewCommentText('');
+      setNewCommentText("");
       if (newCommentRef.current) {
-        newCommentRef.current.style.height = 'auto';
+        newCommentRef.current.style.height = "auto";
       }
     } catch (error) {
-      console.error('Failed to add comment:', error);
+      console.error("Failed to add comment:", error);
     } finally {
       setSubmitting(false);
     }
@@ -73,17 +75,17 @@ export default function EnhancedComments({
     try {
       setSubmitting(true);
       await onAddComment(replyText.trim(), replyingTo);
-      setReplyText('');
+      setReplyText("");
       setReplyingTo(null);
     } catch (error) {
-      console.error('Failed to add reply:', error);
+      console.error("Failed to add reply:", error);
     } finally {
       setSubmitting(false);
     }
   };
 
   const toggleExpanded = (commentId: string) => {
-    setExpandedComments(prev => {
+    setExpandedComments((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(commentId)) {
         newSet.delete(commentId);
@@ -96,18 +98,21 @@ export default function EnhancedComments({
 
   // Build comment tree structure
   const buildCommentTree = (): BlogComment[] => {
-    const commentMap = new Map<string, BlogComment & { children: BlogComment[] }>();
+    const commentMap = new Map<
+      string,
+      BlogComment & { children: BlogComment[] }
+    >();
     const rootComments: (BlogComment & { children: BlogComment[] })[] = [];
 
     // Initialize all comments with children array
-    safeComments.forEach(comment => {
+    safeComments.forEach((comment) => {
       commentMap.set(comment.id, { ...comment, children: [] });
     });
 
     // Build tree structure
-    safeComments.forEach(comment => {
+    safeComments.forEach((comment) => {
       const commentWithChildren = commentMap.get(comment.id)!;
-      
+
       if (comment.parentId) {
         const parent = commentMap.get(comment.parentId);
         if (parent) {
@@ -127,11 +132,15 @@ export default function EnhancedComments({
   const sortComments = () => {
     return safeComments.sort((a, b) => {
       switch (sortBy) {
-        case 'newest':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        case 'oldest':
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-        case 'likes':
+        case "newest":
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        case "oldest":
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+        case "likes":
           return b.likes - a.likes;
         default:
           return 0;
@@ -147,31 +156,36 @@ export default function EnhancedComments({
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return locale === 'ar' ? 'الآن' : 'now';
-    if (diffMins < 60) return locale === 'ar' ? `منذ ${diffMins} دقيقة` : `${diffMins}m ago`;
-    if (diffHours < 24) return locale === 'ar' ? `منذ ${diffHours} ساعة` : `${diffHours}h ago`;
-    if (diffDays < 7) return locale === 'ar' ? `منذ ${diffDays} أيام` : `${diffDays}d ago`;
-    
-    return date.toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+    if (diffMins < 1) return locale === "ar" ? "الآن" : "now";
+    if (diffMins < 60)
+      return locale === "ar" ? `منذ ${diffMins} دقيقة` : `${diffMins}m ago`;
+    if (diffHours < 24)
+      return locale === "ar" ? `منذ ${diffHours} ساعة` : `${diffHours}h ago`;
+    if (diffDays < 7)
+      return locale === "ar" ? `منذ ${diffDays} أيام` : `${diffDays}d ago`;
+
+    return date.toLocaleDateString(locale === "ar" ? "ar-SA" : "en-US", {
+      month: "short",
+      day: "numeric",
+      year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
     });
   };
 
-  const CommentItem = ({ 
-    comment, 
-    depth = 0 
-  }: { 
-    comment: BlogComment & { children?: BlogComment[] }; 
-    depth?: number 
+  const CommentItem = ({
+    comment,
+    depth = 0,
+  }: {
+    comment: BlogComment & { children?: BlogComment[] };
+    depth?: number;
   }) => {
     const hasReplies = comment.children && comment.children.length > 0;
     const isExpanded = expandedComments.has(comment.id);
     const canReply = depth < maxDepth;
 
     return (
-      <div className={`${depth > 0 ? 'ml-8 border-l border-gray-200 pl-4' : ''}`}>
+      <div
+        className={`${depth > 0 ? "ml-8 border-l border-gray-200 pl-4" : ""}`}
+      >
         <div className="bg-gray-50 rounded-xl p-6 hover:bg-gray-100 transition-colors">
           <div className="flex items-start gap-4">
             {/* Avatar */}
@@ -204,15 +218,15 @@ export default function EnhancedComments({
                 </time>
                 {comment.author.email === currentUserId && (
                   <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
-                    {locale === 'ar' ? 'أنت' : 'You'}
+                    {locale === "ar" ? "أنت" : "You"}
                   </span>
                 )}
               </div>
 
               {/* Content */}
-              <p 
+              <p
                 className="text-gray-700 leading-relaxed text-sm mb-4"
-                dir={locale === 'ar' ? 'rtl' : 'ltr'}
+                dir={locale === "ar" ? "rtl" : "ltr"}
               >
                 {comment.content}
               </p>
@@ -223,18 +237,32 @@ export default function EnhancedComments({
                   onClick={() => onLikeComment(comment.id)}
                   className="flex items-center gap-1 text-xs text-gray-500 hover:text-red-600 transition-colors"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    />
                   </svg>
                   {comment.likes > 0 && <span>{comment.likes}</span>}
                 </button>
 
                 {canReply && (
                   <button
-                    onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
+                    onClick={() =>
+                      setReplyingTo(
+                        replyingTo === comment.id ? null : comment.id
+                      )
+                    }
                     className="text-xs text-gray-500 hover:text-blue-600 transition-colors"
                   >
-                    {locale === 'ar' ? 'رد' : 'Reply'}
+                    {locale === "ar" ? "رد" : "Reply"}
                   </button>
                 )}
 
@@ -243,18 +271,28 @@ export default function EnhancedComments({
                     onClick={() => toggleExpanded(comment.id)}
                     className="flex items-center gap-1 text-xs text-gray-500 hover:text-blue-600 transition-colors"
                   >
-                    <svg 
-                      className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      className={`w-4 h-4 transition-transform ${
+                        isExpanded ? "rotate-180" : ""
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
-                    {locale === 'ar' 
-                      ? `${comment.children?.length} ${comment.children?.length === 1 ? 'رد' : 'ردود'}`
-                      : `${comment.children?.length} ${comment.children?.length === 1 ? 'reply' : 'replies'}`
-                    }
+                    {locale === "ar"
+                      ? `${comment.children?.length} ${
+                          comment.children?.length === 1 ? "رد" : "ردود"
+                        }`
+                      : `${comment.children?.length} ${
+                          comment.children?.length === 1 ? "reply" : "replies"
+                        }`}
                   </button>
                 )}
               </div>
@@ -269,31 +307,36 @@ export default function EnhancedComments({
                       setReplyText(e.target.value);
                       autoResize(e.target);
                     }}
-                    placeholder={locale === 'ar' ? 'اكتب ردك...' : 'Write your reply...'}
+                    placeholder={
+                      locale === "ar" ? "اكتب ردك..." : "Write your reply..."
+                    }
                     className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
                     rows={2}
-                    dir={locale === 'ar' ? 'rtl' : 'ltr'}
+                    dir={locale === "ar" ? "rtl" : "ltr"}
                   />
                   <div className="flex justify-end gap-2 mt-2">
                     <button
                       type="button"
                       onClick={() => {
                         setReplyingTo(null);
-                        setReplyText('');
+                        setReplyText("");
                       }}
                       className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
                     >
-                      {locale === 'ar' ? 'إلغاء' : 'Cancel'}
+                      {locale === "ar" ? "إلغاء" : "Cancel"}
                     </button>
                     <button
                       type="submit"
                       disabled={!replyText.trim() || submitting}
                       className="bg-blue-600 text-white px-4 py-2 text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
-                      {submitting 
-                        ? (locale === 'ar' ? 'جاري النشر...' : 'Posting...') 
-                        : (locale === 'ar' ? 'رد' : 'Reply')
-                      }
+                      {submitting
+                        ? locale === "ar"
+                          ? "جاري النشر..."
+                          : "Posting..."
+                        : locale === "ar"
+                        ? "رد"
+                        : "Reply"}
                     </button>
                   </div>
                 </form>
@@ -314,40 +357,50 @@ export default function EnhancedComments({
     );
   };
 
-  const sortedComments = sortComments(buildCommentTree());
+  const sortedComments = sortComments();
 
   return (
     <section className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-bold text-gray-900">
-          {locale === 'ar' 
-            ? `التعليقات (${comments.length})` 
-            : `Comments (${comments.length})`
-          }
+          {locale === "ar"
+            ? `التعليقات (${comments.length})`
+            : `Comments (${comments.length})`}
         </h3>
 
         {/* Sort options */}
         {comments.length > 1 && (
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-600">
-              {locale === 'ar' ? 'ترتيب:' : 'Sort by:'}
+              {locale === "ar" ? "ترتيب:" : "Sort by:"}
             </span>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'newest' | 'oldest' | 'likes')}
+              onChange={(e) =>
+                setSortBy(e.target.value as "newest" | "oldest" | "likes")
+              }
               className="text-sm border border-gray-200 rounded-lg px-3 py-1 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="newest">{locale === 'ar' ? 'الأحدث' : 'Newest'}</option>
-              <option value="oldest">{locale === 'ar' ? 'الأقدم' : 'Oldest'}</option>
-              <option value="likes">{locale === 'ar' ? 'الأكثر إعجاباً' : 'Most liked'}</option>
+              <option value="newest">
+                {locale === "ar" ? "الأحدث" : "Newest"}
+              </option>
+              <option value="oldest">
+                {locale === "ar" ? "الأقدم" : "Oldest"}
+              </option>
+              <option value="likes">
+                {locale === "ar" ? "الأكثر إعجاباً" : "Most liked"}
+              </option>
             </select>
           </div>
         )}
       </div>
 
       {/* New comment form */}
-      <form onSubmit={handleSubmitComment} className="bg-white border border-gray-200 rounded-xl p-6">
+      <form
+        onSubmit={handleSubmitComment}
+        className="bg-white border border-gray-200 rounded-xl p-6"
+      >
         <textarea
           ref={newCommentRef}
           value={newCommentText}
@@ -355,27 +408,31 @@ export default function EnhancedComments({
             setNewCommentText(e.target.value);
             autoResize(e.target);
           }}
-          placeholder={locale === 'ar' ? 'اكتب تعليقك...' : 'Write your comment...'}
+          placeholder={
+            locale === "ar" ? "اكتب تعليقك..." : "Write your comment..."
+          }
           className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
           rows={3}
-          dir={locale === 'ar' ? 'rtl' : 'ltr'}
+          dir={locale === "ar" ? "rtl" : "ltr"}
         />
         <div className="flex justify-between items-center mt-4">
           <div className="text-xs text-gray-500">
-            {locale === 'ar' 
-              ? 'كن محترماً ومهذباً في تعليقاتك' 
-              : 'Please be respectful and constructive in your comments'
-            }
+            {locale === "ar"
+              ? "كن محترماً ومهذباً في تعليقاتك"
+              : "Please be respectful and constructive in your comments"}
           </div>
           <button
             type="submit"
             disabled={!newCommentText.trim() || submitting}
             className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
           >
-            {submitting 
-              ? (locale === 'ar' ? 'جاري النشر...' : 'Posting...') 
-              : (locale === 'ar' ? 'نشر التعليق' : 'Post Comment')
-            }
+            {submitting
+              ? locale === "ar"
+                ? "جاري النشر..."
+                : "Posting..."
+              : locale === "ar"
+              ? "نشر التعليق"
+              : "Post Comment"}
           </button>
         </div>
       </form>
@@ -409,18 +466,27 @@ export default function EnhancedComments({
       ) : comments.length === 0 ? (
         <div className="text-center py-12">
           <div className="mb-6">
-            <svg className="w-16 h-16 text-gray-300 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            <svg
+              className="w-16 h-16 text-gray-300 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1}
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
             </svg>
           </div>
           <h4 className="text-xl font-semibold text-gray-900 mb-2">
-            {locale === 'ar' ? 'لا توجد تعليقات بعد' : 'No comments yet'}
+            {locale === "ar" ? "لا توجد تعليقات بعد" : "No comments yet"}
           </h4>
           <p className="text-gray-600">
-            {locale === 'ar' 
-              ? 'كن أول من يعلق على هذا المقال ويبدأ النقاش!' 
-              : 'Be the first to comment on this article and start the discussion!'
-            }
+            {locale === "ar"
+              ? "كن أول من يعلق على هذا المقال ويبدأ النقاش!"
+              : "Be the first to comment on this article and start the discussion!"}
           </p>
         </div>
       ) : (

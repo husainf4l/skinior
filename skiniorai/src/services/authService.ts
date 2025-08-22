@@ -5,7 +5,13 @@ interface LoginCredentials {
   password: string;
 }
 
-interface RegisterData extends CreateUser {}
+interface RegisterData {
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+}
 
 interface AuthResponse {
   user: User;

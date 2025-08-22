@@ -218,7 +218,7 @@ export default function CartDrawer() {
                     {/* Compelling Messaging */}
                     <div className="space-y-3 mb-8">
                       <h3 className="text-2xl font-bold text-gray-900 tracking-tight">
-                        Let's find your perfect skincare
+                        Let&apos;s find your perfect skincare
                       </h3>
                       <p className="text-gray-600 max-w-sm leading-relaxed">
                         Explore our curated collection of premium products

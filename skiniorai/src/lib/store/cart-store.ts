@@ -28,7 +28,7 @@ interface CartStore {
 
 export const useCartStore = create<CartStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       // Initial state
       cart: null,
       isLoading: false,

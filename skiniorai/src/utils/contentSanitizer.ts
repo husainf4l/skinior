@@ -47,7 +47,6 @@ export function sanitizeHTML(content: string): string {
       ALLOWED_TAGS: SANITIZE_CONFIG.ALLOWED_TAGS,
       ALLOWED_ATTR: SANITIZE_CONFIG.ALLOWED_ATTR,
       ALLOWED_URI_REGEXP: SANITIZE_CONFIG.ALLOWED_URI_REGEXP,
-      REMOVE_EMPTY: SANITIZE_CONFIG.REMOVE_EMPTY,
       FORBID_CONTENTS: SANITIZE_CONFIG.FORBID_CONTENTS,
       
       // Add hooks for custom processing
@@ -55,21 +54,7 @@ export function sanitizeHTML(content: string): string {
       WHOLE_DOCUMENT: false,
       RETURN_DOM: false,
       RETURN_DOM_FRAGMENT: false,
-      RETURN_TRUSTED_TYPE: false,
-      
-      // Custom transformations
-      TRANSFORM_TAGS: SANITIZE_CONFIG.TRANSFORM_TAGS,
-      
-      // Add security headers
-      ADD_TAGS: [],
-      ADD_ATTR: [],
-      
-      // Custom hook to modify elements
-      SANITIZE_NAMED_PROPS: {
-        addHook: (hook: string, func: (...args: unknown[]) => unknown) => {
-          DOMPurify.addHook(hook, func);
-        }
-      }
+      RETURN_TRUSTED_TYPE: false
     });
   } catch (error) {
     console.error('Content sanitization failed:', error);

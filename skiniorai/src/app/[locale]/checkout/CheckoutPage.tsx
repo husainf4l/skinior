@@ -2,14 +2,15 @@
 
 import React, { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { useCart } from "@/lib/store/cart-store";
+import { useCart, useCartStore } from "@/lib/store/cart-store";
 import Image from "next/image";
 import Link from "next/link";
 
 const CheckoutPage: React.FC = () => {
   const t = useTranslations();
   const locale = useLocale();
-  const { cart, clearCart } = useCart();
+  const cart = useCart();
+  const { clearCart } = useCartStore();
   const isRTL = locale === "ar";
 
   const [formData, setFormData] = useState({
@@ -348,8 +349,8 @@ const CheckoutPage: React.FC = () => {
                   <div key={item.id} className="flex gap-3">
                     <div className="relative w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                       <Image
-                        src={item.product.image}
-                        alt={isRTL ? item.product.titleAr : item.product.title}
+                        src={item.image}
+                        alt={isRTL ? item.titleAr || item.title : item.title}
                         fill
                         className="object-cover"
                         sizes="48px"
@@ -361,7 +362,7 @@ const CheckoutPage: React.FC = () => {
                           isRTL ? "font-cairo text-right" : ""
                         }`}
                       >
-                        {isRTL ? item.product.titleAr : item.product.title}
+                        {isRTL ? item.titleAr || item.title : item.title}
                       </h4>
                       <div
                         className={`flex justify-between items-center mt-1 ${
@@ -380,7 +381,7 @@ const CheckoutPage: React.FC = () => {
                             isRTL ? "font-cairo" : ""
                           }`}
                         >
-                          {formatPrice(item.totalPrice)}
+                          {formatPrice(item.price * item.quantity)}
                         </span>
                       </div>
                     </div>

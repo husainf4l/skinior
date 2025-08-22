@@ -15,10 +15,11 @@ export default function ShopPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams?: { deals?: string };
+  searchParams?: Promise<{ deals?: string }>;
 }) {
   const { locale } = use(params);
-  const isDealsPage = searchParams?.deals === "true";
+  const resolvedSearchParams = searchParams ? use(searchParams) : undefined;
+  const isDealsPage = resolvedSearchParams?.deals === "true";
 
   // Enable static rendering
   setRequestLocale(locale);
