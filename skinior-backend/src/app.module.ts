@@ -18,6 +18,7 @@ import { BlogModule } from './blog/blog.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { TreatmentsModule } from './treatments/treatments.module';
 import { ConsultationsModule } from './consultations/consultations.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -45,6 +46,8 @@ import { ConsultationsModule } from './consultations/consultations.module';
     // AI Consultation Modules
     TreatmentsModule,
     ConsultationsModule,
+    // Admin Module
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -123,19 +123,19 @@ model ProductReview {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String?  // Optional for system users
-  firstName String?
-  lastName  String?
-  phone     String?
-  role      String   @default("customer") // customer, admin, agent
-  isActive  Boolean  @default(true)
-  isSystem  Boolean  @default(false) // For agent/system users
-  apiKey    String?  @unique // For agent authentication
+  id             String    @id @default(uuid())
+  email          String    @unique
+  password       String? // Optional for system users
+  firstName      String?
+  lastName       String?
+  phone          String?
+  role           String    @default("customer") // customer, admin, agent
+  isActive       Boolean   @default(true)
+  isSystem       Boolean   @default(false) // For agent/system users
+  apiKey         String?   @unique // For agent authentication
   tokenExpiresAt DateTime? // For long-term tokens
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model Order {
@@ -237,18 +237,18 @@ model LiveKitRoom {
 
 // Analysis Sessions for Agent16 Integration
 model AnalysisSession {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   userId      String
-  sessionId   String   @unique
-  language    String   @default("english")
-  status      String   @default("in_progress") // in_progress, completed, cancelled
+  sessionId   String    @unique
+  language    String    @default("english")
+  status      String    @default("in_progress") // in_progress, completed, cancelled
   metadata    Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   completedAt DateTime?
 
   // Relations
-  analysisData         AnalysisData[]
+  analysisData           AnalysisData[]
   productRecommendations ProductRecommendation[]
 
   @@index([userId])
@@ -275,27 +275,27 @@ model AnalysisData {
 
 // Product Recommendations from Analysis
 model ProductRecommendation {
-  id                 String   @id @default(uuid())
-  userId             String
-  analysisId         String
-  productId          String
-  productName        String
-  brand              String?
-  category           String?
-  ingredients        String[] // Array of ingredients
-  price              Float?
-  currency           String   @default("USD")
-  rating             Float?
-  reviewCount        Int      @default(0)
-  reason             String?
-  usageInstructions  String?
-  priority           String   @default("medium") // high, medium, low
-  availability       Boolean  @default(true)
-  skiniorUrl         String?
-  status             String   @default("pending") // pending, purchased, tried, not_interested, wishlist
-  userNotes          String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  id                String   @id @default(uuid())
+  userId            String
+  analysisId        String
+  productId         String
+  productName       String
+  brand             String?
+  category          String?
+  ingredients       String[] // Array of ingredients
+  price             Float?
+  currency          String   @default("USD")
+  rating            Float?
+  reviewCount       Int      @default(0)
+  reason            String?
+  usageInstructions String?
+  priority          String   @default("medium") // high, medium, low
+  availability      Boolean  @default(true)
+  skiniorUrl        String?
+  status            String   @default("pending") // pending, purchased, tried, not_interested, wishlist
+  userNotes         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   // Relations
   analysisSession AnalysisSession @relation(fields: [analysisId], references: [id], onDelete: Cascade)
@@ -308,42 +308,42 @@ model ProductRecommendation {
 
 // Blog Models
 model BlogPost {
-  id                String   @id @default(uuid())
-  titleEn           String
-  titleAr           String
-  slugEn            String
-  slugAr            String
-  excerptEn         String
-  excerptAr         String
-  contentEn         String   @db.Text
-  contentAr         String   @db.Text
-  featuredImage     String
-  images            String[] // Array of image URLs
-  publishedAt       DateTime?
-  readTimeEn        String   // e.g., "5 min read"
-  readTimeAr        String   // e.g., "5 دقائق قراءة"
-  featured          Boolean  @default(false)
-  published         Boolean  @default(false)
-  seoTitleEn        String?
-  seoTitleAr        String?
-  seoDescriptionEn  String?
-  seoDescriptionAr  String?
-  views             Int      @default(0)
-  likes             Int      @default(0)
-  commentsCount     Int      @default(0)
-  
+  id               String    @id @default(uuid())
+  titleEn          String
+  titleAr          String
+  slugEn           String
+  slugAr           String
+  excerptEn        String
+  excerptAr        String
+  contentEn        String    @db.Text
+  contentAr        String    @db.Text
+  featuredImage    String
+  images           String[] // Array of image URLs
+  publishedAt      DateTime?
+  readTimeEn       String // e.g., "5 min read"
+  readTimeAr       String // e.g., "5 دقائق قراءة"
+  featured         Boolean   @default(false)
+  published        Boolean   @default(false)
+  seoTitleEn       String?
+  seoTitleAr       String?
+  seoDescriptionEn String?
+  seoDescriptionAr String?
+  views            Int       @default(0)
+  likes            Int       @default(0)
+  commentsCount    Int       @default(0)
+
   // Relations
-  categoryId        String
-  category          BlogCategory @relation(fields: [categoryId], references: [id])
-  authorId          String
-  author            BlogAuthor   @relation(fields: [authorId], references: [id])
-  tags              BlogPostTag[]
-  comments          BlogComment[]
-  likes_relation    BlogPostLike[]
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
+  categoryId     String
+  category       BlogCategory   @relation(fields: [categoryId], references: [id])
+  authorId       String
+  author         BlogAuthor     @relation(fields: [authorId], references: [id])
+  tags           BlogPostTag[]
+  comments       BlogComment[]
+  likes_relation BlogPostLike[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([slugEn])
   @@unique([slugAr])
   @@index([published])
@@ -361,24 +361,24 @@ model BlogCategory {
   slugAr        String     @unique
   descriptionEn String?
   descriptionAr String?
-  color         String?    // hex color for UI
+  color         String? // hex color for UI
   posts         BlogPost[]
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 }
 
 model BlogAuthor {
-  id            String     @id @default(uuid())
-  nameEn        String
-  nameAr        String
-  avatar        String     // URL to image
-  bioEn         String
-  bioAr         String
-  email         String?
-  socialLinks   Json?      // JSON object for social media links
-  posts         BlogPost[]
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  id          String     @id @default(uuid())
+  nameEn      String
+  nameAr      String
+  avatar      String // URL to image
+  bioEn       String
+  bioAr       String
+  email       String?
+  socialLinks Json? // JSON object for social media links
+  posts       BlogPost[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model BlogTag {
@@ -398,30 +398,30 @@ model BlogPostTag {
   tagId  String
   post   BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
   tag    BlogTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
-  
+
   @@unique([postId, tagId])
   @@index([postId])
   @@index([tagId])
 }
 
 model BlogComment {
-  id          String        @id @default(uuid())
-  content     String        @db.Text
-  authorName  String
+  id           String  @id @default(uuid())
+  content      String  @db.Text
+  authorName   String
   authorAvatar String?
-  authorEmail String?
-  postId      String
-  parentId    String?
-  likes       Int           @default(0)
-  
+  authorEmail  String?
+  postId       String
+  parentId     String?
+  likes        Int     @default(0)
+
   // Relations
-  post        BlogPost      @relation(fields: [postId], references: [id], onDelete: Cascade)
-  parent      BlogComment?  @relation("CommentReplies", fields: [parentId], references: [id])
-  replies     BlogComment[] @relation("CommentReplies")
-  
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  
+  post    BlogPost      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent  BlogComment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies BlogComment[] @relation("CommentReplies")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([postId])
   @@index([parentId])
 }
@@ -432,7 +432,7 @@ model BlogPostLike {
   userId    String
   post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
-  
+
   @@unique([postId, userId])
   @@index([postId])
   @@index([userId])
@@ -441,10 +441,29 @@ model BlogPostLike {
 model BlogNewsletterSubscriber {
   id           String   @id @default(uuid())
   email        String   @unique
-  locale       String   // 'en' or 'ar'
+  locale       String // 'en' or 'ar'
   active       Boolean  @default(true)
   subscribedAt DateTime @default(now())
-  
+
   @@index([email])
   @@index([active])
+}
+
+// Import Log for tracking Excel/CSV imports
+model ImportLog {
+  id            String    @id @default(uuid())
+  fileName      String
+  status        String // 'pending', 'processing', 'completed', 'failed'
+  totalRows     Int       @default(0)
+  processedRows Int       @default(0)
+  successRows   Int       @default(0)
+  errorRows     Int       @default(0)
+  errors        Json? // Array of error messages
+  metadata      Json? // Additional import metadata
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  completedAt   DateTime?
+
+  @@index([status])
+  @@index([createdAt])
 }

@@ -1,6 +1,7 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import rateLimit from 'express-rate-limit';
 
 async function bootstrap() {
@@ -17,15 +18,27 @@ async function bootstrap() {
     }),
   );
 
-  // Add request logging middleware
+  // Add CORS preflight middleware
   app.use((req: any, res: any, next: any) => {
+    if (req.method === 'OPTIONS') {
+      res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+      res.header('Access-Control-Allow-Credentials', 'true');
+      res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, X-Forwarded-For, X-Real-IP, User-Agent');
+      return res.status(204).end();
+    }
+    next();
+  });
+
+  // Add request logging middleware
+  app.use((req: any, _res: any, next: any) => {
     const timestamp = new Date().toISOString();
     const method = req.method;
     const url = req.url;
-    const userAgent = req.get('User-Agent') || 'Unknown';
     const ip = req.ip || req.connection.remoteAddress || 'Unknown';
+    const origin = req.headers.origin || 'No origin';
     
-    console.log(`[${timestamp}] ${method} ${url} - IP: ${ip} - User-Agent: ${userAgent}`);
+    console.log(`[${timestamp}] ${method} ${url} - Origin: ${origin} - IP: ${ip}`);
     
     if (req.body && Object.keys(req.body).length > 0) {
       console.log('Request Body:', JSON.stringify(req.body, null, 2));
@@ -34,40 +47,50 @@ async function bootstrap() {
     next();
   });
 
-  // Configure CORS
-  app.enableCors({
-    origin: (origin, callback) => {
-      const allowedOrigins = [
-        'http://localhost:3000',
-        'https://localhost:3000',
-        'http://localhost:3007',
-        'http://localhost:4200',
-        'https://localhost:3007',
+  // Configure CORS - Development friendly
+  if (process.env.NODE_ENV === 'production') {
+    // Production CORS - Restrictive
+    app.enableCors({
+      origin: [
         'https://skinior.com',
         'https://www.skinior.com',
-      ];
-      
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-
-      // Allow explicit origins or any subdomain of skinior.com
-      if (allowedOrigins.includes(origin) || origin.endsWith('.skinior.com') || origin === 'https://skinior.com') {
-        return callback(null, true);
-      }
-      
-      return callback(new Error('Not allowed by CORS'));
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: [
-      'Origin',
-      'X-Requested-With',
-      'Content-Type',
-      'Accept',
-      'Authorization',
-      'Cache-Control',
-    ],
-    credentials: true,
-  });
+        /\.skinior\.com$/
+      ],
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      allowedHeaders: [
+        'Origin',
+        'X-Requested-With',
+        'Content-Type',
+        'Accept',
+        'Authorization',
+        'Cache-Control',
+      ],
+      credentials: true,
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+    });
+  } else {
+    // Development CORS - Permissive
+    app.enableCors({
+      origin: true, // Allow all origins in development
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      allowedHeaders: [
+        'Origin',
+        'X-Requested-With',
+        'Content-Type',
+        'Accept',
+        'Authorization',
+        'Cache-Control',
+        'X-Forwarded-For',
+        'X-Real-IP',
+        'User-Agent',
+      ],
+      credentials: true,
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+    });
+    console.log('🔓 CORS: Development mode - allowing all origins');
+  }
 
   // Enable global validation pipe
   app.useGlobalPipes(
@@ -77,6 +100,10 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  // Apply JWT Auth Guard globally to all endpoints
+  const reflector = app.get(Reflector);
+  app.useGlobalGuards(new JwtAuthGuard(reflector));
 
   // Set global API prefix
   app.setGlobalPrefix('api');

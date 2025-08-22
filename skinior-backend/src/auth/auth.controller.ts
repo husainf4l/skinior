@@ -3,11 +3,13 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RegisterDto, LoginDto } from './dto/auth.dto';
+import { Public } from './decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
     const result = await this.authService.register(registerDto);
@@ -17,6 +19,7 @@ export class AuthController {
     };
   }
 
+  @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req, @Body() loginDto: LoginDto) {
@@ -32,7 +35,6 @@ export class AuthController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('me')
   async getProfile(@Request() req) {
     return {
@@ -45,7 +47,6 @@ export class AuthController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('refresh')
   async refreshToken(@Request() req) {
     // Generate a new token for the current user
