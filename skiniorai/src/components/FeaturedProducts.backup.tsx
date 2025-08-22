@@ -3,6 +3,7 @@
 import { useTranslations, useLocale } from "next-intl";
 import { memo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const FeaturedProducts = memo(() => {
   const t = useTranslations();
@@ -91,9 +92,11 @@ const FeaturedProducts = memo(() => {
               className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
             >
               <div className="aspect-square bg-gray-100">
-                <img
+                <Image
                   src={product.images[0].url}
                   alt={product.images[0].altText}
+                  width={400}
+                  height={400}
                   className="w-full h-full object-cover"
                 />
               </div>

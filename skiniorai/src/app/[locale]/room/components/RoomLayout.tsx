@@ -25,15 +25,9 @@ interface RoomLayoutProps {
 export function RoomLayout({
   videoRef,
   isActive,
-  participants,
-  messages,
   currentView,
-  userId,
-  roomId,
-  onSendMessage,
   onViewChange,
   tracks = [],
-  localParticipant,
 }: RoomLayoutProps) {
   const locale = useLocale();
   const isRTL = locale === "ar";
@@ -64,11 +58,19 @@ export function RoomLayout({
             {/* Connection Status */}
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  isActive ? "bg-green-500" : "bg-gray-400"
-                }`}></div>
+                <div
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    isActive ? "bg-green-500" : "bg-gray-400"
+                  }`}
+                ></div>
                 <span className="text-sm text-gray-600 font-medium">
-                  {isActive ? (isRTL ? "مباشر" : "Live") : (isRTL ? "غير متصل" : "Offline")}
+                  {isActive
+                    ? isRTL
+                      ? "مباشر"
+                      : "Live"
+                    : isRTL
+                    ? "غير متصل"
+                    : "Offline"}
                 </span>
               </div>
             </div>
@@ -119,8 +121,18 @@ export function RoomLayout({
                         : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
                     </svg>
                   </button>
                   <button
@@ -131,8 +143,18 @@ export function RoomLayout({
                         : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -142,20 +164,50 @@ export function RoomLayout({
             {/* Video Controls */}
             <div className="flex items-center justify-center mt-6 space-x-4">
               <button className="group p-4 bg-white hover:bg-gray-50 rounded-2xl transition-colors border border-gray-200">
-                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                <svg
+                  className="w-5 h-5 text-gray-700"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+                  />
                 </svg>
               </button>
 
               <button className="group p-5 bg-red-500 hover:bg-red-600 text-white rounded-2xl transition-colors">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
 
               <button className="group p-4 bg-white hover:bg-gray-50 rounded-2xl transition-colors border border-gray-200">
-                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                <svg
+                  className="w-5 h-5 text-gray-700"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
                 </svg>
               </button>
             </div>
@@ -166,11 +218,15 @@ export function RoomLayout({
             <div className="flex items-center justify-center space-x-3 mb-4">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
               <h3 className="text-lg font-medium text-gray-900">
-                {isRTL ? "جاري التحليل بالذكاء الاصطناعي" : "AI Analysis in Progress"}
+                {isRTL
+                  ? "جاري التحليل بالذكاء الاصطناعي"
+                  : "AI Analysis in Progress"}
               </h3>
             </div>
             <p className="text-sm text-gray-500">
-              {isRTL ? "يرجى المحافظة على وضع الكاميرا لأفضل النتائج" : "Please maintain camera position for best results"}
+              {isRTL
+                ? "يرجى المحافظة على وضع الكاميرا لأفضل النتائج"
+                : "Please maintain camera position for best results"}
             </p>
           </div>
         </div>

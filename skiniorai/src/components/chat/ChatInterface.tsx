@@ -25,10 +25,7 @@ interface ChatInterfaceProps {
   isFloating?: boolean;
 }
 
-export default function ChatInterface({
-  onClose,
-  isFloating = false,
-}: ChatInterfaceProps) {
+export default function ChatInterface({ onClose }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);

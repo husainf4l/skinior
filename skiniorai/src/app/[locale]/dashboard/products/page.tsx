@@ -27,8 +27,6 @@ interface RecommendedProduct extends BaseProduct {
   confidence: number;
 }
 
-type Product = FavoriteProduct | RecommendedProduct;
-
 interface BaseProduct {
   id: string;
   name: string;

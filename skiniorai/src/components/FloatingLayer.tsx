@@ -56,7 +56,7 @@ export default function FloatingLayer() {
       return container;
     };
 
-    const container = createFloatingContainer();
+    createFloatingContainer();
     setMounted(true);
 
     // Cleanup function - use element.remove() which is safe if the node is already detached
@@ -66,7 +66,7 @@ export default function FloatingLayer() {
         // Only remove if we created it (no-op if it's already detached)
         try {
           element.remove();
-        } catch (e) {
+        } catch {
           // Defensive fallback: if remove() is not supported, attempt a guarded removeChild
           if (element.parentNode && element.parentNode.contains(element)) {
             element.parentNode.removeChild(element);

@@ -96,7 +96,8 @@ export default function EnhancedComments({
     });
   };
 
-  // Build comment tree structure
+  // Build comment tree structure (currently unused)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const buildCommentTree = (): BlogComment[] => {
     const commentMap = new Map<
       string,

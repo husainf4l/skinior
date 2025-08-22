@@ -1,4 +1,4 @@
-import { User, CreateUser } from '@/types/user';
+import { User } from '@/types/user';
 
 interface LoginCredentials {
   email: string;

@@ -41,15 +41,6 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
     router.push(`/${locale}/products/${product.id}`);
   }, [router, locale, product.id]);
 
-  const handleAddToCartSuccess = useCallback(() => {
-    // Prevent navigation to product page when add to cart succeeds
-    console.log(`Added ${product.title} to cart successfully`);
-  }, [product.title]);
-
-  const handleAddToCartError = useCallback((error: Error) => {
-    console.error("Failed to add to cart:", error);
-  }, []);
-
   const handleWishlistToggle = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
@@ -133,7 +124,9 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
 
         {/* Enhanced Badge */}
         {(product.isNew || onSale || getDiscountPercentage() > 0) && (
-          <div className={`absolute top-4 ${isRTL ? "right-4" : "left-4"} z-10`}>
+          <div
+            className={`absolute top-4 ${isRTL ? "right-4" : "left-4"} z-10`}
+          >
             {product.isNew && (
               <div className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-600 backdrop-blur-xl text-white text-xs font-semibold rounded-full shadow-lg">
                 {t("products.new") || "NEW"}
@@ -165,7 +158,9 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
         >
           <button
             className={`w-10 h-10 bg-white/90 backdrop-blur-xl hover:bg-white rounded-full shadow-lg transition-all duration-300 flex items-center justify-center hover:scale-110 ${
-              isWishlisted ? "text-red-500 bg-red-50" : "text-gray-400 hover:text-red-500"
+              isWishlisted
+                ? "text-red-500 bg-red-50"
+                : "text-gray-400 hover:text-red-500"
             }`}
             onClick={handleWishlistToggle}
             title={
@@ -231,7 +226,11 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
             ))}
           </div>
           {reviews > 0 && (
-            <span className={`text-xs sm:text-sm text-gray-500 ${isRTL ? "font-cairo" : ""}`}>
+            <span
+              className={`text-xs sm:text-sm text-gray-500 ${
+                isRTL ? "font-cairo" : ""
+              }`}
+            >
               ({reviews})
             </span>
           )}

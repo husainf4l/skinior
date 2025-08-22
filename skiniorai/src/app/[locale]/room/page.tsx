@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { authService } from "@/services/authService";
 import { ApiService } from "@/services/apiService";
@@ -149,9 +150,11 @@ export default function RoomPage() {
           {/* Hero Image Section */}
           <div className="text-center mb-16">
             <div className="w-full h-80 mx-auto mb-12 rounded-3xl overflow-hidden shadow-xl bg-gradient-to-br from-orange-100 to-rose-100">
-              <img
+              <Image
                 src="/hero/hero1.webp"
                 alt="Skin Analysis"
+                width={640}
+                height={320}
                 className="w-full h-full object-contain"
               />
             </div>
@@ -308,9 +311,11 @@ export default function RoomPage() {
           <div className="grid lg:grid-cols-2 gap-0 min-h-[50vh]">
             {/* Left Column - Hero Image */}
             <div className="bg-gray-900 overflow-hidden m-8 rounded-3xl flex">
-              <img
+              <Image
                 src="/hero/hero1.webp"
                 alt="Skin Analysis"
+                width={640}
+                height={480}
                 className="block w-full h-full object-cover"
               />
             </div>

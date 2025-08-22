@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useLocale } from "next-intl";
 import {
   useCartStore,
   useCart,
@@ -11,7 +11,6 @@ import {
 import Image from "next/image";
 
 export default function CartDrawer() {
-  const t = useTranslations();
   const locale = useLocale();
   const cart = useCart();
   const isOpen = useCartDrawerOpen();

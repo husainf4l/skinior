@@ -6,7 +6,7 @@ import Link from "next/link";
 import { BlogService } from "../../../services/blogService";
 import { BlogPost, BlogCategory, BlogTag, BlogFilters } from "../../../types/blog";
 import OptimizedImage from "../../../components/OptimizedImage";
-import BlogSEO from "../../../components/blog/BlogSEO";
+import { BlogSEO } from "../../../components/blog/BlogSEO";
 import BlogSkeleton, { BlogHeroSkeleton } from "../../../components/blog/BlogSkeleton";
 import { BlogErrorWrapper, BlogListErrorFallback } from "../../../components/blog/BlogErrorBoundary";
 import AdvancedSearch, { SearchFilters } from "../../../components/blog/AdvancedSearch";
@@ -52,7 +52,6 @@ export default function BlogPage({ params }: BlogPageProps) {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [postsLoading, setPostsLoading] = useState<boolean>(false);
   const [postsError, setPostsError] = useState<string | null>(null);
-  const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState<boolean>(false);
 
   // Load more posts function with ref to avoid dependency issues
   const loadMorePosts = useCallback(async (isInitialLoad: boolean = false): Promise<void> => {
@@ -119,10 +118,6 @@ export default function BlogPage({ params }: BlogPageProps) {
       }
       
       setHasMore(hasMoreResults);
-      
-      if (isInitialLoad) {
-        setHasInitiallyLoaded(true);
-      }
     } catch (error) {
       setPostsError(error instanceof Error ? error.message : 'Failed to load posts');
     } finally {
@@ -135,7 +130,6 @@ export default function BlogPage({ params }: BlogPageProps) {
     setPosts([]);
     setHasMore(true);
     setPostsError(null);
-    setHasInitiallyLoaded(false);
   }, []);
 
   // Load initial data
@@ -198,7 +192,7 @@ export default function BlogPage({ params }: BlogPageProps) {
     }, 100);
     
     return () => clearTimeout(timeoutId);
-  }, [currentFilters, resetPosts, locale]);
+  }, [currentFilters, resetPosts, locale, loadMorePosts]);
 
   // Handle search
   const handleSearch = useCallback((filters: SearchFilters) => {
@@ -328,8 +322,7 @@ export default function BlogPage({ params }: BlogPageProps) {
     <BlogErrorWrapper>
       <BlogSEO 
         locale={locale} 
-        posts={posts} 
-        categories={categories} 
+        posts={posts}
       />
       
       <div className="min-h-screen bg-white">

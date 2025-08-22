@@ -7,7 +7,6 @@ import {
   LiveKitRoom,
   RoomAudioRenderer,
   useTracks,
-  TrackReferenceOrPlaceholder,
   useLocalParticipant,
 } from "@livekit/components-react";
 import { Track } from "livekit-client";
@@ -42,7 +41,6 @@ export default function Room({ params }: RoomProps) {
     microphone: false,
     testing: true,
   });
-  const [analysisStarted, setAnalysisStarted] = useState(false);
 
   // Room connection states
   const [room] = useState(() => new LiveKitRoomClass());
@@ -52,7 +50,7 @@ export default function Room({ params }: RoomProps) {
 
   // Simplified room state for AI session
   const [currentView, setCurrentView] = useState("camera");
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
 
   // Check if room has been created (has token/connection details)
   const hasRoomConnection =
@@ -109,7 +107,6 @@ export default function Room({ params }: RoomProps) {
       const connectToRoom = async () => {
         const token = searchParams.get("token");
         const serverUrl = searchParams.get("serverUrl");
-        const roomName = searchParams.get("roomName") || resolvedParams.id;
 
         if (!token || !serverUrl) {
           console.log("No connection details available");
@@ -133,7 +130,6 @@ export default function Room({ params }: RoomProps) {
               console.log("Room connected");
               setIsConnected(true);
               setIsConnecting(false);
-              setAnalysisStarted(true);
             });
 
             room.on("disconnected", (reason) => {
@@ -241,7 +237,6 @@ export default function Room({ params }: RoomProps) {
   const connectToRoom = async () => {
     const token = searchParams.get("token");
     const serverUrl = searchParams.get("serverUrl");
-    const roomName = searchParams.get("roomName") || resolvedParams.id;
 
     if (!token || !serverUrl) {
       console.log("No connection details available");
@@ -265,7 +260,6 @@ export default function Room({ params }: RoomProps) {
           console.log("Room connected");
           setIsConnected(true);
           setIsConnecting(false);
-          setAnalysisStarted(true);
         });
 
         room.on("disconnected", (reason) => {
@@ -315,7 +309,6 @@ export default function Room({ params }: RoomProps) {
     }
 
     setIsStarting(true);
-    setAnalysisStarted(true);
   };
 
   // If no room connection details, show permission screen
