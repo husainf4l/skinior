@@ -1,11 +1,12 @@
 """
-JWT Token Validation for Agent Service
+JWT Token Validation for Skinior AI Agent
 
-This service validates JWT tokens from the main Balsan Admin API
+This service validates JWT tokens from the Skinior backend API
 using the same secret key. It does NOT generate tokens - only validates them.
 """
 
 import jwt
+import requests
 from datetime import datetime
 from typing import Optional, Dict, Any
 from fastapi import HTTPException, status
@@ -21,12 +22,12 @@ load_dotenv(env_path)
 logger = logging.getLogger(__name__)
 
 # Use environment variable for JWT secret key
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key")
+SECRET_KEY = os.getenv("SKINIOR_JWT_SECRET_KEY", os.getenv("JWT_SECRET_KEY", "skinior-secret-key"))
 ALGORITHM = "HS256"
 
 
 class TokenValidator:
-    """Validates JWT tokens from the main API"""
+    """Validates JWT tokens from the Skinior backend API"""
 
     def __init__(self):
         self.secret_key = SECRET_KEY
@@ -124,7 +125,10 @@ token_validator = TokenValidator()
 
 def validate_token(token: str) -> Optional[Dict[str, Any]]:
     """
-    Convenience function to validate a token
+    Validate token with Skinior backend API
+    
+    This function validates tokens by calling the Skinior backend's /auth/me endpoint
+    to ensure the token is valid and get current user information.
 
     Args:
         token: JWT token string
@@ -132,7 +136,45 @@ def validate_token(token: str) -> Optional[Dict[str, Any]]:
     Returns:
         User information or None if invalid
     """
-    return token_validator.get_user_from_token(token)
+    try:
+        # Remove 'Bearer ' prefix if present
+        if token.startswith("Bearer "):
+            token = token[7:]
+        
+        # Call Skinior backend to validate token
+        backend_url = os.getenv("SKINIOR_BACKEND_URL", "http://localhost:4008")
+        
+        response = requests.get(
+            f"{backend_url}/auth/me",
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json"
+            },
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            if result.get("success") and result.get("data", {}).get("tokenValid"):
+                user_data = result.get("data", {}).get("user", {})
+                return {
+                    "user_id": user_data.get("id"),
+                    "sub": user_data.get("email"),
+                    "username": user_data.get("email"),
+                    "token": token,
+                    "skin_type": user_data.get("skinType"),
+                    "skin_concerns": user_data.get("skinConcerns", []),
+                    "firstName": user_data.get("firstName"),
+                    "lastName": user_data.get("lastName"),
+                }
+        
+        logger.warning(f"Token validation failed: {response.status_code}")
+        return None
+        
+    except Exception as e:
+        logger.error(f"Error validating token with Skinior backend: {str(e)}")
+        # Fallback to JWT validation
+        return token_validator.get_user_from_token(token)
 
 
 def require_valid_token(token: str) -> Dict[str, Any]:

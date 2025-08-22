@@ -1,9 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import rateLimit from 'express-rate-limit';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Global rate limiter: 100 requests per 15 minutes per IP
+  app.use(
+    rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 100, // limit each IP to 100 requests per windowMs
+      standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+      legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+      message: 'Too many requests, please try again later.',
+    }),
+  );
 
   // Add request logging middleware
   app.use((req: any, res: any, next: any) => {

@@ -1,20 +1,42 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { DashboardAnalyticsService } from './dashboard-analytics.service';
-import { AnalyticsDto } from '../dto/dashboard.dto';
+import { AnalyticsDto, DashboardOverviewDto, DashboardOverviewResponseDto } from '../dto/dashboard.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { AdminGuard } from '../guards/admin.guard';
 import { AdminOnly } from '../decorators/admin-only.decorator';
+import { GetUser } from '../../auth/decorators/get-user.decorator';
 
 @ApiTags('Dashboard Analytics')
-@Controller('dashboard/analytics')
-@UseGuards(JwtAuthGuard, AdminGuard)
+@Controller('dashboard')
+@UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
-@AdminOnly()
 export class DashboardAnalyticsController {
   constructor(private readonly analyticsService: DashboardAnalyticsService) {}
 
   @Get('overview')
+  @ApiOperation({
+    summary: 'Get personal dashboard overview',
+    description: 'Returns user-specific AI stats, appointments, treatments, consultations, and product metrics in a single call',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Personal dashboard overview retrieved successfully',
+    type: DashboardOverviewResponseDto,
+  })
+  async getDashboardOverview(@Query() dto: DashboardOverviewDto, @GetUser() user: any) {
+    const overview = await this.analyticsService.getDashboardOverview(dto, user.id);
+    return {
+      success: true,
+      data: overview,
+      message: 'Personal dashboard overview retrieved successfully',
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Get('analytics/overview')
+  @UseGuards(AdminGuard)
+  @AdminOnly()
   @ApiOperation({
     summary: 'Get dashboard overview statistics',
     description: 'Returns key metrics for the dashboard overview',

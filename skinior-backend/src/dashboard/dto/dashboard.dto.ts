@@ -178,3 +178,43 @@ export class UpdateOrderStatusDto {
   @IsString()
   notes?: string;
 }
+
+export class DashboardOverviewDto {
+  @IsOptional()
+  @IsEnum(['7d', '30d', '90d'])
+  range?: '7d' | '30d' | '90d' = '7d';
+}
+
+// Response DTOs for type safety - User-focused personal dashboard
+export class PersonalStatsDto {
+  myConsultations: number;
+  myActiveTreatments: number;
+  skinImprovementRate: number;
+  avgImprovementScore: number;
+}
+
+export class MyTreatmentSummaryDto {
+  id: string;
+  name: string;
+  progress: number;
+  status: string;
+  startDate: Date;
+  currentWeek: number;
+  nextMilestone: string;
+}
+
+export class MyConsultationSummaryDto {
+  id: string;
+  concerns: string[];
+  createdAt: Date;
+  status: string;
+}
+
+export class DashboardOverviewResponseDto {
+  personalStats: PersonalStatsDto;
+  myActiveTreatments: MyTreatmentSummaryDto[];
+  myRecentConsultations: MyConsultationSummaryDto[];
+  recommendedProductsCount: number;
+  favoritesCount: number;
+  myCollectionValue: number;
+}

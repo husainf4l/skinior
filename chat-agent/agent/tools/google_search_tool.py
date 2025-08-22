@@ -1,11 +1,11 @@
 """
-Google Search Tools for Al Balsan AI Agent
+Google Search Tools for Skinior AI Agent
 
 Provides comprehensive web search capabilities using Google Custom Search API
-for market research, business intelligence, and information gathering.
+for skincare research, beauty trends, and dermatology information gathering.
 
-Author: Al Balsan Group AI Agent
-Date: 2025-07-30
+Author: Skinior AI Agent
+Date: 2025-08-22
 """
 
 import os
@@ -102,25 +102,25 @@ def _perform_google_search(query: str, num_results: int = 5, search_type: str = 
 @tool
 def google_search(query: str, num_results: int = 5) -> str:
     """
-    Search Google using Custom Search API for comprehensive web results.
+    Search Google using Custom Search API for comprehensive skincare and beauty information.
 
     Core search tool for finding relevant information on:
-    - Company profiles and business information
-    - Market research and industry analysis
-    - Technical documentation and resources
-    - News and current events
-    - Product information and comparisons
+    - Skincare ingredients and their benefits
+    - Beauty product reviews and comparisons
+    - Dermatology research and scientific studies
+    - Skincare routines and best practices
+    - Latest beauty trends and innovations
 
     Args:
-        query: Search query (e.g., "Al Balsan Group Iraq", "electronics market trends")
+        query: Search query (e.g., "retinol benefits skincare", "vitamin C serum comparison")
         num_results: Number of search results to return (1-10, default: 5)
 
     Returns:
         Search results with titles, descriptions, and URLs
 
     Examples:
-        google_search("Iraq electronics market 2025")
-        google_search("ERP software comparison", 8)
+        google_search("hyaluronic acid moisturizer benefits")
+        google_search("anti-aging skincare routine 2025", 8)
     """
     return _perform_google_search(query, num_results, "web")
 
@@ -128,25 +128,25 @@ def google_search(query: str, num_results: int = 5) -> str:
 @tool
 def google_news_search(query: str, num_results: int = 5) -> str:
     """
-    Search Google News for recent news articles.
+    Search Google News for recent skincare and beauty news articles.
 
     Specialized tool for finding recent news and current events related to:
-    - Business and industry news
-    - Financial market updates
-    - Company announcements and press releases
-    - Economic trends and developments
-    - Technology and innovation news
+    - Skincare industry innovations and breakthroughs
+    - New product launches and brand announcements
+    - Dermatology research and clinical studies
+    - Beauty trends and consumer insights
+    - Ingredient discoveries and regulatory updates
 
     Args:
-        query: News search query (e.g., "Iraq economy 2025", "electronics industry news")
+        query: News search query (e.g., "skincare innovation 2025", "retinol dermatology news")
         num_results: Number of news articles to return (1-10, default: 5)
 
     Returns:
         Recent news articles with titles, snippets, and publication info
 
     Examples:
-        google_news_search("Iraq business news")
-        google_news_search("Middle East technology companies", 8)
+        google_news_search("skincare breakthrough dermatology")
+        google_news_search("beauty industry trends 2025", 8)
     """
     return _perform_google_search(query, num_results, "news")
 
@@ -156,42 +156,42 @@ def google_business_research(
     company_or_topic: str, research_type: str = "general"
 ) -> str:
     """
-    Perform targeted business research using Google Search.
+    Perform targeted skincare and beauty industry research using Google Search.
 
-    Advanced research tool for deep business intelligence on:
-    - Company profiles and corporate information
-    - Competitive analysis and market positioning
-    - Financial performance and business metrics
-    - Industry trends and market opportunities
+    Advanced research tool for deep beauty industry intelligence on:
+    - Skincare company profiles and brand information
+    - Competitive analysis in beauty market
+    - Product performance and consumer reviews
+    - Beauty industry trends and market opportunities
 
     Args:
-        company_or_topic: Company name or business topic to research
+        company_or_topic: Beauty company name or skincare topic to research
         research_type: Type of research to conduct:
-            - "general": Company overview and basic information
+            - "general": Company/brand overview and basic information
             - "competitors": Competitive analysis and market landscape
-            - "financial": Financial performance and business metrics
-            - "news": Latest news and company updates
+            - "products": Product performance and consumer feedback
+            - "news": Latest news and brand updates
 
     Returns:
-        Comprehensive business research results
+        Comprehensive beauty industry research results
 
     Examples:
-        google_business_research("Al Balsan Group", "competitors")
-        google_business_research("Iraq electronics market", "financial")
-        google_business_research("ERP software companies", "general")
+        google_business_research("CeraVe skincare", "competitors")
+        google_business_research("anti-aging serum market", "products")
+        google_business_research("Neutrogena brand", "general")
     """
     if not company_or_topic:
-        return "❌ Company or topic is required for business research"
+        return "❌ Company or topic is required for beauty industry research"
 
     # Create targeted search queries based on research type
     if research_type == "competitors":
-        query = f"{company_or_topic} competitors market analysis"
-    elif research_type == "financial":
-        query = f"{company_or_topic} financial performance revenue profit"
+        query = f"{company_or_topic} competitors skincare beauty market analysis"
+    elif research_type == "products":
+        query = f"{company_or_topic} product reviews performance consumer feedback"
     elif research_type == "news":
-        query = f"{company_or_topic} latest news updates"
+        query = f"{company_or_topic} latest news updates beauty industry"
     else:  # general
-        query = f"{company_or_topic} business profile company information"
+        query = f"{company_or_topic} skincare brand profile company information"
 
     # Use standard search with 7 results for comprehensive research
     return _perform_google_search(query, 7, "web")

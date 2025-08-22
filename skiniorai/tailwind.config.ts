@@ -20,6 +20,7 @@ const config: Config = {
         'gradient-shift': 'gradient-shift 8s ease infinite',
         'float': 'float 3s ease-in-out infinite',
         'bounce-gentle': 'bounce-gentle 2s infinite',
+        'slide-in-right': 'slideInRight 0.3s ease-out forwards',
       },
       keyframes: {
         fadeInUp: {
@@ -53,6 +54,10 @@ const config: Config = {
           '40%, 43%': { transform: 'translateY(-8px)' },
           '70%': { transform: 'translateY(-4px)' },
           '90%': { transform: 'translateY(-2px)' },
+        },
+        slideInRight: {
+          '0%': { transform: 'translateX(100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
         },
       },
       boxShadow: {

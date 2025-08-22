@@ -53,7 +53,10 @@
     "retry": "Try Again",
     "close": "Close",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "shopNow": "Shop Now",
+    "products": "Products",
+    "explore": "Explore"
   },
   "products": {
     "new": "New",
@@ -339,6 +342,13 @@
     "redirecting": "Redirecting...",
     "termsAndConditions": "Terms and Conditions",
     "privacyPolicy": "Privacy Policy"
+  },
+  "shopByCategory": {
+    "title": "Shop by Category",
+    "subtitle": "Discover our carefully curated collection of skincare products organized by category to help you find exactly what your skin needs.",
+    "productCount": "{count} Products",
+    "viewAll": "View All Products",
+    "badge": "Discover Categories"
   },
   "Metadata": {
     "description": "Revolutionary AI-powered skin analysis with 98% clinical accuracy. Get personalized skincare recommendations from certified dermatologists in real-time. Transform your beauty routine with cutting-edge artificial intelligence technology.",

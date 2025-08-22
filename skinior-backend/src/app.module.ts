@@ -15,6 +15,9 @@ import { AnalysisSessionsModule } from './analysis-sessions/analysis-sessions.mo
 import { AnalysisDataModule } from './analysis-data/analysis-data.module';
 import { ProductRecommendationsModule } from './product-recommendations/product-recommendations.module';
 import { BlogModule } from './blog/blog.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { TreatmentsModule } from './treatments/treatments.module';
+import { ConsultationsModule } from './consultations/consultations.module';
 
 @Module({
   imports: [
@@ -37,6 +40,11 @@ import { BlogModule } from './blog/blog.module';
     ProductRecommendationsModule,
     // Blog Module
     BlogModule,
+    // Dashboard Module
+    DashboardModule,
+    // AI Consultation Modules
+    TreatmentsModule,
+    ConsultationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

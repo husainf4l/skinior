@@ -61,12 +61,18 @@ def should_continue(state):
                 tool_name in content
                 for tool_name in [
                     "send_email",
-                    "send_request",
+                    "send_request", 
                     "send_custom",
-                    "get_account",
-                    "get_income",
-                    "get_trial",
-                    "analyze_financial",
+                    "google_search",
+                    "google_news",
+                    "google_business",
+                    "get_product_recommendations",
+                    "search_skinior_products",
+                    "get_product_details",
+                    "get_user_consultations",
+                    "get_todays_deals",
+                    "add_to_cart",
+                    "get_skincare_routine_builder",
                 ]
             )
         ):

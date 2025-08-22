@@ -251,3 +251,42 @@ datasets/
 *.json
 *.xml
 *.parquet
+
+# Flutter / Dart
+# Ignore Dart & Flutter tool artifacts and build outputs
+.dart_tool/
+.pub/
+.pub-cache/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.flutter-credentials
+build/
+
+# Android build / local config
+android/.gradle/
+android/app/build/
+android/local.properties
+android/.cxx/
+
+# iOS build / local config
+ios/Pods/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Runner.xcworkspace/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Podfile.lock
+
+# Xcode
+*.xcworkspace
+*.xcuserdata
+*.xccheckout
+DerivedData/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+
+# Generated files
+**/GeneratedPluginRegistrant.*

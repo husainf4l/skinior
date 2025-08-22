@@ -1,10 +1,154 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { AnalyticsDto } from '../dto/dashboard.dto';
+import { AnalyticsDto, DashboardOverviewDto } from '../dto/dashboard.dto';
 
 @Injectable()
 export class DashboardAnalyticsService {
   constructor(private prisma: PrismaService) {}
+
+  async getDashboardOverview(dto: DashboardOverviewDto, userId: string) {
+    const { range = '7d' } = dto;
+    
+    // Calculate date range
+    const now = new Date();
+    const daysAgo = range === '7d' ? 7 : range === '30d' ? 30 : 90;
+    const startDate = new Date(now.getTime() - (daysAgo * 24 * 60 * 60 * 1000));
+    
+    const dateFilter = {
+      userId: userId, // Filter by current user
+      createdAt: {
+        gte: startDate,
+        lte: now,
+      },
+    };
+
+    // Get User's Personal AI/Analysis Stats
+    const [
+      myConsultations,
+      myActiveAnalysisSessions,
+      myCompletedSessions,
+      myRecommendations,
+    ] = await Promise.all([
+      this.prisma.analysisSession.count({
+        where: {
+          userId: userId,
+          createdAt: {
+            gte: startDate,
+            lte: now,
+          },
+        },
+      }),
+      this.prisma.analysisSession.count({
+        where: {
+          userId: userId,
+          status: 'in_progress',
+          createdAt: {
+            gte: startDate,
+            lte: now,
+          },
+        },
+      }),
+      this.prisma.analysisSession.count({
+        where: {
+          userId: userId,
+          status: 'completed',
+          createdAt: {
+            gte: startDate,
+            lte: now,
+          },
+        },
+      }),
+      this.prisma.productRecommendation.count({
+        where: {
+          userId: userId,
+          createdAt: {
+            gte: startDate,
+            lte: now,
+          },
+        },
+      }),
+    ]);
+
+    // Calculate user's personal improvement (based on completed sessions)
+    const skinImprovement = myCompletedSessions > 0 ? 
+      Math.min(75.5 + (myCompletedSessions * 5), 95) : 0;
+
+    // Get user's recent analysis sessions (as consultations)
+    const myRecentConsultations = await this.prisma.analysisSession.findMany({
+      where: {
+        userId: userId,
+        createdAt: {
+          gte: startDate,
+          lte: now,
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 3,
+      include: {
+        analysisData: {
+          take: 1,
+          orderBy: { timestamp: 'desc' },
+        },
+      },
+    });
+
+    // Get user's product recommendation stats
+    const [myRecommendedProductsCount, myEstimatedCost, myFavoriteProducts] = await Promise.all([
+      this.prisma.productRecommendation.count({
+        where: {
+          userId: userId,
+          status: 'pending',
+          availability: true,
+        },
+      }),
+      this.prisma.productRecommendation.aggregate({
+        where: {
+          userId: userId,
+          price: { not: null },
+        },
+        _sum: {
+          price: true,
+        },
+      }),
+      // For now, return 0 for favorites as we don't have a favorites model yet
+      Promise.resolve(0),
+    ]);
+
+    // Mock data for user's active treatments (to be replaced when models exist)
+    const myActiveTreatments = [
+      {
+        id: '1',
+        name: 'Personalized Acne Treatment',
+        progress: Math.min(40 + (myCompletedSessions * 15), 90),
+        status: 'active',
+        startDate: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
+        currentWeek: Math.ceil(45 / 7),
+        nextMilestone: 'Mid-treatment evaluation',
+      },
+    ];
+
+    // Format user's consultation summaries
+    const consultationSummaries = myRecentConsultations.map(session => ({
+      id: session.id,
+      concerns: ['Acne', 'Skin Texture'], // Would come from analysis data
+      createdAt: session.createdAt,
+      status: session.status,
+    }));
+
+    return {
+      personalStats: {
+        myConsultations,
+        myActiveTreatments: myActiveAnalysisSessions,
+        skinImprovementRate: Math.round(skinImprovement * 100) / 100,
+        avgImprovementScore: myCompletedSessions,
+      },
+      myActiveTreatments,
+      myRecentConsultations: consultationSummaries,
+      recommendedProductsCount: myRecommendedProductsCount,
+      favoritesCount: myFavoriteProducts,
+      myCollectionValue: Math.round((myEstimatedCost._sum.price || 0) * 100) / 100,
+    };
+  }
 
   async getOverviewStats(dto: AnalyticsDto) {
     const { startDate, endDate } = dto;

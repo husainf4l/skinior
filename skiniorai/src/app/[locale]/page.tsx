@@ -4,6 +4,7 @@ import { routing } from "../../i18n/routing";
 import HeroSection from "../../components/HeroSection";
 import TodaysDeals from "../../components/TodaysDeals";
 import FeaturedProducts from "../../components/FeaturedProducts";
+import ShopByCategory from "../../components/ShopByCategory";
 import DealsSection from "../../components/DealsSection";
 
 export const dynamic = "force-static";
@@ -29,6 +30,7 @@ export default function HomePage({
       <HeroSection />
       <TodaysDeals />
       <FeaturedProducts />
+      <ShopByCategory />
       <DealsSection />
     </>
   );
