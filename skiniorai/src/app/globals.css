@@ -72,6 +72,18 @@ img, picture, video, canvas, svg {
   height: auto;
 }
 
+/* Apple-style improved will-change for better performance */
+.apple-card, .apple-button, .hover-lift {
+  will-change: transform;
+}
+
+/* Optimized GPU acceleration for animations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
 /* Reduce layout shifts */
 .hero-section {
   min-height: 85vh;
@@ -348,6 +360,155 @@ body > div[style*="position: fixed"] {
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+/* Apple-style shop enhancements */
+.shop-hero-animation {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+/* Staggered fade-in animation for product cards */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced Apple-style button hover effects */
+.apple-button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateZ(0);
+}
+
+.apple-button:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.apple-button:active {
+  transform: translateY(0) scale(1);
+  transition: all 0.1s;
+}
+
+/* Apple-style card hover effects */
+.apple-card {
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateZ(0);
+}
+
+.apple-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Apple-style floating animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.float-animation {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Apple-style pulse animation for loading states */
+@keyframes applePulse {
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+}
+
+.apple-pulse {
+  animation: applePulse 2s ease-in-out infinite;
+}
+
+/* Apple-style slide in from bottom */
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in-bottom {
+  animation: slideInFromBottom 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Apple-style scale in animation */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.scale-in {
+  animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Enhanced glass morphism with better blur */
+.glass-morphism-enhanced {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Apple-style focus ring */
+.apple-focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  transition: box-shadow 0.2s ease;
+}
+
+/* Apple-style gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Apple-style hover lift */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Apple-style search bar glow */
+.search-glow:focus {
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3), 0 0 20px rgba(59, 130, 246, 0.1);
+}
+
 .prose h2 {
   font-size: 2rem;
   font-weight: 700;
@@ -455,6 +616,52 @@ html {
   line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Apple-style smooth transitions for all interactive elements */
+.transition-apple {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Apple-style elevated shadow */
+.shadow-apple {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-apple-hover {
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Apple-style text animations */
+.text-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Apple-style container animations */
+.container-fade-in {
+  animation: containerFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+@keyframes containerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Enhanced button animations */

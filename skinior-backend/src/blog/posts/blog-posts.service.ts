@@ -218,6 +218,97 @@ export class BlogPostsService {
       };
     }
 
+    // Handle date range filtering
+    if (query.dateRangeStart || query.dateRangeEnd) {
+      where.publishedAt = {};
+      if (query.dateRangeStart) {
+        where.publishedAt.gte = new Date(query.dateRangeStart);
+      }
+      if (query.dateRangeEnd) {
+        where.publishedAt.lte = new Date(query.dateRangeEnd);
+      }
+    } else if (query.dateRange) {
+      try {
+        const dateRange = JSON.parse(query.dateRange);
+        if (dateRange.start || dateRange.end) {
+          where.publishedAt = {};
+          if (dateRange.start) {
+            where.publishedAt.gte = new Date(dateRange.start);
+          }
+          if (dateRange.end) {
+            where.publishedAt.lte = new Date(dateRange.end);
+          }
+        }
+      } catch (error) {
+        // Invalid JSON, ignore date range filter
+      }
+    }
+
+    // Handle read time range filtering
+    // Note: This is a basic implementation - for more precise filtering,
+    // you'd need to calculate actual read times and store them as numbers
+    if (query.readTimeMin !== undefined || query.readTimeMax !== undefined) {
+      const readTimeConditions = [];
+      
+      if (query.readTimeMin !== undefined) {
+        // Approximate filter based on content length
+        const minWords = query.readTimeMin * 200; // 200 words per minute
+        readTimeConditions.push({
+          OR: [
+            { contentEn: { not: null }, AND: [{ contentEn: { length: { gte: minWords * 5 } } }] }, // ~5 chars per word
+            { contentAr: { not: null }, AND: [{ contentAr: { length: { gte: minWords * 5 } } }] },
+          ],
+        });
+      }
+      
+      if (query.readTimeMax !== undefined) {
+        const maxWords = query.readTimeMax * 200;
+        readTimeConditions.push({
+          OR: [
+            { contentEn: { not: null }, AND: [{ contentEn: { length: { lte: maxWords * 5 } } }] },
+            { contentAr: { not: null }, AND: [{ contentAr: { length: { lte: maxWords * 5 } } }] },
+          ],
+        });
+      }
+      
+      if (readTimeConditions.length > 0) {
+        where.AND = where.AND ? [...where.AND, ...readTimeConditions] : readTimeConditions;
+      }
+    } else if (query.readTimeRange) {
+      try {
+        const readTimeRange = JSON.parse(query.readTimeRange);
+        if (readTimeRange.min !== undefined || readTimeRange.max !== undefined) {
+          const readTimeConditions = [];
+          
+          if (readTimeRange.min !== undefined) {
+            const minWords = readTimeRange.min * 200;
+            readTimeConditions.push({
+              OR: [
+                { contentEn: { not: null }, AND: [{ contentEn: { length: { gte: minWords * 5 } } }] },
+                { contentAr: { not: null }, AND: [{ contentAr: { length: { gte: minWords * 5 } } }] },
+              ],
+            });
+          }
+          
+          if (readTimeRange.max !== undefined) {
+            const maxWords = readTimeRange.max * 200;
+            readTimeConditions.push({
+              OR: [
+                { contentEn: { not: null }, AND: [{ contentEn: { length: { lte: maxWords * 5 } } }] },
+                { contentAr: { not: null }, AND: [{ contentAr: { length: { lte: maxWords * 5 } } }] },
+              ],
+            });
+          }
+          
+          if (readTimeConditions.length > 0) {
+            where.AND = where.AND ? [...where.AND, ...readTimeConditions] : readTimeConditions;
+          }
+        }
+      } catch (error) {
+        // Invalid JSON, ignore read time range filter
+      }
+    }
+
     const orderBy: any = {};
     if (query.sortBy === 'title') {
       orderBy.titleEn = query.sortOrder;

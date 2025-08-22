@@ -26,97 +26,100 @@ export class BlogPostsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createBlogPostDto: CreateBlogPostDto) {
-    return this.blogPostsService.create(createBlogPostDto);
+  async create(@Body() createBlogPostDto: CreateBlogPostDto) {
+    return {
+      data: await this.blogPostsService.create(createBlogPostDto),
+    };
   }
 
   @Public()
   @Get()
-  findAll(@Query() query: BlogPostQueryDto) {
+  async findAll(@Query() query: BlogPostQueryDto) {
     return {
-      data: this.blogPostsService.findAll(query),
+      data: await this.blogPostsService.findAll(query),
     };
   }
 
   @Public()
   @Get('featured')
-  findFeatured(@Query('limit') limit?: string) {
+  async findFeatured(@Query('limit') limit?: string) {
     const limitNum = limit ? parseInt(limit) : 5;
     return {
-      data: this.blogPostsService.findFeatured(limitNum),
+      data: await this.blogPostsService.findFeatured(limitNum),
     };
   }
 
   @Public()
   @Get('search')
-  search(@Query() searchDto: BlogPostSearchDto) {
+  async search(@Query() searchDto: BlogPostSearchDto) {
     return {
-      data: this.blogPostsService.search(searchDto),
+      data: await this.blogPostsService.search(searchDto),
     };
   }
 
   @Public()
   @Get('stats')
-  getStats() {
+  async getStats() {
     return {
-      data: this.blogPostsService.getStats(),
+      data: await this.blogPostsService.getStats(),
     };
   }
 
   @Public()
   @Get('slug/:slug')
-  findBySlug(
+  async findBySlug(
     @Param('slug') slug: string,
     @Query('locale') locale?: 'en' | 'ar',
   ) {
     return {
-      data: this.blogPostsService.findBySlug(slug, locale || 'en'),
+      data: await this.blogPostsService.findBySlug(slug, locale || 'en'),
     };
   }
 
   @Public()
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return {
-      data: this.blogPostsService.findOne(id),
+      data: await this.blogPostsService.findOne(id),
     };
   }
 
   @Public()
   @Get(':id/related')
-  findRelated(@Param('id') id: string, @Query('limit') limit?: string) {
+  async findRelated(@Param('id') id: string, @Query('limit') limit?: string) {
     const limitNum = limit ? parseInt(limit) : 3;
     return {
-      data: this.blogPostsService.findRelated(id, limitNum),
+      data: await this.blogPostsService.findRelated(id, limitNum),
     };
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBlogPostDto: UpdateBlogPostDto) {
+  async update(@Param('id') id: string, @Body() updateBlogPostDto: UpdateBlogPostDto) {
     return {
-      data: this.blogPostsService.update(id, updateBlogPostDto),
+      data: await this.blogPostsService.update(id, updateBlogPostDto),
     };
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.blogPostsService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.blogPostsService.remove(id);
+    return { success: true };
   }
 
   @Public()
   @Post(':id/views')
-  incrementViews(@Param('id') id: string) {
-    this.blogPostsService.incrementViews(id);
+  async incrementViews(@Param('id') id: string) {
+    await this.blogPostsService.incrementViews(id);
     return { success: true };
   }
 
   @UseGuards(JwtAuthGuard)
   @Post(':id/like')
-  likePost(@Param('id') id: string, @Request() req: any) {
+  async likePost(@Param('id') id: string, @Request() req: any) {
     return {
-      data: this.blogPostsService.likePost(id, req.user.id),
+      data: await this.blogPostsService.likePost(id, req.user.id),
     };
   }
 }

@@ -339,6 +339,43 @@ export class ProductsController {
     return product;
   }
 
+  @Get(':id')
+  @Public()
+  @ApiOperation({ 
+    summary: 'Get product by ID',
+    description: 'Retrieves a single product by its ID'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Product identifier',
+    example: '684ca6c6-fe72-45e0-9625-47341ed67893',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Product retrieved successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Product not found',
+  })
+  async getProductById(@Param('id') id: string): Promise<{
+    success: boolean;
+    data: any;
+    message: string;
+    timestamp: string;
+  }> {
+    const product = await this.productsService.getProductById(id);
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
+    return {
+      success: true,
+      data: product,
+      message: 'Product retrieved successfully',
+      timestamp: new Date().toISOString(),
+    };
+  }
+
   @Get()
   @Public()
   @ApiOperation({ 

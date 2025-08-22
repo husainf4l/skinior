@@ -53,14 +53,14 @@ const ProductPage = ({ params }: ProductPageProps) => {
     fetchProduct();
   }, [id]); // Remove locale dependency
 
-  const formatPrice = (price: number) => {
+  const formatPrice = (price: number | null | undefined) => {
+    if (price == null) return isRTL ? "0.00 د.أ" : "JOD 0.00";
     return isRTL ? `${price.toFixed(2)} د.أ` : `JOD ${price.toFixed(2)}`;
   };
 
   const handleWishlistToggle = () => {
     setIsWishlisted(!isWishlisted);
   };
-
 
   if (loading) {
     return (
@@ -132,15 +132,25 @@ const ProductPage = ({ params }: ProductPageProps) => {
     );
   }
 
-  // Create images array from product data
-  const productImages = product.images.map((img) => img.url);
-
   if (!product) {
     notFound();
   }
 
   // Get localized content
   const productName = isRTL ? product.titleAr : product.title;
+
+  // Create images array from product data with null check and fallback
+  const productImages = product.images?.filter((img) => img.url) || [];
+
+  // Ensure selected index is valid
+  const validSelectedImageIndex = Math.min(
+    selectedImageIndex,
+    productImages.length - 1
+  );
+  const currentImage = productImages[validSelectedImageIndex];
+  const currentImageSrc = currentImage?.url || "/product-holder.webp";
+  const currentImageAlt =
+    currentImage?.altText || productName || "Product image";
   const productDescription = isRTL
     ? product.descriptionAr
     : product.descriptionEn;
@@ -171,8 +181,8 @@ const ProductPage = ({ params }: ProductPageProps) => {
           <div className={`space-y-4 ${isRTL ? "lg:order-2" : ""}`}>
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-white/60 backdrop-blur-xl border border-white/20 shadow-xl shadow-black/5">
               <Image
-                src={productImages[selectedImageIndex]}
-                alt={productName}
+                src={currentImageSrc}
+                alt={currentImageAlt}
                 fill
                 className="object-cover object-center transition-all duration-700 ease-out"
                 priority
@@ -181,7 +191,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
             </div>
 
             <div className="grid grid-cols-4 gap-3">
-              {productImages.map((img: string, index: number) => (
+              {productImages.map((img, index: number) => (
                 <button
                   key={index}
                   className={`aspect-square rounded-xl overflow-hidden transition-all duration-300 ${
@@ -192,8 +202,8 @@ const ProductPage = ({ params }: ProductPageProps) => {
                   onClick={() => setSelectedImageIndex(index)}
                 >
                   <Image
-                    src={img}
-                    alt={`${productName} ${index + 1}`}
+                    src={img.url || "/product-holder.webp"}
+                    alt={img.altText || `${productName} ${index + 1}`}
                     width={120}
                     height={120}
                     className="w-full h-full object-cover"
@@ -616,16 +626,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                   productId={product.id}
                   quantity={quantity}
                   disabled={!product.isInStock}
-                  size="lg"
-                  className="flex-1"
-                  onSuccess={() => {
-                    console.log("Product added to cart successfully");
-                    // Optional: Show toast notification
-                  }}
-                  onError={(error) => {
-                    console.error("Failed to add product to cart:", error);
-                    // Optional: Show error toast
-                  }}
+                  className="flex-1 py-4 text-lg font-medium"
                 />
 
                 <button

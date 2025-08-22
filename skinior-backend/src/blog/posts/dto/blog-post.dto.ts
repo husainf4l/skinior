@@ -178,6 +178,33 @@ export class BlogPostQueryDto {
   @IsOptional()
   @IsString()
   sortOrder?: 'asc' | 'desc' = 'desc';
+
+  // Date range filtering
+  @IsOptional()
+  @IsString()
+  dateRangeStart?: string; // ISO date string
+
+  @IsOptional()
+  @IsString()
+  dateRangeEnd?: string; // ISO date string
+
+  // Read time range filtering
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  readTimeMin?: number; // in minutes
+
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  readTimeMax?: number; // in minutes
+
+  // Alternative: Support JSON string format for backward compatibility
+  @IsOptional()
+  @IsString()
+  dateRange?: string; // JSON string: {"start": "2024-01-01", "end": "2024-12-31"}
+
+  @IsOptional()
+  @IsString()
+  readTimeRange?: string; // JSON string: {"min": 1, "max": 10}
 }
 
 export class BlogPostSearchDto {

@@ -92,15 +92,27 @@ export interface BlogPost {
 
 export interface BlogFilters {
   category?: string;
+  categories?: string[];
   author?: string;
+  authors?: string[];
   tag?: string;
+  tags?: string[];
   featured?: boolean;
   published?: boolean;
   search?: string;
+  query?: string;
   limit?: number;
   offset?: number;
-  sortBy?: 'publishedAt' | 'views' | 'likes' | 'title';
+  sortBy?: 'publishedAt' | 'views' | 'likes' | 'title' | 'relevance';
   sortOrder?: 'asc' | 'desc';
+  dateRange?: {
+    start?: string;
+    end?: string;
+  };
+  readTimeRange?: {
+    min?: number;
+    max?: number;
+  };
 }
 
 export interface BlogListResponse {

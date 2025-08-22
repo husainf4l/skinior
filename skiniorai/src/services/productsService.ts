@@ -188,8 +188,19 @@ export const productsService = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const data: Product = await response.json();
-      return data;
+      const responseData = await response.json();
+
+      if (responseData.success && responseData.data) {
+        return responseData.data as Product;
+      }
+      
+      // Fallback for cases where the API might return the product object directly
+      if (responseData && typeof responseData === 'object' && !('success' in responseData)) {
+        return responseData as Product;
+      }
+
+      console.warn('Product API returned unexpected data structure:', responseData);
+      return null;
     } catch (error) {
       console.error('Error fetching product by ID:', error);
       throw error;

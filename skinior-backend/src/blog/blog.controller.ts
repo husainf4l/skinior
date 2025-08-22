@@ -9,9 +9,9 @@ export class BlogController {
 
   @Public()
   @Get('search')
-  search(@Query() searchDto: BlogPostSearchDto) {
+  async search(@Query() searchDto: BlogPostSearchDto) {
     return {
-      data: this.blogPostsService.search(searchDto),
+      data: await this.blogPostsService.search(searchDto),
     };
   }
 }
