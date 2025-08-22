@@ -13,6 +13,7 @@ class ProductsProvider extends ChangeNotifier {
   List<Product> get featuredProducts => _featuredProducts;
   List<Product> get todaysDeals => _todaysDeals;
   List<Product> get searchResults => _searchResults;
+  List<Product> get products => _searchResults.isNotEmpty ? _searchResults : [..._featuredProducts, ..._todaysDeals];
   ProductSearchData? get lastSearchData => _lastSearchData;
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -173,6 +174,11 @@ class ProductsProvider extends ChangeNotifier {
   }
 
   Future<void> refreshTodaysDeals() async {
+    await loadTodaysDeals();
+  }
+
+  Future<void> loadProducts() async {
+    await loadFeaturedProducts();
     await loadTodaysDeals();
   }
 

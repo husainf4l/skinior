@@ -339,16 +339,19 @@ class CartScreen extends StatelessWidget {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     
     if (!authProvider.isLoggedIn) {
-      // Show login dialog for guest users
+      // Show login/guest checkout dialog
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Login Required'),
-          content: const Text('Please login to proceed with checkout.'),
+          title: const Text('Checkout Options'),
+          content: const Text('You can checkout as a guest or login to your account for a faster experience.'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                context.go('/checkout');
+              },
+              child: const Text('Continue as Guest'),
             ),
             ElevatedButton(
               onPressed: () {

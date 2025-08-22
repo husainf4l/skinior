@@ -6,6 +6,9 @@ import '../../providers/auth_provider.dart';
 import '../../providers/products_provider.dart';
 import '../../providers/cart_provider.dart';
 import '../../models/product_models.dart';
+import '../products/products_screen.dart';
+import '../favorites/favorites_screen.dart';
+import '../cart/cart_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,9 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
         index: _selectedIndex,
         children: [
           const _HomePage(),
-          const _ProductsPage(),
-          const _CartPage(),
-          const _FavoritesPage(),
+          const ProductsScreen(),
+          const CartScreen(),
+          const FavoritesScreen(),
           const _ProfilePage(),
         ],
       ),
@@ -416,6 +419,51 @@ class _HomePage extends StatelessWidget {
                   );
                 },
               ),
+              
+              const SizedBox(height: 24),
+              
+              // Recommended for You
+              Consumer<ProductsProvider>(
+                builder: (context, productsProvider, _) {
+                  final recommendedProducts = _getRecommendedProducts(productsProvider);
+                  if (recommendedProducts.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Recommended for You',
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => context.go('/products'),
+                            child: const Text('View All'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        height: 220,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: recommendedProducts.length.clamp(0, 5),
+                          itemBuilder: (context, index) {
+                            final product = recommendedProducts[index];
+                            return _buildProductCard(context, product);
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -545,276 +593,16 @@ class _HomePage extends StatelessWidget {
       ),
     );
   }
-}
-
-class _ProductsPage extends StatelessWidget {
-  const _ProductsPage();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Products'),
-        automaticallyImplyLeading: false,
-      ),
-      body: const Center(
-        child: Text('Products Page - Coming Soon'),
-      ),
-    );
+  
+  List<Product> _getRecommendedProducts(ProductsProvider productsProvider) {
+    // Simple recommendation algorithm: mix of featured and deals
+    final allProducts = [...productsProvider.featuredProducts, ...productsProvider.todaysDeals];
+    allProducts.shuffle(); // Randomize for variety
+    return allProducts.take(10).toList();
   }
 }
 
-class _CartPage extends StatelessWidget {
-  const _CartPage();
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Shopping Cart'),
-        automaticallyImplyLeading: false,
-      ),
-      body: Consumer<CartProvider>(
-        builder: (context, cartProvider, _) {
-          if (cartProvider.items.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.shopping_cart_outlined,
-                    size: 64,
-                    color: Colors.grey[400],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Your cart is empty',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => context.go('/products'),
-                    child: const Text('Start Shopping'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: cartProvider.items.length,
-                  itemBuilder: (context, index) {
-                    final item = cartProvider.items[index];
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      child: ListTile(
-                        leading: item.product?.imageUrl != null
-                            ? CachedNetworkImage(
-                                imageUrl: item.product!.imageUrl!,
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                              )
-                            : Container(
-                                width: 50,
-                                height: 50,
-                                color: Colors.grey[200],
-                                child: const Icon(Icons.image),
-                              ),
-                        title: Text(item.product?.name ?? 'Unknown Product'),
-                        subtitle: Text('\$${item.price.toStringAsFixed(2)} × ${item.quantity}'),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () => cartProvider.removeItem(item.id),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Total: \$${cartProvider.total.toStringAsFixed(2)}',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () => context.go('/checkout'),
-                        child: const Text('Checkout'),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _FavoritesPage extends StatelessWidget {
-  const _FavoritesPage();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Favorites'),
-        automaticallyImplyLeading: false,
-      ),
-      body: Consumer<FavoritesProvider>(
-        builder: (context, favoritesProvider, _) {
-          if (favoritesProvider.favorites.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.favorite_border,
-                    size: 64,
-                    color: Colors.grey[400],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No favorites yet',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => context.go('/products'),
-                    child: const Text('Browse Products'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return GridView.builder(
-            padding: const EdgeInsets.all(16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 0.8,
-            ),
-            itemCount: favoritesProvider.favorites.length,
-            itemBuilder: (context, index) {
-              final product = favoritesProvider.favorites[index];
-              return Card(
-                child: InkWell(
-                  onTap: () => context.go('/product/${product.id}'),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Stack(
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              child: product.imageUrl != null
-                                  ? CachedNetworkImage(
-                                      imageUrl: product.imageUrl!,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Container(
-                                      color: Colors.grey[200],
-                                      child: const Icon(Icons.image),
-                                    ),
-                            ),
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: IconButton(
-                                icon: const Icon(Icons.favorite, color: Colors.red),
-                                onPressed: () => favoritesProvider.removeFromFavorites(product.id),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              product.name,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '\$${product.price.toStringAsFixed(2)}',
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _AnalysisPage extends StatelessWidget {
-  const _AnalysisPage();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Analysis Page - Coming Soon'),
-      ),
-    );
-  }
-}
-
-class _DashboardPage extends StatelessWidget {
-  const _DashboardPage();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Dashboard Page - Coming Soon'),
-      ),
-    );
-  }
-}
 
 class _ProfilePage extends StatelessWidget {
   const _ProfilePage();
@@ -873,7 +661,9 @@ class _ProfilePage extends StatelessWidget {
                     title: const Text('Settings'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
-                      // TODO: Navigate to settings
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Settings coming soon')),
+                      );
                     },
                   ),
                   const Spacer(),

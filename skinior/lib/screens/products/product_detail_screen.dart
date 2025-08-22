@@ -23,7 +23,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Product? _product;
   bool _isLoading = true;
   int _selectedQuantity = 1;
-  int _selectedImageIndex = 0;
 
   @override
   void initState() {
@@ -126,11 +125,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         background: images.isNotEmpty
             ? PageView.builder(
                 itemCount: images.length,
-                onPageChanged: (index) {
-                  setState(() {
-                    _selectedImageIndex = index;
-                  });
-                },
+                onPageChanged: (index) {},
                 itemBuilder: (context, index) {
                   return CachedNetworkImage(
                     imageUrl: images[index],
@@ -198,7 +193,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${_product!.rating!.toStringAsFixed(1)}',
+                  _product!.rating!.toStringAsFixed(1),
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),

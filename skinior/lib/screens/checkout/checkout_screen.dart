@@ -21,10 +21,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final _zipController = TextEditingController();
   final _phoneController = TextEditingController();
   
-  String _selectedCountry = 'United States';
   String _selectedState = 'California';
   String _paymentMethod = 'card';
-  bool _sameAsShipping = true;
   bool _isProcessing = false;
 
   @override
