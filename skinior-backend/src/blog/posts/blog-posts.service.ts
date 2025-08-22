@@ -248,7 +248,7 @@ export class BlogPostsService {
     // Note: This is a basic implementation - for more precise filtering,
     // you'd need to calculate actual read times and store them as numbers
     if (query.readTimeMin !== undefined || query.readTimeMax !== undefined) {
-      const readTimeConditions = [];
+      const readTimeConditions: any[] = [];
       
       if (query.readTimeMin !== undefined) {
         // Approximate filter based on content length
@@ -278,7 +278,7 @@ export class BlogPostsService {
       try {
         const readTimeRange = JSON.parse(query.readTimeRange);
         if (readTimeRange.min !== undefined || readTimeRange.max !== undefined) {
-          const readTimeConditions = [];
+          const readTimeConditions: any[] = [];
           
           if (readTimeRange.min !== undefined) {
             const minWords = readTimeRange.min * 200;
