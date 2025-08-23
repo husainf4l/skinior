@@ -4,7 +4,11 @@ import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { productsService } from "@/services/productsService";
-import { type Product, type ProductQueryParams, type ProductsResult } from "@/types/product";
+import {
+  type Product,
+  type ProductQueryParams,
+  type ProductsResult,
+} from "@/types/product";
 import ProductCard from "./ProductCard";
 import ProductFilters from "./shop/ProductFilters";
 
@@ -30,7 +34,9 @@ export default function ShopProductList({ locale }: { locale: string }) {
   const isDealsPage = searchParams.get("deals") === "true";
   const urlCategory = searchParams.get("category") || "all";
 
-  const [productsResult, setProductsResult] = useState<ProductsResult | null>(null);
+  const [productsResult, setProductsResult] = useState<ProductsResult | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -58,85 +64,92 @@ export default function ShopProductList({ locale }: { locale: string }) {
       const result = await productsService.getProducts(apiFilters);
       return result;
     } catch (err) {
-      console.error('Error loading filtered products:', err);
+      console.error("Error loading filtered products:", err);
       throw err;
     }
   }, []);
 
   // Convert filter state to API filters
-  const convertToApiFilters = useCallback((filterState: FilterState, currentPage: number, dealsOnly: boolean): ProductQueryParams => {
-    const apiFilters: ProductQueryParams = {
-      page: currentPage,
-      limit: PAGE_SIZE,
-      isActive: true
-    };
+  const convertToApiFilters = useCallback(
+    (
+      filterState: FilterState,
+      currentPage: number,
+      dealsOnly: boolean
+    ): ProductQueryParams => {
+      const apiFilters: ProductQueryParams = {
+        page: currentPage,
+        limit: PAGE_SIZE,
+        isActive: true,
+      };
 
-    if (dealsOnly) {
-      apiFilters.onSale = true;
-    }
+      if (dealsOnly) {
+        apiFilters.onSale = true;
+      }
 
-    if (filterState.query.trim()) {
-      apiFilters.search = filterState.query.trim();
-    }
+      if (filterState.query.trim()) {
+        apiFilters.search = filterState.query.trim();
+      }
 
-    if (filterState.category && filterState.category !== 'all') {
-      apiFilters.category = filterState.category;
-    }
+      if (filterState.category && filterState.category !== "all") {
+        apiFilters.category = filterState.category;
+      }
 
-    if (filterState.brand && filterState.brand !== 'all') {
-      apiFilters.brand = filterState.brand;
-    }
+      if (filterState.brand && filterState.brand !== "all") {
+        apiFilters.brand = filterState.brand;
+      }
 
-    if (filterState.priceRange[0] > 0) {
-      apiFilters.minPrice = filterState.priceRange[0];
-    }
+      if (filterState.priceRange[0] > 0) {
+        apiFilters.minPrice = filterState.priceRange[0];
+      }
 
-    if (filterState.priceRange[1] < 1000) {
-      apiFilters.maxPrice = filterState.priceRange[1];
-    }
+      if (filterState.priceRange[1] < 1000) {
+        apiFilters.maxPrice = filterState.priceRange[1];
+      }
 
-    if (filterState.skinTypes.length > 0) {
-      apiFilters.skinType = filterState.skinTypes.join(',');
-    }
+      if (filterState.skinTypes.length > 0) {
+        apiFilters.skinType = filterState.skinTypes.join(",");
+      }
 
-    if (filterState.concerns.length > 0) {
-      apiFilters.concernsFilter = filterState.concerns;
-    }
+      if (filterState.concerns.length > 0) {
+        apiFilters.concernsFilter = filterState.concerns;
+      }
 
-    if (filterState.onSale) {
-      apiFilters.onSale = true;
-    }
+      if (filterState.onSale) {
+        apiFilters.onSale = true;
+      }
 
-    if (filterState.isNew) {
-      apiFilters.isNew = true;
-    }
+      if (filterState.isNew) {
+        apiFilters.isNew = true;
+      }
 
-    // Map sort values to API format
-    switch (filterState.sort) {
-      case 'price_asc':
-        apiFilters.sortBy = 'price';
-        apiFilters.sortOrder = 'asc';
-        break;
-      case 'price_desc':
-        apiFilters.sortBy = 'price';
-        apiFilters.sortOrder = 'desc';
-        break;
-      case 'newest':
-        apiFilters.sortBy = 'createdAt';
-        apiFilters.sortOrder = 'desc';
-        break;
-      case 'rating':
-        apiFilters.sortBy = 'rating';
-        apiFilters.sortOrder = 'desc';
-        break;
-      case 'relevance':
-      default:
-        // Use default server sorting
-        break;
-    }
+      // Map sort values to API format
+      switch (filterState.sort) {
+        case "price_asc":
+          apiFilters.sortBy = "price";
+          apiFilters.sortOrder = "asc";
+          break;
+        case "price_desc":
+          apiFilters.sortBy = "price";
+          apiFilters.sortOrder = "desc";
+          break;
+        case "newest":
+          apiFilters.sortBy = "createdAt";
+          apiFilters.sortOrder = "desc";
+          break;
+        case "rating":
+          apiFilters.sortBy = "rating";
+          apiFilters.sortOrder = "desc";
+          break;
+        case "relevance":
+        default:
+          // Use default server sorting
+          break;
+      }
 
-    return apiFilters;
-  }, []);
+      return apiFilters;
+    },
+    []
+  );
 
   // Initial load - just load the first page of products
   useEffect(() => {
@@ -145,13 +158,13 @@ export default function ShopProductList({ locale }: { locale: string }) {
     setError(null);
 
     // Load initial filtered products based on page type
-    const initialFilters: ProductQueryParams = { 
-      page: 1, 
-      limit: PAGE_SIZE, 
+    const initialFilters: ProductQueryParams = {
+      page: 1,
+      limit: PAGE_SIZE,
       isActive: true,
-      category: urlCategory !== 'all' ? urlCategory : undefined
+      category: urlCategory !== "all" ? urlCategory : undefined,
     };
-    
+
     if (isDealsPage) {
       initialFilters.onSale = true;
     }
@@ -160,19 +173,19 @@ export default function ShopProductList({ locale }: { locale: string }) {
       .then((result) => {
         if (!mounted) return;
         setProductsResult(result);
-        
+
         // For now, we'll use the current products for filters
         // In a production setup, you might want a separate endpoint for filter metadata
         setAllProducts(result.products || []);
-        
+
         // Initialize price range - you could get this from API metadata instead
         if (result.products && result.products.length > 0) {
-          const prices = result.products.map(p => p.price);
+          const prices = result.products.map((p) => p.price);
           const minPrice = Math.min(...prices);
           const maxPrice = Math.max(...prices);
-          setFilters(prev => ({
+          setFilters((prev) => ({
             ...prev,
-            priceRange: [Math.max(0, minPrice - 10), maxPrice + 10] // Add some padding
+            priceRange: [Math.max(0, minPrice - 10), maxPrice + 10], // Add some padding
           }));
         }
       })
@@ -213,8 +226,8 @@ export default function ShopProductList({ locale }: { locale: string }) {
         setProductsResult(result);
         setAllProducts(result.products || []);
       } catch (err) {
-        console.error('Error applying category from URL:', err);
-        setError('Failed to apply category');
+        console.error("Error applying category from URL:", err);
+        setError("Failed to apply category");
       } finally {
         setLoading(false);
       }
@@ -222,66 +235,85 @@ export default function ShopProductList({ locale }: { locale: string }) {
   }, [urlCategory, isDealsPage, convertToApiFilters, loadProducts, filters]);
 
   // Filter change handlers
-  const handleFiltersChange = useCallback(async (newFilters: Partial<FilterState>) => {
-    const updatedFilters = { ...filters, ...newFilters };
-    setFilters(updatedFilters);
-    setPage(1);
-    
-    setLoading(true);
-    try {
-      const apiFilters = convertToApiFilters(updatedFilters, 1, isDealsPage);
-      const result = await loadProducts(apiFilters);
-      setProductsResult(result);
-    } catch (err) {
-      console.error('Error applying filters:', err);
-      setError('Failed to apply filters');
-    } finally {
-      setLoading(false);
-    }
-  }, [filters, isDealsPage, loadProducts, convertToApiFilters]);
-
-  const handleQueryChange = useCallback((query: string) => {
-    if (debounceRef.current) window.clearTimeout(debounceRef.current);
-    debounceRef.current = window.setTimeout(async () => {
-      const updatedFilters = { ...filters, query };
+  const handleFiltersChange = useCallback(
+    async (newFilters: Partial<FilterState>) => {
+      const updatedFilters = { ...filters, ...newFilters };
       setFilters(updatedFilters);
       setPage(1);
-      
+
       setLoading(true);
       try {
         const apiFilters = convertToApiFilters(updatedFilters, 1, isDealsPage);
         const result = await loadProducts(apiFilters);
         setProductsResult(result);
       } catch (err) {
-        console.error('Error applying search:', err);
-        setError('Failed to apply search');
+        console.error("Error applying filters:", err);
+        setError("Failed to apply filters");
       } finally {
         setLoading(false);
       }
-    }, 300);
-  }, [filters, isDealsPage, loadProducts, convertToApiFilters]);
+    },
+    [filters, isDealsPage, loadProducts, convertToApiFilters]
+  );
+
+  const handleQueryChange = useCallback(
+    (query: string) => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
+      debounceRef.current = window.setTimeout(async () => {
+        const updatedFilters = { ...filters, query };
+        setFilters(updatedFilters);
+        setPage(1);
+
+        setLoading(true);
+        try {
+          const apiFilters = convertToApiFilters(
+            updatedFilters,
+            1,
+            isDealsPage
+          );
+          const result = await loadProducts(apiFilters);
+          setProductsResult(result);
+        } catch (err) {
+          console.error("Error applying search:", err);
+          setError("Failed to apply search");
+        } finally {
+          setLoading(false);
+        }
+      }, 300);
+    },
+    [filters, isDealsPage, loadProducts, convertToApiFilters]
+  );
 
   // Handle page changes
   useEffect(() => {
     if (!productsResult || page === productsResult.pagination.page) return;
-    
+
     setLoading(true);
     const apiFilters = convertToApiFilters(filters, page, isDealsPage);
-    
+
     loadProducts(apiFilters)
-      .then(result => {
+      .then((result) => {
         setProductsResult(result);
       })
-      .catch(err => {
-        console.error('Error loading page:', err);
-        setError('Failed to load page');
+      .catch((err) => {
+        console.error("Error loading page:", err);
+        setError("Failed to load page");
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [page, filters, isDealsPage, productsResult, convertToApiFilters, loadProducts]);
+  }, [
+    page,
+    filters,
+    isDealsPage,
+    productsResult,
+    convertToApiFilters,
+    loadProducts,
+  ]);
 
-  const products = Array.isArray(productsResult?.products) ? productsResult.products : [];
+  const products = Array.isArray(productsResult?.products)
+    ? productsResult.products
+    : [];
   const pagination = productsResult?.pagination;
   const totalPages = pagination?.pages || 1;
   const totalCount = pagination?.total || 0;
@@ -415,7 +447,8 @@ export default function ShopProductList({ locale }: { locale: string }) {
         </div>
         {totalCount > 0 && totalPages > 1 && (
           <div className="text-sm text-gray-500">
-            {isRTL ? "صفحة" : "Page"} {pagination?.page || page} {isRTL ? "من" : "of"} {totalPages}
+            {isRTL ? "صفحة" : "Page"} {pagination?.page || page}{" "}
+            {isRTL ? "من" : "of"} {totalPages}
           </div>
         )}
       </div>
