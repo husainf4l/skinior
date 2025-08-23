@@ -5,8 +5,10 @@ import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { useState, useEffect } from "react";
-import { productsService, type Product } from "@/services/productsService";
+import { productsService } from "@/services/productsService";
+import { type Product } from "@/types/product";
 import AddToCartButton from "@/components/cart/AddToCartButton";
+import ProductAttributeSelector, { type AttributeSelection } from "@/components/product/ProductAttributeSelector";
 
 interface ProductPageProps {
   params: Promise<{
@@ -25,6 +27,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [selectedAttributes, setSelectedAttributes] = useState<AttributeSelection>({});
 
   const isRTL = locale === "ar";
 
@@ -60,6 +63,19 @@ const ProductPage = ({ params }: ProductPageProps) => {
 
   const handleWishlistToggle = () => {
     setIsWishlisted(!isWishlisted);
+  };
+
+  const handleAttributeSelectionChange = (selections: AttributeSelection) => {
+    setSelectedAttributes(selections);
+  };
+
+  // Check if all required attributes are selected
+  const isValidAttributeSelection = () => {
+    if (!product?.attributes) return true;
+    
+    return Object.keys(product.attributes).every(attributeName => {
+      return selectedAttributes[attributeName] !== null && selectedAttributes[attributeName] !== undefined;
+    });
   };
 
   if (loading) {
@@ -291,29 +307,12 @@ const ProductPage = ({ params }: ProductPageProps) => {
                 </span>
               </div>
 
-              {/* Pricing */}
-              <div
-                className={`flex items-baseline gap-4 ${
-                  isRTL ? "flex-row-reverse justify-start" : "justify-start"
-                }`}
-              >
-                <span
-                  className={`text-3xl font-light text-gray-900 price ${
-                    isRTL ? "font-cairo" : ""
-                  }`}
-                >
-                  {formatPrice(product.price)}
-                </span>
-                {product.compareAtPrice && (
-                  <span
-                    className={`text-lg text-gray-600 line-through price font-light ${
-                      isRTL ? "font-cairo" : ""
-                    }`}
-                  >
-                    {formatPrice(product.compareAtPrice)}
-                  </span>
-                )}
-              </div>
+              {/* Compare At Price (if no attributes) */}
+              {product.compareAtPrice && (!product.attributes || Object.keys(product.attributes).length === 0) && (
+                <div className={`text-lg text-gray-600 line-through price font-light ${isRTL ? "font-cairo" : ""}`}>
+                  {formatPrice(product.compareAtPrice)}
+                </div>
+              )}
             </div>
 
             {/* Description */}
@@ -326,6 +325,14 @@ const ProductPage = ({ params }: ProductPageProps) => {
                 {productDescription}
               </p>
             </div>
+
+            {/* Product Attributes Selector */}
+            <ProductAttributeSelector
+              product={product}
+              locale={locale}
+              onSelectionChange={handleAttributeSelectionChange}
+              selectedAttributes={selectedAttributes}
+            />
 
             {/* Product Details */}
             <div className="space-y-6">
@@ -625,8 +632,9 @@ const ProductPage = ({ params }: ProductPageProps) => {
                 <AddToCartButton
                   productId={product.id}
                   quantity={quantity}
-                  disabled={!product.isInStock}
+                  disabled={!product.isInStock || !isValidAttributeSelection()}
                   className="flex-1 py-4 text-lg font-medium"
+                  selectedAttributes={selectedAttributes}
                 />
 
                 <button

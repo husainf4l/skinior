@@ -24,6 +24,22 @@ export class ProductsService {
           where: { isPublished: true },
           orderBy: { createdAt: 'desc' },
         },
+        attributeValues: {
+          include: {
+            attributeValue: {
+              include: {
+                attribute: true,
+              },
+            },
+          },
+          orderBy: {
+            attributeValue: {
+              attribute: {
+                sortOrder: 'asc',
+              },
+            },
+          },
+        },
       },
       orderBy: [
         { createdAt: 'desc' },
@@ -44,6 +60,22 @@ export class ProductsService {
         brand: true,
         reviews: {
           where: { isPublished: true },
+        },
+        attributeValues: {
+          include: {
+            attributeValue: {
+              include: {
+                attribute: true,
+              },
+            },
+          },
+          orderBy: {
+            attributeValue: {
+              attribute: {
+                sortOrder: 'asc',
+              },
+            },
+          },
         },
       },
       orderBy: [
@@ -67,6 +99,22 @@ export class ProductsService {
         reviews: {
           where: { isPublished: true },
           orderBy: { createdAt: 'desc' },
+        },
+        attributeValues: {
+          include: {
+            attributeValue: {
+              include: {
+                attribute: true,
+              },
+            },
+          },
+          orderBy: {
+            attributeValue: {
+              attribute: {
+                sortOrder: 'asc',
+              },
+            },
+          },
         },
       },
     });
@@ -92,6 +140,22 @@ export class ProductsService {
         brand: true,
         reviews: {
           where: { isPublished: true },
+        },
+        attributeValues: {
+          include: {
+            attributeValue: {
+              include: {
+                attribute: true,
+              },
+            },
+          },
+          orderBy: {
+            attributeValue: {
+              attribute: {
+                sortOrder: 'asc',
+              },
+            },
+          },
         },
       },
       orderBy: [
@@ -123,6 +187,22 @@ export class ProductsService {
         brand: true,
         reviews: {
           where: { isPublished: true },
+        },
+        attributeValues: {
+          include: {
+            attributeValue: {
+              include: {
+                attribute: true,
+              },
+            },
+          },
+          orderBy: {
+            attributeValue: {
+              attribute: {
+                sortOrder: 'asc',
+              },
+            },
+          },
         },
       },
       orderBy: [
@@ -171,12 +251,45 @@ export class ProductsService {
         return value;
       };
 
+      // Format attributes for better API response
+      const formattedAttributes: Record<string, any[]> = {};
+      if (product.attributeValues) {
+        product.attributeValues.forEach((av: any) => {
+          const attrName = av.attributeValue?.attribute?.name;
+          if (attrName) {
+            if (!formattedAttributes[attrName]) {
+              formattedAttributes[attrName] = [];
+            }
+            formattedAttributes[attrName].push({
+              id: av.attributeValue.id,
+              value: av.attributeValue.value,
+              valueAr: av.attributeValue.valueAr,
+              slug: av.attributeValue.slug,
+              hexColor: av.attributeValue.hexColor,
+              image: av.attributeValue.image,
+              priceAdjustment: av.attributeValue.priceAdjustment,
+              stockQuantity: av.attributeValue.stockQuantity,
+              attribute: {
+                id: av.attributeValue.attribute.id,
+                name: av.attributeValue.attribute.name,
+                nameAr: av.attributeValue.attribute.nameAr,
+                slug: av.attributeValue.attribute.slug,
+              },
+            });
+          }
+        });
+      }
+
       const parsedProduct = {
         ...product,
         features: safeParse(product.features),
         featuresAr: safeParse(product.featuresAr),
         concerns: safeParse(product.concerns),
+        attributes: formattedAttributes,
       };
+
+      // Remove the raw attributeValues from response to keep it clean
+      delete parsedProduct.attributeValues;
 
       return {
         ...parsedProduct,
@@ -310,6 +423,22 @@ export class ProductsService {
         reviews: {
           where: { isPublished: true },
         },
+        attributeValues: {
+          include: {
+            attributeValue: {
+              include: {
+                attribute: true,
+              },
+            },
+          },
+          orderBy: {
+            attributeValue: {
+              attribute: {
+                sortOrder: 'asc',
+              },
+            },
+          },
+        },
       },
       orderBy: [
         { isFeatured: 'desc' },
@@ -350,6 +479,22 @@ export class ProductsService {
         reviews: {
           where: { isPublished: true },
           orderBy: { createdAt: 'desc' },
+        },
+        attributeValues: {
+          include: {
+            attributeValue: {
+              include: {
+                attribute: true,
+              },
+            },
+          },
+          orderBy: {
+            attributeValue: {
+              attribute: {
+                sortOrder: 'asc',
+              },
+            },
+          },
         },
       },
     });
@@ -457,6 +602,22 @@ export class ProductsService {
           reviews: {
             where: { isPublished: true },
           },
+          attributeValues: {
+            include: {
+              attributeValue: {
+                include: {
+                  attribute: true,
+                },
+              },
+            },
+            orderBy: {
+              attributeValue: {
+                attribute: {
+                  sortOrder: 'asc',
+                },
+              },
+            },
+          },
         },
         orderBy,
         take: searchDto.limit,
@@ -520,6 +681,22 @@ export class ProductsService {
         category: true,
         brand: true,
         reviews: { where: { isPublished: true } },
+        attributeValues: {
+          include: {
+            attributeValue: {
+              include: {
+                attribute: true,
+              },
+            },
+          },
+          orderBy: {
+            attributeValue: {
+              attribute: {
+                sortOrder: 'asc',
+              },
+            },
+          },
+        },
       },
       orderBy: [{ createdAt: 'desc' }],
       take: limit,
@@ -530,15 +707,8 @@ export class ProductsService {
     const filtered = products.filter(p => (p.compareAtPrice ?? 0) > (p.price ?? 0));
 
     return this.addProductStats(filtered).map(p => ({
-      id: p.id,
-      name: p.title,
-      price: p.price,
-      compareAtPrice: p.compareAtPrice,
+      ...p, // Include all product data including attributes
       discountPercentage: p.compareAtPrice && p.price ? Math.round(((p.compareAtPrice - p.price) / p.compareAtPrice) * 100) : 0,
-      images: p.images?.map((i: any) => i.url) || [],
-      brand: p.brand?.name,
-      category: p.category?.name,
-      availability: p.isInStock,
     }));
   }
 

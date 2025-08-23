@@ -24,6 +24,7 @@ model Product {
   compareAtPrice Float? // For discount pricing (was JOD 60.00)
   currency       String  @default("JOD")
   sku            String? @unique
+  barcode        String? @unique // Product barcode
   isActive       Boolean @default(true)
   isFeatured     Boolean @default(false)
   isNew          Boolean @default(false)
@@ -54,13 +55,14 @@ model Product {
   salesCount Int @default(0)
 
   // Relations
-  images     ProductImage[]
-  reviews    ProductReview[]
-  cartItems  CartItem[]
-  categoryId String?
-  category   Category?       @relation(fields: [categoryId], references: [id])
-  brandId    String?
-  brand      Brand?          @relation(fields: [brandId], references: [id])
+  images          ProductImage[]
+  reviews         ProductReview[]
+  cartItems       CartItem[]
+  attributeValues ProductAttribute_Product[] // Product variants/attributes
+  categoryId      String?
+  category        Category?                  @relation(fields: [categoryId], references: [id])
+  brandId         String?
+  brand           Brand?                     @relation(fields: [brandId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -136,6 +138,71 @@ model User {
   tokenExpiresAt DateTime? // For long-term tokens
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+}
+
+// Product Attributes System
+model ProductAttribute {
+  id          String  @id @default(uuid())
+  name        String // "Color", "Size", "Type", etc.
+  nameAr      String? // Arabic name
+  slug        String  @unique // "color", "size", "type"
+  description String?
+  isActive    Boolean @default(true)
+  sortOrder   Int     @default(0)
+
+  // Relations
+  values ProductAttributeValue[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([sortOrder])
+}
+
+model ProductAttributeValue {
+  id          String           @id @default(uuid())
+  attributeId String
+  attribute   ProductAttribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+  value       String // "Dark Brown", "Black", "30ml", etc.
+  valueAr     String? // Arabic value
+  slug        String // "dark-brown", "black", "30ml"
+  hexColor    String? // For color attributes: "#8B4513"
+  image       String? // Image URL for this attribute value
+  description String?
+  isActive    Boolean @default(true)
+  sortOrder   Int     @default(0)
+
+  // Price adjustments for this variant
+  priceAdjustment Float @default(0) // +/- amount from base product price
+  stockQuantity   Int   @default(0) // Stock for this specific variant
+
+  // Relations
+  products ProductAttribute_Product[] @relation("AttributeValueProducts")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([attributeId, slug])
+  @@index([attributeId])
+  @@index([slug])
+  @@index([sortOrder])
+}
+
+// Junction table for Product-AttributeValue many-to-many relationship
+model ProductAttribute_Product {
+  id                      String                @id @default(uuid())
+  productId               String
+  product                 Product               @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productAttributeValueId String
+  attributeValue          ProductAttributeValue @relation("AttributeValueProducts", fields: [productAttributeValueId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([productId, productAttributeValueId])
+  @@index([productId])
+  @@index([productAttributeValueId])
 }
 
 model Order {

@@ -3,7 +3,8 @@
 import { useTranslations, useLocale } from "next-intl";
 import { memo, useState, useEffect } from "react";
 import ProductCard from "./ProductCard";
-import { productsService, type Product } from "@/services/productsService";
+import { productsService } from "@/services/productsService";
+import { type Product } from "@/types/product";
 import Link from "next/link";
 
 const FeaturedProducts = memo(() => {

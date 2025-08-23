@@ -3,10 +3,25 @@
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { productsService, type Product } from "@/services/productsService";
+import { productsService } from "@/services/productsService";
+import { type Product } from "@/types/product";
 import ProductCard from "./ProductCard";
+import ProductFilters from "./shop/ProductFilters";
 
 const PAGE_SIZE = 12;
+
+interface FilterState {
+  query: string;
+  category: string | "all";
+  brand: string | "all";
+  priceRange: [number, number];
+  skinTypes: string[];
+  concerns: string[];
+  inStock: boolean;
+  onSale: boolean;
+  isNew: boolean;
+  sort: "relevance" | "price_asc" | "price_desc" | "newest" | "rating";
+}
 
 export default function ShopProductList({ locale }: { locale: string }) {
   const t = useTranslations();
@@ -17,16 +32,21 @@ export default function ShopProductList({ locale }: { locale: string }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Filters / UI state
-  const [query, setQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | "all">(
-    "all"
-  );
-  const [sort, setSort] = useState<
-    "relevance" | "price_asc" | "price_desc" | "newest"
-  >("relevance");
   const [page, setPage] = useState(1);
+
+  // Initialize filter state
+  const [filters, setFilters] = useState<FilterState>({
+    query: "",
+    category: "all",
+    brand: "all",
+    priceRange: [0, 1000],
+    skinTypes: [],
+    concerns: [],
+    inStock: false,
+    onSale: false,
+    isNew: false,
+    sort: "relevance",
+  });
 
   const debounceRef = useRef<number | null>(null);
 
@@ -40,6 +60,17 @@ export default function ShopProductList({ locale }: { locale: string }) {
       .then((data) => {
         if (!mounted) return;
         setProducts(data || []);
+        
+        // Initialize price range based on actual product data
+        if (data && data.length > 0) {
+          const prices = data.map(p => p.price);
+          const minPrice = Math.min(...prices);
+          const maxPrice = Math.max(...prices);
+          setFilters(prev => ({
+            ...prev,
+            priceRange: [minPrice, maxPrice]
+          }));
+        }
       })
       .catch((err) => {
         console.error(err);
@@ -56,30 +87,21 @@ export default function ShopProductList({ locale }: { locale: string }) {
     };
   }, [t]);
 
-  // Derive categories from products
-  const categories = useMemo(() => {
-    const map = new Map<string, string>();
-    products.forEach((p) => {
-      const name = p.category?.name || p.category?.slug || "uncategorized";
-      const id = p.category?.id || name;
-      if (!map.has(String(id))) map.set(String(id), String(name));
-    });
-    return [
-      { id: "all", name: t("shop.allCategories") ?? "All" },
-      ...Array.from(map.entries()).map(([id, name]) => ({ id, name })),
-    ];
-  }, [products, t]);
+  // Filter change handlers
+  const handleFiltersChange = useCallback((newFilters: Partial<FilterState>) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
+    setPage(1);
+  }, []);
 
-  // Debounced query setter for better UX
-  const setQueryDebounced = useCallback((val: string) => {
+  const handleQueryChange = useCallback((query: string) => {
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
     debounceRef.current = window.setTimeout(() => {
-      setQuery(val);
+      setFilters(prev => ({ ...prev, query }));
       setPage(1);
     }, 300);
   }, []);
 
-  // Filtering + sorting
+  // Advanced filtering + sorting
   const filtered = useMemo(() => {
     let list = products.slice();
 
@@ -90,8 +112,9 @@ export default function ShopProductList({ locale }: { locale: string }) {
       );
     }
 
-    if (query.trim()) {
-      const q = query.trim().toLowerCase();
+    // Text search
+    if (filters.query.trim()) {
+      const q = filters.query.trim().toLowerCase();
       list = list.filter((p) => {
         return (
           p.title?.toLowerCase().includes(q) ||
@@ -99,20 +122,75 @@ export default function ShopProductList({ locale }: { locale: string }) {
           p.sku?.toLowerCase().includes(q) ||
           p.activeIngredients?.toLowerCase().includes(q) ||
           p.descriptionEn?.toLowerCase().includes(q) ||
-          p.descriptionAr?.toLowerCase().includes(q)
+          p.descriptionAr?.toLowerCase().includes(q) ||
+          p.brand?.name?.toLowerCase().includes(q) ||
+          p.category?.name?.toLowerCase().includes(q)
         );
       });
     }
 
-    if (selectedCategory && selectedCategory !== "all") {
+    // Category filter
+    if (filters.category && filters.category !== "all") {
       list = list.filter(
         (p) =>
-          String(p.categoryId) === String(selectedCategory) ||
-          String(p.category?.id) === String(selectedCategory)
+          String(p.categoryId) === String(filters.category) ||
+          String(p.category?.id) === String(filters.category)
       );
     }
 
-    switch (sort) {
+    // Brand filter
+    if (filters.brand && filters.brand !== "all") {
+      list = list.filter(
+        (p) =>
+          String(p.brandId) === String(filters.brand) ||
+          String(p.brand?.id) === String(filters.brand)
+      );
+    }
+
+    // Price range filter
+    list = list.filter(
+      (p) => p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]
+    );
+
+    // Skin type filter
+    if (filters.skinTypes.length > 0) {
+      list = list.filter((p) => {
+        if (!p.skinType) return false;
+        const productSkinTypes = p.skinType.split(',').map(s => s.trim().toLowerCase());
+        return filters.skinTypes.some(filterType => 
+          productSkinTypes.includes(filterType.toLowerCase())
+        );
+      });
+    }
+
+    // Concerns filter
+    if (filters.concerns.length > 0) {
+      list = list.filter((p) => {
+        if (!p.concerns || !Array.isArray(p.concerns)) return false;
+        const productConcerns = p.concerns.map(c => c.toLowerCase());
+        return filters.concerns.some(filterConcern => 
+          productConcerns.includes(filterConcern.toLowerCase())
+        );
+      });
+    }
+
+    // Stock filter
+    if (filters.inStock) {
+      list = list.filter((p) => p.isInStock && p.stockQuantity > 0);
+    }
+
+    // Sale filter
+    if (filters.onSale) {
+      list = list.filter((p) => p.compareAtPrice && p.compareAtPrice > p.price);
+    }
+
+    // New products filter
+    if (filters.isNew) {
+      list = list.filter((p) => p.isNew);
+    }
+
+    // Sorting
+    switch (filters.sort) {
       case "price_asc":
         list.sort((a, b) => a.price - b.price);
         break;
@@ -125,6 +203,9 @@ export default function ShopProductList({ locale }: { locale: string }) {
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         break;
+      case "rating":
+        list.sort((a, b) => (b.reviewStats?.averageRating || 0) - (a.reviewStats?.averageRating || 0));
+        break;
       case "relevance":
       default:
         // keep original order (server relevance)
@@ -132,7 +213,7 @@ export default function ShopProductList({ locale }: { locale: string }) {
     }
 
     return list;
-  }, [products, query, selectedCategory, sort, isDealsPage]);
+  }, [products, filters, isDealsPage]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
 
@@ -185,11 +266,23 @@ export default function ShopProductList({ locale }: { locale: string }) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-          <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          <svg
+            className="w-8 h-8 text-red-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+            />
           </svg>
         </div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Something went wrong</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">
+          Something went wrong
+        </h3>
         <p className="text-gray-600 text-center max-w-md">{error}</p>
       </div>
     );
@@ -200,102 +293,39 @@ export default function ShopProductList({ locale }: { locale: string }) {
       className={`${isRTL ? "rtl font-cairo" : "ltr"} space-y-8`}
       aria-labelledby="shop-heading"
     >
-      {/* Apple-style search and filters */}
-      <div className="space-y-6 mb-12">
-        {/* Enhanced search bar */}
-        <div className="relative max-w-2xl">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-            </svg>
-          </div>
-          <input
-            id="search"
-            type="search"
-            placeholder={
-              t("shop.searchPlaceholder") ||
-              "Search products, ingredients or SKU..."
-            }
-            onChange={(e) => setQueryDebounced(e.target.value)}
-            className={`w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl text-lg placeholder-gray-500 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 ${isRTL ? "text-right font-cairo" : "text-left"}`}
-            aria-label={t("shop.search") || "Search"}
-          />
-        </div>
-
-        {/* Enhanced filters */}
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="relative">
-            <select
-              id="category"
-              value={selectedCategory}
-              onChange={(e) => {
-                setSelectedCategory(e.target.value as string | "all");
-                setPage(1);
-              }}
-              className={`appearance-none bg-white border border-gray-200 rounded-xl px-6 py-3 pr-10 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 ${isRTL ? "font-cairo" : ""}`}
-              aria-label={t("shop.category") || "Category"}
-            >
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
-          </div>
-
-          <div className="relative">
-            <select
-              id="sort"
-              value={sort}
-              onChange={(e) => {
-                setSort(
-                  e.target.value as
-                    | "relevance"
-                    | "price_asc"
-                    | "price_desc"
-                    | "newest"
-                );
-                setPage(1);
-              }}
-              className={`appearance-none bg-white border border-gray-200 rounded-xl px-6 py-3 pr-10 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 ${isRTL ? "font-cairo" : ""}`}
-              aria-label={t("shop.sort") || "Sort"}
-            >
-              <option value="relevance">
-                {t("shop.sortRelevance") || "Relevance"}
-              </option>
-              <option value="price_asc">
-                {t("shop.sortPriceLow") || "Price: Low to High"}
-              </option>
-              <option value="price_desc">
-                {t("shop.sortPriceHigh") || "Price: High to Low"}
-              </option>
-              <option value="newest">{t("shop.sortNewest") || "Newest"}</option>
-            </select>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Apple-style filters */}
+      <ProductFilters
+        products={products}
+        locale={locale}
+        filters={filters}
+        onFiltersChange={handleFiltersChange}
+        onQueryChange={handleQueryChange}
+        isDealsPage={isDealsPage}
+      />
 
       {/* Enhanced deals indicator */}
       {isDealsPage && (
         <div className="mb-8 p-6 bg-gradient-to-r from-red-50 to-orange-50 border border-red-100 rounded-2xl">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
+              <svg
+                className="w-5 h-5 text-white"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
             <div>
-              <h3 className={`text-lg font-semibold text-red-900 ${isRTL ? "font-cairo" : ""}`}>
+              <h3
+                className={`text-lg font-semibold text-red-900 ${
+                  isRTL ? "font-cairo" : ""
+                }`}
+              >
                 {isRTL ? "عروض حصرية" : "Exclusive Deals"}
               </h3>
               <p className={`text-red-700 ${isRTL ? "font-cairo" : ""}`}>
@@ -309,16 +339,27 @@ export default function ShopProductList({ locale }: { locale: string }) {
       )}
 
       {/* Enhanced results info */}
-      <div className={`mb-8 flex items-center justify-between ${isRTL ? "flex-row-reverse" : ""}`}>
-        <p className={`text-lg text-gray-600 ${isRTL ? "font-cairo" : ""}`}>
-          {isDealsPage
-            ? isRTL
-              ? `${filtered.length} منتج مخفض`
-              : `${filtered.length} deals found`
-            : t("shop.resultsCount", { count: filtered.length }) ??
-              `${filtered.length} products found`}
-        </p>
-        {filtered.length > 0 && (
+      <div
+        className={`mb-8 flex items-center justify-between ${
+          isRTL ? "flex-row-reverse" : ""
+        }`}
+      >
+        <div className="flex items-center gap-4">
+          <p className={`text-lg text-gray-600 ${isRTL ? "font-cairo" : ""}`}>
+            {isDealsPage
+              ? isRTL
+                ? `${filtered.length} منتج مخفض`
+                : `${filtered.length} deals found`
+              : t("shop.resultsCount", { count: filtered.length }) ??
+                `${filtered.length} products found`}
+          </p>
+          {filtered.length !== products.length && !isDealsPage && (
+            <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+              {isRTL ? `من ${products.length} منتج` : `of ${products.length} total`}
+            </span>
+          )}
+        </div>
+        {filtered.length > 0 && totalPages > 1 && (
           <div className="text-sm text-gray-500">
             {isRTL ? "صفحة" : "Page"} {page} {isRTL ? "من" : "of"} {totalPages}
           </div>
@@ -329,23 +370,41 @@ export default function ShopProductList({ locale }: { locale: string }) {
       {visibleProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20">
           <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-            <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            <svg
+              className="w-10 h-10 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+              />
             </svg>
           </div>
-          <h3 className={`text-xl font-medium text-gray-900 mb-2 ${isRTL ? "font-cairo" : ""}`}>
+          <h3
+            className={`text-xl font-medium text-gray-900 mb-2 ${
+              isRTL ? "font-cairo" : ""
+            }`}
+          >
             {isRTL ? "لا توجد نتائج" : "No results found"}
           </h3>
-          <p className={`text-gray-600 text-center max-w-md ${isRTL ? "font-cairo" : ""}`}>
+          <p
+            className={`text-gray-600 text-center max-w-md ${
+              isRTL ? "font-cairo" : ""
+            }`}
+          >
             {t("shop.noResults") || "No products match your search."}
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {visibleProducts.map((p, index) => (
-            <div 
-              key={p.id} 
-              className="animate-fade-in-up" 
+            <div
+              key={p.id}
+              className="animate-fade-in-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <ProductCard product={p} />
@@ -366,8 +425,18 @@ export default function ShopProductList({ locale }: { locale: string }) {
             className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:shadow-md"
             aria-label={t("shop.prev") || "Previous"}
           >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="w-5 h-5 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
           </button>
 
@@ -383,15 +452,15 @@ export default function ShopProductList({ locale }: { locale: string }) {
               } else {
                 idx = page - 2 + i;
               }
-              
+
               return (
                 <button
                   key={idx}
                   onClick={() => setPage(idx)}
                   aria-current={page === idx ? "page" : undefined}
                   className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full border transition-all duration-200 hover:shadow-md text-sm sm:text-base ${
-                    page === idx 
-                      ? "bg-blue-500 text-white border-blue-500 shadow-lg" 
+                    page === idx
+                      ? "bg-blue-500 text-white border-blue-500 shadow-lg"
                       : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
                   }`}
                 >
@@ -407,8 +476,18 @@ export default function ShopProductList({ locale }: { locale: string }) {
             className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:shadow-md"
             aria-label={t("shop.next") || "Next"}
           >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg
+              className="w-5 h-5 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
         </nav>

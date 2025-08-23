@@ -7,6 +7,53 @@ export interface ProductImage {
   sortOrder?: number;
 }
 
+export interface ProductAttribute {
+  id: string;
+  name: string;
+  nameAr: string;
+  slug: string;
+}
+
+export interface ProductAttributeValue {
+  id: string;
+  value: string;
+  valueAr: string;
+  slug: string;
+  hexColor?: string;
+  image?: string;
+  priceAdjustment: number;
+  stockQuantity: number;
+  attribute: ProductAttribute;
+}
+
+export interface ProductReview {
+  id: string;
+  rating: number;
+  comment: string;
+  userId: string;
+  userName: string;
+  createdAt: Date;
+}
+
+export interface ReviewStats {
+  averageRating: number;
+  totalReviews: number;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  nameAr?: string;
+  slug: string;
+}
+
+export interface Brand {
+  id: string;
+  name: string;
+  nameAr?: string;
+  slug: string;
+}
+
 export interface Product {
   id: string;
   title: string;
@@ -18,6 +65,7 @@ export interface Product {
   compareAtPrice?: number;
   currency?: string;
   sku?: string;
+  barcode?: string;
   isActive?: boolean;
   isFeatured?: boolean;
   isNew?: boolean;
@@ -27,10 +75,10 @@ export interface Product {
   skinType?: string;
   concerns?: string;
   usage?: string;
-  features?: string;
+  features?: string[];
   ingredients?: string;
   howToUse?: string;
-  featuresAr?: string;
+  featuresAr?: string[];
   ingredientsAr?: string;
   howToUseAr?: string;
   
@@ -42,22 +90,27 @@ export interface Product {
   stockQuantity?: number;
   viewCount?: number;
   salesCount?: number;
+  isInStock?: boolean;
   
   // Relations
   categoryId?: string;
   brandId?: string;
-  category?: string;
-  brand?: string;
+  category?: Category;
+  brand?: Brand;
   
   // Images
   images?: ProductImage[];
   
-  // Timestamps
-  createdAt?: Date;
-  updatedAt?: Date;
+  // Attributes (variant data like color, size)
+  attributes?: Record<string, ProductAttributeValue[]>;
   
-  // Extra data
-  extra?: any;
+  // Reviews
+  reviews?: ProductReview[];
+  reviewStats?: ReviewStats;
+  
+  // Timestamps
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export interface CreateProductImageDto {
@@ -78,6 +131,7 @@ export interface CreateProductDto {
   compareAtPrice?: number;
   currency?: string;
   sku?: string;
+  barcode?: string;
   isActive?: boolean;
   isFeatured?: boolean;
   isNew?: boolean;
@@ -86,13 +140,13 @@ export interface CreateProductDto {
   activeIngredients?: string;
   skinType?: string;
   
-  // Structured fields (stored as strings in database)
+  // Structured fields
   concerns?: string;
   usage?: string;
-  features?: string;
+  features?: string[];
   ingredients?: string;
   howToUse?: string;
-  featuresAr?: string;
+  featuresAr?: string[];
   ingredientsAr?: string;
   howToUseAr?: string;
   
@@ -111,9 +165,6 @@ export interface CreateProductDto {
   
   // Images - nested DTO
   images?: CreateProductImageDto[];
-  
-  // Extra data
-  extra?: any;
 }
 
 export interface UpdateProductImageDto {
@@ -134,6 +185,7 @@ export interface UpdateProductDto {
   compareAtPrice?: number;
   currency?: string;
   sku?: string;
+  barcode?: string;
   isActive?: boolean;
   isFeatured?: boolean;
   isNew?: boolean;
@@ -142,13 +194,13 @@ export interface UpdateProductDto {
   activeIngredients?: string;
   skinType?: string;
   
-  // Structured fields (stored as strings in database)
+  // Structured fields
   concerns?: string;
   usage?: string;
-  features?: string;
+  features?: string[];
   ingredients?: string;
   howToUse?: string;
-  featuresAr?: string;
+  featuresAr?: string[];
   ingredientsAr?: string;
   howToUseAr?: string;
   
@@ -167,7 +219,18 @@ export interface UpdateProductDto {
   
   // Images - nested DTO
   images?: UpdateProductImageDto[];
-  
-  // Extra data
-  extra?: any;
+}
+
+export interface ProductResponse {
+  success: boolean;
+  data: Product;
+  message: string;
+  timestamp: string;
+}
+
+export interface ProductListResponse {
+  success: boolean;
+  data: Product[];
+  message: string;
+  timestamp: string;
 }

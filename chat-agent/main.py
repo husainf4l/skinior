@@ -74,8 +74,14 @@ database_url = os.getenv("DATABASE_URL")
 
 if not openai_api_key:
     raise ValueError("OPENAI_API_KEY environment variable is required")
+
 if not database_url:
-    raise ValueError("DATABASE_URL environment variable is required")
+    # Allow the service to run in degraded/local mode without a database configured.
+    # This avoids failing at import time so the server can be used for basic testing.
+    logger.warning(
+        "DATABASE_URL environment variable is not set. Running without DB (degraded mode)."
+    )
+    database_url = None
 
 # Create agent instance but don't initialize it yet
 _agent = LangGraphAgent(openai_api_key=openai_api_key, database_url=database_url)
@@ -85,7 +91,13 @@ agent = None
 async def startup_event():
     """Initialize the agent on startup."""
     global agent
-    agent = await _agent.__aenter__()
+    # Only initialize the agent if a database URL is configured. The agent relies on
+    # a Postgres checkpointer for session persistence; skip initialization in
+    # degraded mode to allow local development without Postgres.
+    if database_url:
+        agent = await _agent.__aenter__()
+    else:
+        logger.warning("Agent initialization skipped because DATABASE_URL is not configured.")
 
 
 # Add startup event
@@ -151,6 +163,17 @@ async def stream_chat_with_agent(
             user_data = {}
             if authorization:
                 user_data = validate_token(authorization) or {}
+
+            # If the agent was not initialized (degraded mode), return a helpful error
+            # message to the client instead of attempting to call into the agent.
+            if agent is None:
+                error_chunk = {
+                    "type": "error",
+                    "content": "Agent unavailable: server running in degraded mode because DATABASE_URL is not configured.",
+                }
+                yield f"data: {json.dumps(error_chunk)}\n\n"
+                yield "data: [DONE]\n\n"
+                return
 
             context = AgentContext(
                 user_id=user_data.get("user_id"),

@@ -1,4 +1,11 @@
 // Cart Type Definitions
+import { type ProductAttributeValue } from "./product";
+
+export interface CartItemAttribute {
+  attributeName: string;
+  value: ProductAttributeValue;
+}
+
 export interface CartItem {
   id: string;
   productId: string;
@@ -8,6 +15,7 @@ export interface CartItem {
   image: string;
   title: string;
   titleAr?: string;
+  attributes?: CartItemAttribute[];
 }
 
 export interface Cart {
@@ -26,6 +34,7 @@ export interface AddToCartRequest {
   productId: string;
   variantId?: string;
   quantity: number;
+  attributes?: CartItemAttribute[];
 }
 
 export interface UpdateCartItemRequest {

@@ -1,8 +1,8 @@
 // Product Types - Matching backend schema exactly
 
 export interface ProductImage {
-  id: number;
-  productId: number;
+  id: string;
+  productId: string;
   url: string;
   altText: string;
   isMain: boolean;
@@ -12,19 +12,99 @@ export interface ProductImage {
 }
 
 export interface ProductCategory {
-  id: number;
+  id: string;
   name: string;
   nameAr: string;
   slug: string;
-  description: string;
-  parentId: number | null;
+  description?: string;
+  parentId: string | null;
   createdAt: string;
 }
 
+export interface ProductBrand {
+  id: string;
+  name: string;
+  nameAr?: string;
+  slug: string;
+  description?: string;
+  logo?: string;
+  createdAt: string;
+}
+
+export interface ProductAttribute {
+  id: string;
+  name: string;
+  nameAr: string;
+  slug: string;
+}
+
+export interface ProductAttributeValue {
+  id: string;
+  value: string;
+  valueAr: string;
+  slug: string;
+  hexColor: string | null;
+  image: string | null;
+  priceAdjustment: number;
+  stockQuantity: number;
+  attribute: ProductAttribute;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  nameAr: string;
+  slug: string;
+  description: string | null;
+  parentId: string | null;
+  createdAt: string;
+}
+
+export interface Brand {
+  id: string;
+  name: string;
+  nameAr: string;
+  slug: string;
+  description: string | null;
+  logo: string | null;
+  createdAt: string;
+}
+
+export interface Review {
+  id: string;
+  productId: string;
+  userId: string | null;
+  customerName: string;
+  email: string | null;
+  rating: number;
+  title: string;
+  comment: string;
+  isVerified: boolean;
+  isPublished: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductAttributes {
+  [attributeName: string]: ProductAttributeValue[];
+}
+
+export interface ProductAttributeValue {
+  id: string;
+  value: string;
+  valueAr: string;
+  slug: string;
+  hexColor: string | null;
+  image: string | null;
+  priceAdjustment: number;
+  stockQuantity: number;
+  attribute: ProductAttribute;
+}
+
 export interface ProductReview {
-  id: number;
-  productId: number;
-  userId: number | null;
+  id: string;
+  productId: string;
+  userId: string | null;
   customerName: string;
   email: string | null;
   rating: number;
@@ -42,7 +122,7 @@ export interface ReviewStats {
 }
 
 export interface Product {
-  id: number;
+  id: string;
   title: string;
   titleAr: string;
   slug: string;
@@ -52,38 +132,41 @@ export interface Product {
   compareAtPrice: number | null;
   currency: string;
   sku: string;
+  barcode: string | null;
   isActive: boolean;
   isFeatured: boolean;
   isNew: boolean;
-  activeIngredients: string;
-  skinType: string;
-  concerns: string; // JSON string array
-  usage: string;
-  features: string[]; // Array for current locale
-  ingredients: string;
-  howToUse: string;
-  featuresAr: string; // JSON string array
-  ingredientsAr: string;
-  howToUseAr: string;
+  activeIngredients: string | null;
+  skinType: string | null;
+  concerns: string[] | null;
+  usage: string | null;
+  features: string[];
+  ingredients: string | null;
+  howToUse: string | null;
+  featuresAr: string[];
+  ingredientsAr: string | null;
+  howToUseAr: string | null;
   metaTitle: string | null;
   metaDescription: string | null;
   stockQuantity: number;
   viewCount: number;
   salesCount: number;
-  categoryId: number;
+  categoryId: string | null;
+  brandId: string | null;
   createdAt: string;
   updatedAt: string;
   images: ProductImage[];
-  category: ProductCategory;
-  reviews: ProductReview[];
-  description: string; // Localized based on API call
+  category: Category | null;
+  brand: Brand | null;
+  reviews: Review[];
+  attributes: ProductAttributes;
   reviewStats: ReviewStats;
   isInStock: boolean;
 }
 
 // For ProductCard component - simplified view
 export interface ProductCardData {
-  id: number;
+  id: string;
   title: string;
   description: string;
   price: number;
@@ -92,6 +175,7 @@ export interface ProductCardData {
   isNew: boolean;
   isInStock: boolean;
   reviewStats: ReviewStats;
+  attributes?: Record<string, ProductAttributeValue[]>;
 }
 
 // API Response types

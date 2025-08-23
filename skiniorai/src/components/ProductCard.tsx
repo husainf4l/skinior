@@ -4,7 +4,7 @@ import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, memo, useCallback } from "react";
-import { Product } from "@/services/productsService";
+import { Product } from "@/types/product";
 import AddToCartButton from "./cart/AddToCartButton";
 
 interface ProductCardProps {

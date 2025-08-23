@@ -14,6 +14,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.graph import START, MessagesState, StateGraph
 from langgraph.runtime import Runtime
+from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
 
 from agent.tools import (
     send_email_tool,
@@ -277,7 +278,33 @@ As Skinsight AI, you help users understand skincare science, recommend effective
             return
 
         # Simple saver initialization
-        self._saver_context = AsyncPostgresSaver.from_conn_string(self.database_url)
+        # Some connection strings may include query parameters that psycopg doesn't
+        # accept (for example: "schema"). Sanitize the URL by stripping known
+        # unsupported query parameters before handing it to the psycopg-based
+        # AsyncPostgresSaver.
+        conn_str = self.database_url
+        if conn_str:
+            try:
+                parsed = urlparse(conn_str)
+                if parsed.query:
+                    q = dict(parse_qsl(parsed.query, keep_blank_values=True))
+                    # Remove unsupported keys
+                    unsupported = ["schema"]
+                    removed = {k: q.pop(k) for k in list(q.keys()) if k in unsupported and k in q}
+                    if removed:
+                        new_query = urlencode(q, doseq=True)
+                        parsed = parsed._replace(query=new_query)
+                        conn_str = urlunparse(parsed)
+                        logger.warning(
+                            "Stripped unsupported DB URL params: %s; new conn string used for saver.",
+                            ",".join(removed.keys()),
+                        )
+            except Exception:
+                # If parsing fails, fall back to original conn string and allow
+                # the saver to raise a clear error.
+                conn_str = self.database_url
+
+        self._saver_context = AsyncPostgresSaver.from_conn_string(conn_str)
         self.saver = await self._saver_context.__aenter__()
         await self.saver.setup()
 

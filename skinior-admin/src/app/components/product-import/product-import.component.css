@@ -1,0 +1,317 @@
+.product-import-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tab-content {
+  padding: 20px 0;
+}
+
+.step-card {
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.step-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.step-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-card mat-card-title mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* File Upload Styles */
+.file-upload-area {
+  margin: 16px 0;
+}
+
+.upload-zone {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #fafafa;
+}
+
+.upload-zone:hover {
+  border-color: #2196f3;
+  background-color: #f0f8ff;
+}
+
+.upload-zone.dragover {
+  border-color: #2196f3;
+  background-color: #e3f2fd;
+}
+
+.upload-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.selected-file {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #2196f3;
+  font-weight: 500;
+}
+
+.file-size {
+  color: #666;
+  font-weight: normal;
+  font-size: 0.9em;
+}
+
+.file-actions {
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* Validation Styles */
+.validation-actions {
+  margin: 16px 0;
+}
+
+.validation-results {
+  margin-top: 20px;
+}
+
+.validation-summary {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.summary-item .label {
+  font-size: 0.9em;
+  color: #666;
+  font-weight: 500;
+}
+
+.summary-item .value {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.summary-item .value.success {
+  color: #4caf50;
+}
+
+.summary-item .value.error {
+  color: #f44336;
+}
+
+.validation-errors,
+.validation-warnings {
+  margin-top: 20px;
+}
+
+.validation-errors h4 {
+  color: #f44336;
+  margin-bottom: 12px;
+}
+
+.validation-warnings h4 {
+  color: #ff9800;
+  margin-bottom: 12px;
+}
+
+.validation-table {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.validation-table mat-row:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Import Options */
+.import-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.import-actions {
+  margin: 16px 0;
+}
+
+/* Import Results */
+.import-results {
+  margin-top: 20px;
+}
+
+.result-summary {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.import-details {
+  margin-top: 20px;
+}
+
+.import-details h4 {
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.details-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.detail-item {
+  padding: 8px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.detail-item.success {
+  background-color: #e8f5e8;
+  border-left: 4px solid #4caf50;
+}
+
+.detail-item.error {
+  background-color: #ffeaea;
+  border-left: 4px solid #f44336;
+}
+
+.detail-item .row-number {
+  font-weight: bold;
+  min-width: 60px;
+}
+
+.detail-item .status {
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.detail-item.success .status {
+  color: #4caf50;
+}
+
+.detail-item.error .status {
+  color: #f44336;
+}
+
+.detail-item .message {
+  color: #666;
+}
+
+/* History Table */
+.history-table {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.history-table mat-row:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.history-table .success {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.history-table .error {
+  color: #f44336;
+  font-weight: 500;
+}
+
+/* Loading */
+.loading {
+  margin: 20px 0;
+}
+
+/* Progress bars */
+mat-progress-bar {
+  margin: 16px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .product-import-container {
+    padding: 10px;
+  }
+  
+  .validation-summary,
+  .result-summary {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .summary-item {
+    align-items: flex-start;
+  }
+  
+  .upload-zone {
+    padding: 20px 10px;
+  }
+  
+  .upload-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Chips */
+mat-chip {
+  text-transform: capitalize;
+}
+
+/* Tooltips */
+[matTooltip] {
+  cursor: help;
+}
+
+/* Custom snackbar classes */
+:host ::ng-deep .success-snackbar {
+  background-color: #4caf50;
+  color: white;
+}
+
+:host ::ng-deep .error-snackbar {
+  background-color: #f44336;
+  color: white;
+}
+
+:host ::ng-deep .warning-snackbar {
+  background-color: #ff9800;
+  color: white;
+}
