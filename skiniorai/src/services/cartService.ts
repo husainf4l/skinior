@@ -27,19 +27,6 @@ export class ItemNotFoundError extends CartServiceError {
 const CART_STORAGE_KEY = 'cart-storage';
 const SESSION_ID_KEY = 'skinior-session-id';
 
-// Default cart data
-const defaultCart: Cart = {
-  id: '',
-  items: [],
-  itemCount: 0,
-  subtotal: 0,
-  tax: 0,
-  shipping: 0,
-  total: 0,
-  currency: 'JOD',
-  updatedAt: new Date().toISOString(),
-};
-
 // Helper functions for session management
 const getStoredSessionId = (): string => {
   if (typeof window === 'undefined') return generateSessionId();
@@ -171,85 +158,27 @@ export class CartService {
       const currentCart = await this.getCart();
       const sessionId = getStoredSessionId();
 
-      try {
-        // Try to add item to cart via API
-        const response = await ApiService.authenticatedFetch(`/cart/${currentCart.id}/items?sessionId=${encodeURIComponent(sessionId)}`, {
-          method: 'POST',
-          requireAuth: false,
-          body: JSON.stringify({
-            productId: request.productId,
-            quantity: request.quantity
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        const updatedCart = result.data;
-        
-        // Save to localStorage for Zustand compatibility
-        saveCartToStorage(updatedCart);
-
-        return updatedCart;
-      } catch (apiError) {
-        // Fallback: Create mock cart item when API is unavailable
-        console.warn('API unavailable, using mock cart item:', apiError);
-        
-        // Create mock cart item with product data
-        const mockCartItem: CartItem = {
-          id: `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      // Add item to cart via API
+      const response = await ApiService.authenticatedFetch(`/cart/${currentCart.id}/items?sessionId=${encodeURIComponent(sessionId)}`, {
+        method: 'POST',
+        requireAuth: false,
+        body: JSON.stringify({
           productId: request.productId,
-          variantId: request.variantId,
-          quantity: request.quantity,
-          price: 25.00, // Mock price - in real app, fetch from product service
-          image: '/product-holder.webp', // Default product image
-          title: `Product ${request.productId}`, // Mock title
-          titleAr: `منتج ${request.productId}`, // Mock Arabic title
-          attributes: request.attributes
-        };
+          quantity: request.quantity
+        })
+      });
 
-        // Add to current cart
-        const existingItemIndex = currentCart.items.findIndex(
-          item => item.productId === request.productId && item.variantId === request.variantId
-        );
-
-        let updatedItems: CartItem[];
-        if (existingItemIndex >= 0) {
-          // Update existing item quantity
-          updatedItems = [...currentCart.items];
-          updatedItems[existingItemIndex] = {
-            ...updatedItems[existingItemIndex],
-            quantity: updatedItems[existingItemIndex].quantity + request.quantity
-          };
-        } else {
-          // Add new item
-          updatedItems = [...currentCart.items, mockCartItem];
-        }
-
-        // Calculate totals
-        const subtotal = updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const tax = subtotal * 0.16; // 16% tax
-        const shipping = subtotal >= 50 ? 0 : 5; // Free shipping over 50 JOD
-        const total = subtotal + tax + shipping;
-
-        const updatedCart: Cart = {
-          ...currentCart,
-          items: updatedItems,
-          itemCount: updatedItems.reduce((sum, item) => sum + item.quantity, 0),
-          subtotal,
-          tax,
-          shipping,
-          total,
-          updatedAt: new Date().toISOString()
-        };
-
-        // Save to localStorage
-        saveCartToStorage(updatedCart);
-
-        return updatedCart;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      const result = await response.json();
+      const updatedCart = result.data;
+      
+      // Save to localStorage for Zustand compatibility
+      saveCartToStorage(updatedCart);
+
+      return updatedCart;
     } catch (error) {
       console.error('Add to cart error:', error);
       if (error instanceof CartServiceError) {

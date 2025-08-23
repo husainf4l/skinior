@@ -1,0 +1,182 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "PM2: Start Production",
+			"type": "shell",
+			"command": "pm2 start ecosystem.config.js --only skiniorai",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "new"
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"label": "PM2: Start Development",
+			"type": "shell",
+			"command": "pm2 start ecosystem.config.js --only skiniorai-dev",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "new"
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"label": "PM2: Start All",
+			"type": "shell",
+			"command": "pm2 start ecosystem.config.js",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "new"
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"label": "PM2: Stop All",
+			"type": "shell",
+			"command": "pm2 stop ecosystem.config.js",
+			"group": "build",
+			"isBackground": false,
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"label": "PM2: Restart All",
+			"type": "shell",
+			"command": "pm2 restart ecosystem.config.js",
+			"group": "build",
+			"isBackground": false,
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"label": "PM2: Delete All",
+			"type": "shell",
+			"command": "pm2 delete ecosystem.config.js",
+			"group": "build",
+			"isBackground": false,
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"label": "PM2: Show Status",
+			"type": "shell",
+			"command": "pm2 status",
+			"group": "test",
+			"isBackground": false,
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"label": "PM2: Show Logs",
+			"type": "shell",
+			"command": "pm2 logs",
+			"group": "test",
+			"isBackground": true,
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "new"
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"label": "PM2: Monitor",
+			"type": "shell",
+			"command": "pm2 monit",
+			"group": "test",
+			"isBackground": true,
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "new"
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"label": "Build and Start Production",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"npm: build",
+				"PM2: Start Production"
+			],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "npm: build",
+			"type": "npm",
+			"script": "build",
+			"group": "build",
+			"isBackground": false,
+			"problemMatcher": ["$tsc"],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		}
+	]
+}

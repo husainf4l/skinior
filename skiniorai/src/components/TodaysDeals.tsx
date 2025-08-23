@@ -7,13 +7,23 @@ import { API_CONFIG } from "@/lib/config";
 
 interface Deal {
   id: string;
-  name: string;
+  title: string;
+  titleAr: string;
   price: number;
   compareAtPrice: number;
   discountPercentage: number;
-  images: string[];
-  category: string;
-  availability: boolean;
+  images: Array<{
+    id: string;
+    url: string;
+    altText: string;
+    isMain: boolean;
+  }>;
+  category: {
+    name: string;
+    nameAr: string | null;
+  };
+  isActive: boolean;
+  isInStock: boolean;
 }
 
 const TodaysDeals = memo(() => {
@@ -53,7 +63,10 @@ const TodaysDeals = memo(() => {
         const activeDeals = dealsData
           .filter(
             (deal) =>
-              deal.availability &&
+              deal.isActive &&
+              deal.isInStock &&
+              deal.images.length > 0 && // Only include deals with images
+              deal.images[0]?.url && // Ensure the first image has a valid URL
               (deal.discountPercentage > 0 || deal.compareAtPrice > deal.price)
           )
           .sort((a, b) => b.discountPercentage - a.discountPercentage);
@@ -165,7 +178,7 @@ const TodaysDeals = memo(() => {
                         isRTL ? "font-cairo" : ""
                       }`}
                     >
-                      {deal.name}
+                      {isRTL ? deal.titleAr || deal.title : deal.title}
                     </h3>
 
                     {/* Deal Description - Skinior Style */}
@@ -175,8 +188,10 @@ const TodaysDeals = memo(() => {
                       }`}
                     >
                       {isRTL
-                        ? `وفر ${deal.discountPercentage}% على ${deal.category}`
-                        : `Save ${deal.discountPercentage}% on ${deal.category}`}
+                        ? `وفر ${deal.discountPercentage}% على ${
+                            deal.category.nameAr || deal.category.name
+                          }`
+                        : `Save ${deal.discountPercentage}% on ${deal.category.name}`}
                     </p>
 
                     {/* Price Display */}
@@ -239,8 +254,8 @@ const TodaysDeals = memo(() => {
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gray-900/5" />
                     <Image
-                      src={deal.images[0] || "/product-holder.webp"}
-                      alt={deal.name}
+                      src={deal.images[0].url}
+                      alt={isRTL ? deal.titleAr || deal.title : deal.title}
                       fill
                       className="object-cover transition-all duration-700 ease-out group-hover:scale-105"
                       priority={index === 0}

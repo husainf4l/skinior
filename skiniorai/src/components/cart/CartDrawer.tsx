@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   useCartStore,
   useCart,
@@ -10,10 +10,12 @@ import {
   useCartError,
   useCartOptimisticUpdates,
 } from "../../lib/store/cart-store";
+import { authService } from "../../services/authService";
 import Image from "next/image";
 
 export default function CartDrawer() {
   const locale = useLocale();
+  const t = useTranslations();
   const cart = useCart();
   const isOpen = useCartDrawerOpen();
   const close = useCartDrawerClose();
@@ -429,7 +431,7 @@ export default function CartDrawer() {
 
               {/* Checkout Button */}
               <button
-                className="w-full bg-black text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+                className="w-full bg-black text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors mb-3"
                 onClick={() => {
                   handleClose();
                   if (typeof window !== "undefined") {
@@ -438,6 +440,32 @@ export default function CartDrawer() {
                 }}
               >
                 Proceed to Checkout
+              </button>
+
+              {/* View My Orders Button */}
+              <button
+                className="w-full bg-gray-100 text-gray-900 py-3 px-6 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                onClick={async () => {
+                  handleClose();
+
+                  // Check if user is authenticated
+                  if (!authService.isAuthenticated()) {
+                    // Redirect to login or show login modal
+                    if (typeof window !== "undefined") {
+                      // You could redirect to login page or show a login modal
+                      // For now, let's redirect to login (you can adjust this)
+                      window.location.href = `/${locale}/login?redirect=/account/orders`;
+                    }
+                    return;
+                  }
+
+                  // User is authenticated, go to orders page
+                  if (typeof window !== "undefined") {
+                    window.location.href = `/${locale}/account/orders`;
+                  }
+                }}
+              >
+                {t("account.orders.title")}
               </button>
             </div>
           )}

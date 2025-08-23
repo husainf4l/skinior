@@ -52,14 +52,16 @@ export class OrderItemDto {
   productId: string;
 
   @IsString()
-  title: string;
+  @IsOptional()
+  title?: string;
 
   @IsString()
   @IsOptional()
   sku?: string;
 
   @IsNumber()
-  price: number;
+  @IsOptional()
+  price?: number;
 
   @IsNumber()
   quantity: number;
@@ -129,4 +131,17 @@ export class CalculateShippingDto {
 export class GetPaymentMethodsDto {
   @IsString()
   country: string;
+}
+
+export class LinkAccountDto {
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  password: string;
+}
+
+export class GetOrderHistoryDto {
+  @IsEmail()
+  email: string;
 }

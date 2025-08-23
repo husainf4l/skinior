@@ -50,7 +50,8 @@ export class CheckoutService {
     ];
 
     // Add Cash on Delivery for Jordan
-    if (country === 'JO' || country === 'Jordan') {
+    const countryLower = country.toLowerCase();
+    if (countryLower === 'jo' || countryLower === 'jordan') {
       paymentMethods.push({
         id: 'cod',
         name: 'Cash on Delivery',
@@ -137,12 +138,39 @@ export class CheckoutService {
     }
 
     // Validate shipping address for Jordan if COD
-    if (paymentMethod === 'cod' && shippingAddress?.country !== 'JO') {
+    const shippingCountry = shippingAddress?.country?.toLowerCase();
+    if (paymentMethod === 'cod' && 
+        shippingCountry !== 'jo' && 
+        shippingCountry !== 'jordan') {
       throw new BadRequestException('Cash on Delivery is only available for orders within Jordan');
     }
 
+    // Fetch product details for items that don't have complete information
+    const enrichedItems = await Promise.all(
+      items.map(async (item: any) => {
+        if (!item.title || !item.price) {
+          // Fetch product details from database
+          const product = await this.prisma.product.findUnique({
+            where: { id: item.productId },
+          });
+
+          if (!product) {
+            throw new BadRequestException(`Product not found: ${item.productId}`);
+          }
+
+          return {
+            ...item,
+            title: item.title || product.title,
+            price: item.price || product.price,
+            sku: item.sku || product.sku,
+          };
+        }
+        return item;
+      }),
+    );
+
     // Calculate subtotal and totals
-    const subtotal = items.reduce((s: number, it: any) => s + (Number(it.price || it.unitPrice || 0) * Number(it.quantity || 1)), 0);
+    const subtotal = enrichedItems.reduce((s: number, it: any) => s + (Number(it.price || it.unitPrice || 0) * Number(it.quantity || 1)), 0);
 
     // For demo purposes, tax = 8% and shipping based on shippingMethod
     const tax = parseFloat((subtotal * 0.08).toFixed(2));
@@ -157,6 +185,50 @@ export class CheckoutService {
 
     const total = parseFloat((subtotal + tax + shipping).toFixed(2));
 
+    // Handle guest checkout with automatic account creation
+    let userId: string | null = null;
+    if (customer?.email) {
+      try {
+        // Check if user already exists
+        let existingUser = await this.prisma.user.findUnique({
+          where: { email: customer.email.toLowerCase() },
+        });
+
+        if (!existingUser) {
+          // Create a new user account for guest checkout
+          const newUser = await this.prisma.user.create({
+            data: {
+              email: customer.email.toLowerCase(),
+              firstName: customer.firstName || null,
+              lastName: customer.lastName || null,
+              phone: customer.phone || null,
+              role: 'customer',
+              isActive: true,
+              password: null, // Guest users don't have passwords initially
+            },
+          });
+          userId = newUser.id;
+        } else {
+          userId = existingUser.id;
+          
+          // Update user info if it was missing
+          if (!existingUser.firstName && customer.firstName) {
+            await this.prisma.user.update({
+              where: { id: existingUser.id },
+              data: {
+                firstName: customer.firstName,
+                lastName: customer.lastName || existingUser.lastName,
+                phone: customer.phone || existingUser.phone,
+              },
+            });
+          }
+        }
+      } catch (e) {
+        // If user creation fails, continue as guest order
+        console.warn('Failed to create/update user account:', e);
+      }
+    }
+
     // Persist order
     const orderNumber = this.generateOrderNumber();
 
@@ -164,6 +236,7 @@ export class CheckoutService {
       const order = await this.prisma.order.create({
         data: {
           orderNumber,
+          userId: userId,
           customerEmail: customer?.email || null,
           customerName: `${customer?.firstName || ''} ${customer?.lastName || ''}`.trim() || null,
           status: 'pending',
@@ -178,8 +251,8 @@ export class CheckoutService {
         },
       });
 
-      // Create order items
-      const orderItemsData = items.map((it: any) => ({
+      // Create order items using enriched data
+      const orderItemsData = enrichedItems.map((it: any) => ({
         orderId: order.id,
         productId: it.productId || null,
         title: it.title || it.name || 'Unknown product',
@@ -193,7 +266,17 @@ export class CheckoutService {
         await this.prisma.orderItem.create({ data });
       }
 
-      return { data: order };
+      return { 
+        data: {
+          ...order,
+          accountCreated: userId && !await this.prisma.user.findFirst({
+            where: { 
+              id: userId,
+              createdAt: { lt: new Date(Date.now() - 60000) } // Created more than 1 minute ago
+            }
+          }),
+        }
+      };
     } catch (e) {
       throw new InternalServerErrorException('Failed to create order');
     }
@@ -282,5 +365,54 @@ export class CheckoutService {
       // Propagate Stripe errors sensibly
       throw new BadRequestException(e.message || 'Payment processing failed');
     }
+  }
+
+  async linkGuestAccountWithPassword(email: string, password: string) {
+    // Find user account that was created for guest checkout
+    const user = await this.prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (!user) {
+      throw new BadRequestException('No account found with this email address');
+    }
+
+    if (user.password) {
+      throw new BadRequestException('This account already has a password set');
+    }
+
+    // Hash password (you'll need to implement password hashing)
+    // For now, storing as plain text - in production, use bcrypt or similar
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: password, // Should be hashed in production
+      },
+    });
+
+    return {
+      data: {
+        message: 'Password successfully set for your account',
+        email: user.email,
+      },
+    };
+  }
+
+  async getOrderHistory(email: string) {
+    // Get all orders for a customer by email
+    const orders = await this.prisma.order.findMany({
+      where: { customerEmail: email.toLowerCase() },
+      include: {
+        items: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      data: {
+        orders,
+        totalOrders: orders.length,
+      },
+    };
   }
 }

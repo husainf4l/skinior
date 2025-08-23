@@ -86,20 +86,20 @@ const Footer = () => {
             <h4 className="text-lg font-bold text-gray-900 mb-6">Legal</h4>
             <ul className="space-y-3">
               <li>
-                <a
-                  href="#"
+                <Link
+                  href={`/${locale}/privacy`}
                   className="text-gray-600 hover:text-indigo-600 transition-colors duration-300 hover:translate-x-1 inline-block"
                 >
                   {t("footer.privacy")}
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  href={`/${locale}/terms`}
                   className="text-gray-600 hover:text-indigo-600 transition-colors duration-300 hover:translate-x-1 inline-block"
                 >
                   {t("footer.terms")}
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

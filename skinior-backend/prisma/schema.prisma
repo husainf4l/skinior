@@ -28,6 +28,7 @@ model Product {
   isActive       Boolean @default(true)
   isFeatured     Boolean @default(false)
   isNew          Boolean @default(false)
+  isTodayDeal    Boolean @default(false) // Mark products for today's deals section
 
   // Skincare specific fields
   activeIngredients String? // "25% Vitamin C", "20% Niacinamide"

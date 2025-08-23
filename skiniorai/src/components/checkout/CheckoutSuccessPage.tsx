@@ -1,13 +1,25 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 const CheckoutSuccessPage: React.FC = () => {
   const t = useTranslations();
   const locale = useLocale();
   const isRTL = locale === "ar";
+  const searchParams = useSearchParams();
+  const [orderNumber, setOrderNumber] = useState<string>("");
+
+  // Get order number from URL params or generate a stable one client-side
+  useEffect(() => {
+    const orderNum =
+      searchParams.get("orderNumber") ||
+      searchParams.get("order") ||
+      `SK${Date.now().toString().slice(-6)}`;
+    setOrderNumber(orderNum);
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12" dir={isRTL ? "rtl" : "ltr"}>
@@ -60,9 +72,7 @@ const CheckoutSuccessPage: React.FC = () => {
                 <span className="text-gray-600">
                   {t("checkout.orderNumber")}:
                 </span>
-                <span className="font-medium">
-                  #SK{Math.random().toString().slice(2, 8)}
-                </span>
+                <span className="font-medium">{orderNumber || "SK000000"}</span>
               </div>
               <div
                 className={`flex justify-between ${

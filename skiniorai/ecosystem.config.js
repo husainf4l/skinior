@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'skiniorai',
-      cwd: '/Users/al-husseinabdullah/Desktop/skinior/skiniorai',
+      cwd: '/home/husain/skinior/skiniorai',
       script: 'npm',
       args: 'run start',
       instances: 1,
@@ -18,7 +18,7 @@ module.exports = {
     {
       // PM2 entry for local development (runs `npm run dev`)
       name: 'skiniorai-dev',
-      cwd: '/Users/al-husseinabdullah/Desktop/skinior/skiniorai',
+      cwd: '/home/husain/skinior/skiniorai',
       script: 'npm',
       args: 'run dev',
       instances: 1,

@@ -47,6 +47,41 @@
     "privacy": "سياسة الخصوصية",
     "terms": "شروط الخدمة"
   },
+  "account": {
+    "title": "حسابي",
+    "description": "إدارة حسابك وعرض تاريخ طلباتك",
+    "orders": {
+      "title": "طلباتي",
+      "subtitle": "عرض وتتبع جميع طلباتك",
+      "description": "عرض تاريخ طلباتك ومعلومات التتبع",
+      "orderNumber": "الطلب",
+      "placedOn": "تم في",
+      "quantity": "الكمية",
+      "subtotal": "المجموع الفرعي",
+      "shipping": "الشحن",
+      "tax": "الضريبة",
+      "total": "الإجمالي",
+      "freeShipping": "مجاني",
+      "shippingAddress": "عنوان الشحن",
+      "status": {
+        "pending": "في الانتظار",
+        "processing": "قيد المعالجة",
+        "shipped": "تم الشحن",
+        "delivered": "تم التسليم",
+        "cancelled": "ملغي"
+      },
+      "empty": {
+        "title": "لا توجد طلبات بعد",
+        "description": "لم تقم بوضع أي طلبات بعد. ابدأ التسوق لرؤية طلباتك هنا.",
+        "shopNow": "تسوق الآن"
+      },
+      "error": {
+        "title": "غير قادر على تحميل الطلبات",
+        "retry": "حاول مرة أخرى"
+      },
+      "loginRequired": "يرجى تسجيل الدخول لعرض طلباتك"
+    }
+  },
   "common": {
     "loading": "جاري التحميل...",
     "error": "حدث خطأ",

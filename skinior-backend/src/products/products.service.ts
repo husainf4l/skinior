@@ -664,23 +664,16 @@ export class ProductsService {
   }
 
   /**
-   * Returns products that are on deal today. We consider a product on deal
-   * when `compareAtPrice` is set and greater than `price`.
+   * Returns products that are marked for today's deals.
+   * Uses the isTodayDeal boolean field for explicit control over featured deals.
    */
   async getTodayDeals(limit = 20, offset = 0) {
+    console.log('🔍 getTodayDeals: Starting query with limit:', limit, 'offset:', offset);
+    
     const products = await this.prismaService.product.findMany({
       where: {
         isActive: true,
-        compareAtPrice: {
-          gt: 0,
-        },
-        AND: [
-          {
-            price: {
-              lt: undefined, // placeholder - Prisma doesn't support comparing two fields directly here
-            },
-          },
-        ],
+        isTodayDeal: true, // Explicitly marked as today's deal
       },
       include: {
         images: { orderBy: { sortOrder: 'asc' } },
@@ -704,18 +697,37 @@ export class ProductsService {
           },
         },
       },
-      orderBy: [{ createdAt: 'desc' }],
+      orderBy: [
+        { createdAt: 'desc' }
+      ],
       take: limit,
       skip: offset,
     });
 
-    // Filter server-side to ensure compareAtPrice > price since Prisma can't compare two columns directly
-    const filtered = products.filter(p => (p.compareAtPrice ?? 0) > (p.price ?? 0));
+    console.log('🔍 getTodayDeals: Found today deal products:', products.length);
+    products.forEach(p => {
+      console.log(`  - Product ${p.id}: price=${p.price}, compareAtPrice=${p.compareAtPrice}, isTodayDeal=${p.isTodayDeal}, title="${p.title}"`);
+    });
 
-    return this.addProductStats(filtered).map(p => ({
-      ...p, // Include all product data including attributes
-      discountPercentage: p.compareAtPrice && p.price ? Math.round(((p.compareAtPrice - p.price) / p.compareAtPrice) * 100) : 0,
-    }));
+    return this.addProductStats(products).map(p => {
+      const comparePrice = p.compareAtPrice || 0;
+      const currentPrice = p.price || 0;
+      const discountAmount = comparePrice > currentPrice && comparePrice > 0 ? comparePrice - currentPrice : 0;
+      const discountPercentage = comparePrice > 0 && discountAmount > 0 ? Math.round((discountAmount / comparePrice) * 100) : 0;
+      
+      return {
+        ...p, // Include all product data including attributes
+        deal: {
+          originalPrice: comparePrice > 0 ? comparePrice : null,
+          discountedPrice: currentPrice,
+          discountAmount: discountAmount,
+          discountPercentage: discountPercentage,
+          savings: discountAmount > 0 ? `Save ${discountAmount.toFixed(2)} ${p.currency}` : null,
+        },
+        // Legacy field for backward compatibility
+        discountPercentage,
+      };
+    });
   }
 
   async syncSkiniorProducts(syncDto: SyncSkiniorProductsDto) {
@@ -869,6 +881,7 @@ export class ProductsService {
     isNew?: boolean;
     isActive?: boolean;
     onSale?: boolean;
+    isTodayDeal?: boolean;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
   }) {
@@ -1042,6 +1055,11 @@ export class ProductsService {
       } else {
         where.compareAtPrice = null;
       }
+    }
+
+    // Today deals filter
+    if (filters.isTodayDeal !== undefined) {
+      where.isTodayDeal = filters.isTodayDeal;
     }
 
     // Combine all AND conditions

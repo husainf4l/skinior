@@ -8,7 +8,9 @@ import { useState, useEffect } from "react";
 import { productsService } from "@/services/productsService";
 import { type Product } from "@/types/product";
 import AddToCartButton from "@/components/cart/AddToCartButton";
-import ProductAttributeSelector, { type AttributeSelection } from "@/components/product/ProductAttributeSelector";
+import ProductAttributeSelector, {
+  type AttributeSelection,
+} from "@/components/product/ProductAttributeSelector";
 
 interface ProductPageProps {
   params: Promise<{
@@ -27,7 +29,8 @@ const ProductPage = ({ params }: ProductPageProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const [selectedAttributes, setSelectedAttributes] = useState<AttributeSelection>({});
+  const [selectedAttributes, setSelectedAttributes] =
+    useState<AttributeSelection>({});
 
   const isRTL = locale === "ar";
 
@@ -72,9 +75,12 @@ const ProductPage = ({ params }: ProductPageProps) => {
   // Check if all required attributes are selected
   const isValidAttributeSelection = () => {
     if (!product?.attributes) return true;
-    
-    return Object.keys(product.attributes).every(attributeName => {
-      return selectedAttributes[attributeName] !== null && selectedAttributes[attributeName] !== undefined;
+
+    return Object.keys(product.attributes).every((attributeName) => {
+      return (
+        selectedAttributes[attributeName] !== null &&
+        selectedAttributes[attributeName] !== undefined
+      );
     });
   };
 
@@ -207,25 +213,26 @@ const ProductPage = ({ params }: ProductPageProps) => {
             </div>
 
             <div className="grid grid-cols-4 gap-3">
-              {productImages.map((img, index: number) => (
-                <button
-                  key={index}
-                  className={`aspect-square rounded-xl overflow-hidden transition-all duration-300 ${
-                    selectedImageIndex === index
-                      ? "ring-2 ring-gray-900/30 ring-offset-2 shadow-md"
-                      : "hover:shadow-md opacity-70 hover:opacity-100"
-                  }`}
-                  onClick={() => setSelectedImageIndex(index)}
-                >
-                  <Image
-                    src={img.url || "/product-holder.webp"}
-                    alt={img.altText || `${productName} ${index + 1}`}
-                    width={120}
-                    height={120}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
+              {productImages.length > 1 &&
+                productImages.map((img, index: number) => (
+                  <button
+                    key={index}
+                    className={`aspect-square rounded-xl overflow-hidden transition-all duration-300 ${
+                      selectedImageIndex === index
+                        ? "ring-2 ring-gray-900/30 ring-offset-2 shadow-md"
+                        : "hover:shadow-md opacity-70 hover:opacity-100"
+                    }`}
+                    onClick={() => setSelectedImageIndex(index)}
+                  >
+                    <Image
+                      src={img.url || "/product-holder.webp"}
+                      alt={img.altText || `${productName} ${index + 1}`}
+                      width={120}
+                      height={120}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
             </div>
           </div>
 
@@ -308,23 +315,41 @@ const ProductPage = ({ params }: ProductPageProps) => {
               </div>
 
               {/* Compare At Price (if no attributes) */}
-              {product.compareAtPrice && (!product.attributes || Object.keys(product.attributes).length === 0) && (
-                <div className={`text-lg text-gray-600 line-through price font-light ${isRTL ? "font-cairo" : ""}`}>
-                  {formatPrice(product.compareAtPrice)}
-                </div>
-              )}
+              {product.compareAtPrice &&
+                product.compareAtPrice > product.price &&
+                (!product.attributes ||
+                  Object.keys(product.attributes).length === 0) && (
+                  <div
+                    className={`text-sm text-gray-400 line-through font-light ${
+                      isRTL ? "font-cairo" : ""
+                    }`}
+                  >
+                    {formatPrice(product.compareAtPrice)}
+                  </div>
+                )}
+
+              {/* Current Price */}
+              <div
+                className={`text-2xl lg:text-3xl font-light text-gray-900 ${
+                  isRTL ? "font-cairo" : ""
+                }`}
+              >
+                {formatPrice(product.price)}
+              </div>
             </div>
 
             {/* Description */}
-            <div>
-              <p
-                className={`text-gray-600 leading-relaxed ${
-                  isRTL ? "text-right font-cairo" : "text-left"
-                }`}
-              >
-                {productDescription}
-              </p>
-            </div>
+            {productDescription && (
+              <div>
+                <p
+                  className={`text-gray-600 leading-relaxed ${
+                    isRTL ? "text-right font-cairo" : "text-left"
+                  }`}
+                >
+                  {productDescription}
+                </p>
+              </div>
+            )}
 
             {/* Product Attributes Selector */}
             <ProductAttributeSelector
@@ -356,79 +381,88 @@ const ProductPage = ({ params }: ProductPageProps) => {
                     </p>
                   </div>
                 )}
-                <div>
-                  <h3
-                    className={`text-sm font-medium text-gray-900 mb-1 ${
-                      isRTL ? "font-cairo text-right" : ""
-                    }`}
-                  >
-                    {isRTL ? "الفئة" : "Category"}
-                  </h3>
-                  <p
-                    className={`text-sm text-gray-600 ${
-                      isRTL ? "font-cairo text-right" : ""
-                    }`}
-                  >
-                    {categoryName || "N/A"}
-                  </p>
-                </div>
+                {categoryName && (
+                  <div>
+                    <h3
+                      className={`text-sm font-medium text-gray-900 mb-1 ${
+                        isRTL ? "font-cairo text-right" : ""
+                      }`}
+                    >
+                      {isRTL ? "الفئة" : "Category"}
+                    </h3>
+                    <p
+                      className={`text-sm text-gray-600 ${
+                        isRTL ? "font-cairo text-right" : ""
+                      }`}
+                    >
+                      {categoryName}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Active Ingredients */}
-              {product.activeIngredients && (
-                <div>
-                  <h3
-                    className={`text-sm font-medium text-gray-900 mb-2 ${
-                      isRTL ? "font-cairo text-right" : ""
-                    }`}
-                  >
-                    {isRTL ? "المكونات الفعالة" : "Active Ingredients"}
-                  </h3>
-                  <p
-                    className={`text-sm text-gray-600 ${
-                      isRTL ? "font-cairo text-right" : ""
-                    }`}
-                  >
-                    {product.activeIngredients}
-                  </p>
-                </div>
-              )}
+              {product.activeIngredients &&
+                product.activeIngredients.trim() && (
+                  <div>
+                    <h3
+                      className={`text-sm font-medium text-gray-900 mb-2 ${
+                        isRTL ? "font-cairo text-right" : ""
+                      }`}
+                    >
+                      {isRTL ? "المكونات الفعالة" : "Active Ingredients"}
+                    </h3>
+                    <p
+                      className={`text-sm text-gray-600 ${
+                        isRTL ? "font-cairo text-right" : ""
+                      }`}
+                    >
+                      {product.activeIngredients}
+                    </p>
+                  </div>
+                )}
 
               {/* Skin Type & Usage */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h3
-                    className={`text-sm font-medium text-gray-900 mb-1 ${
-                      isRTL ? "font-cairo text-right" : ""
-                    }`}
-                  >
-                    {isRTL ? "نوع البشرة" : "Skin Type"}
-                  </h3>
-                  <p
-                    className={`text-sm text-gray-600 ${
-                      isRTL ? "font-cairo text-right" : ""
-                    }`}
-                  >
-                    {product.skinType}
-                  </p>
+              {(product.skinType || product.usage) && (
+                <div className="grid grid-cols-2 gap-4">
+                  {product.skinType && product.skinType.trim() && (
+                    <div>
+                      <h3
+                        className={`text-sm font-medium text-gray-900 mb-1 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
+                        {isRTL ? "نوع البشرة" : "Skin Type"}
+                      </h3>
+                      <p
+                        className={`text-sm text-gray-600 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
+                        {product.skinType}
+                      </p>
+                    </div>
+                  )}
+                  {product.usage && product.usage.trim() && (
+                    <div>
+                      <h3
+                        className={`text-sm font-medium text-gray-900 mb-1 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
+                        {isRTL ? "وقت الاستخدام" : "Usage"}
+                      </h3>
+                      <p
+                        className={`text-sm text-gray-600 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
+                        {product.usage}
+                      </p>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <h3
-                    className={`text-sm font-medium text-gray-900 mb-1 ${
-                      isRTL ? "font-cairo text-right" : ""
-                    }`}
-                  >
-                    {isRTL ? "وقت الاستخدام" : "Usage"}
-                  </h3>
-                  <p
-                    className={`text-sm text-gray-600 ${
-                      isRTL ? "font-cairo text-right" : ""
-                    }`}
-                  >
-                    {product.usage}
-                  </p>
-                </div>
-              </div>
+              )}
 
               {/* Concerns */}
               {product.concerns && product.concerns.length > 0 && (
@@ -492,7 +526,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
               )}
 
               {/* Ingredients */}
-              {ingredients && (
+              {ingredients && ingredients.trim() && (
                 <div>
                   <h3
                     className={`text-sm font-medium text-gray-900 mb-2 ${
@@ -512,7 +546,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
               )}
 
               {/* How to Use */}
-              {howToUse && (
+              {howToUse && howToUse.trim() && (
                 <div>
                   <h3
                     className={`text-sm font-medium text-gray-900 mb-2 ${
@@ -533,35 +567,19 @@ const ProductPage = ({ params }: ProductPageProps) => {
 
               {/* Stock Information */}
               <div className="bg-gray-50 rounded-lg p-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span
-                      className={`text-gray-500 ${isRTL ? "font-cairo" : ""}`}
-                    >
-                      {isRTL ? "الكمية المتوفرة:" : "Stock:"}
-                    </span>
-                    <span
-                      className={`ml-2 font-medium text-gray-900 ${
-                        isRTL ? "font-cairo mr-2" : ""
-                      }`}
-                    >
-                      {product.stockQuantity} {isRTL ? "قطعة" : "units"}
-                    </span>
-                  </div>
-                  <div>
-                    <span
-                      className={`text-gray-500 ${isRTL ? "font-cairo" : ""}`}
-                    >
-                      {isRTL ? "المشاهدات:" : "Views:"}
-                    </span>
-                    <span
-                      className={`ml-2 font-medium text-gray-900 ${
-                        isRTL ? "font-cairo mr-2" : ""
-                      }`}
-                    >
-                      {product.viewCount}
-                    </span>
-                  </div>
+                <div className="text-sm">
+                  <span
+                    className={`text-gray-500 ${isRTL ? "font-cairo" : ""}`}
+                  >
+                    {isRTL ? "الكمية المتوفرة:" : "Stock:"}
+                  </span>
+                  <span
+                    className={`ml-2 font-medium text-gray-900 ${
+                      isRTL ? "font-cairo mr-2" : ""
+                    }`}
+                  >
+                    {product.stockQuantity} {isRTL ? "قطعة" : "units"}
+                  </span>
                 </div>
               </div>
             </div>

@@ -24090,3 +24090,68 @@ websockets.client 2025-08-21 02:07:26,737 - DEBUG - send_data:984 - x closing TC
 livekit.agents 2025-08-21 02:07:26,738 - DEBUG - _aclose_impl:654 - session closed
 livekit.agents 2025-08-21 02:07:26,738 - DEBUG - _aclose_impl:654 - session closed
 livekit.agents 2025-08-21 02:07:26,800 - WARNING - run_worker:107 - exiting forcefully
+agent16.main 2025-08-23 17:10:14,314 - INFO - <module>:255 - 🔬 Starting agent16 on port 8000 - Advanced Skin Analysis Agent
+agent16.main 2025-08-23 17:10:48,530 - INFO - <module>:255 - 🔬 Starting agent16 on port 8000 - Advanced Skin Analysis Agent
+asyncio 2025-08-23 17:10:48,532 - DEBUG - __init__:64 - Using selector: EpollSelector
+livekit.agents 2025-08-23 17:10:48,532 - DEV - run:84 - Watching /home/husain/skinior/agent/agent16
+asyncio 2025-08-23 17:10:49,152 - DEBUG - __init__:64 - Using selector: EpollSelector
+agent16.main 2025-08-23 17:14:53,288 - INFO - <module>:255 - 🔬 Starting agent16 on port 8000 - Advanced Skin Analysis Agent
+asyncio 2025-08-23 17:14:53,290 - DEBUG - __init__:64 - Using selector: EpollSelector
+livekit.agents 2025-08-23 17:14:53,291 - DEV - run:84 - Watching /home/husain/skinior/agent/agent16
+asyncio 2025-08-23 17:14:53,890 - DEBUG - __init__:64 - Using selector: EpollSelector
+livekit.agents 2025-08-23 17:14:53,892 - INFO - run:390 - starting worker
+livekit.agents 2025-08-23 17:14:53,893 - INFO - run:397 - preloading plugins
+livekit.agents 2025-08-23 17:14:54,655 - INFO - _handle_register:801 - registered worker
+livekit.agents 2025-08-23 17:15:00,097 - INFO - aclose:576 - shutting down worker
+agent16.main 2025-08-23 17:15:19,311 - INFO - <module>:255 - 🔬 Starting agent16 on port 8000 - Advanced Skin Analysis Agent
+livekit.agents 2025-08-23 17:15:19,313 - INFO - run:390 - starting worker
+livekit.agents 2025-08-23 17:15:19,313 - INFO - run:397 - preloading plugins
+livekit.agents 2025-08-23 17:15:19,847 - INFO - initialize:167 - initializing process
+livekit.agents 2025-08-23 17:15:19,849 - INFO - initialize:167 - initializing process
+livekit.agents 2025-08-23 17:15:19,849 - INFO - initialize:167 - initializing process
+livekit.agents 2025-08-23 17:15:19,850 - INFO - initialize:167 - initializing process
+livekit.agents 2025-08-23 17:15:19,883 - INFO - initialize:184 - process initialized
+livekit.agents 2025-08-23 17:15:19,883 - INFO - initialize:184 - process initialized
+asyncio 2025-08-23 17:15:19,883 - DEBUG - __init__:64 - Using selector: EpollSelector
+asyncio 2025-08-23 17:15:19,883 - DEBUG - __init__:64 - Using selector: EpollSelector
+livekit.agents 2025-08-23 17:15:19,884 - INFO - initialize:184 - process initialized
+asyncio 2025-08-23 17:15:19,883 - DEBUG - __init__:64 - Using selector: EpollSelector
+livekit.agents 2025-08-23 17:15:19,887 - INFO - initialize:184 - process initialized
+asyncio 2025-08-23 17:15:19,887 - DEBUG - __init__:64 - Using selector: EpollSelector
+livekit.agents 2025-08-23 17:15:20,435 - INFO - _handle_register:801 - registered worker
+livekit.agents 2025-08-23 17:23:00,079 - INFO - drain:493 - draining worker
+livekit.agents 2025-08-23 17:23:00,080 - INFO - aclose:576 - shutting down worker
+agent16.main 2025-08-23 17:23:01,057 - INFO - <module>:255 - 🔬 Starting agent16 on port 8000 - Advanced Skin Analysis Agent
+livekit.agents 2025-08-23 17:23:01,059 - INFO - run:390 - starting worker
+livekit.agents 2025-08-23 17:23:01,059 - INFO - run:397 - preloading plugins
+livekit.agents 2025-08-23 17:23:01,743 - INFO - initialize:167 - initializing process
+livekit.agents 2025-08-23 17:23:01,744 - INFO - initialize:167 - initializing process
+livekit.agents 2025-08-23 17:23:01,745 - INFO - initialize:167 - initializing process
+livekit.agents 2025-08-23 17:23:01,746 - INFO - initialize:167 - initializing process
+livekit.agents 2025-08-23 17:23:01,781 - INFO - initialize:184 - process initialized
+asyncio 2025-08-23 17:23:01,780 - DEBUG - __init__:64 - Using selector: EpollSelector
+livekit.agents 2025-08-23 17:23:01,787 - INFO - initialize:184 - process initialized
+livekit.agents 2025-08-23 17:23:01,787 - INFO - initialize:184 - process initialized
+asyncio 2025-08-23 17:23:01,787 - DEBUG - __init__:64 - Using selector: EpollSelector
+asyncio 2025-08-23 17:23:01,787 - DEBUG - __init__:64 - Using selector: EpollSelector
+livekit.agents 2025-08-23 17:23:01,789 - INFO - initialize:184 - process initialized
+asyncio 2025-08-23 17:23:01,789 - DEBUG - __init__:64 - Using selector: EpollSelector
+livekit.agents 2025-08-23 17:23:02,291 - INFO - _handle_register:801 - registered worker
+livekit.agents 2025-08-23 18:01:38,290 - INFO - drain:493 - draining worker
+livekit.agents 2025-08-23 18:01:38,290 - INFO - aclose:576 - shutting down worker
+agent16.main 2025-08-23 18:01:39,263 - INFO - <module>:255 - 🔬 Starting agent16 on port 8000 - Advanced Skin Analysis Agent
+livekit.agents 2025-08-23 18:01:39,265 - INFO - run:390 - starting worker
+livekit.agents 2025-08-23 18:01:39,265 - INFO - run:397 - preloading plugins
+livekit.agents 2025-08-23 18:01:39,899 - INFO - initialize:167 - initializing process
+livekit.agents 2025-08-23 18:01:39,900 - INFO - initialize:167 - initializing process
+livekit.agents 2025-08-23 18:01:39,902 - INFO - initialize:167 - initializing process
+livekit.agents 2025-08-23 18:01:39,903 - INFO - initialize:167 - initializing process
+livekit.agents 2025-08-23 18:01:39,938 - INFO - initialize:184 - process initialized
+livekit.agents 2025-08-23 18:01:39,938 - INFO - initialize:184 - process initialized
+asyncio 2025-08-23 18:01:39,938 - DEBUG - __init__:64 - Using selector: EpollSelector
+asyncio 2025-08-23 18:01:39,938 - DEBUG - __init__:64 - Using selector: EpollSelector
+livekit.agents 2025-08-23 18:01:39,938 - INFO - initialize:184 - process initialized
+asyncio 2025-08-23 18:01:39,938 - DEBUG - __init__:64 - Using selector: EpollSelector
+asyncio 2025-08-23 18:01:39,938 - DEBUG - __init__:64 - Using selector: EpollSelector
+livekit.agents 2025-08-23 18:01:39,939 - INFO - initialize:184 - process initialized
+livekit.agents 2025-08-23 18:01:40,472 - INFO - _handle_register:801 - registered worker

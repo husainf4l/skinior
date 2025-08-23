@@ -3,7 +3,10 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useCart, useCartStore } from "@/lib/store/cart-store";
-import { checkoutService, CreateOrderRequest } from "@/services/checkoutService";
+import {
+  checkoutService,
+  CreateOrderRequest,
+} from "@/services/checkoutService";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -16,7 +19,7 @@ interface FormData {
   city: string;
   postalCode: string;
   country: string;
-  paymentMethod: 'cod' | 'card' | '';
+  paymentMethod: "cod" | "card" | "";
   cardNumber: string;
   expiryDate: string;
   cvv: string;
@@ -43,7 +46,7 @@ const CheckoutPage: React.FC = () => {
     city: "",
     postalCode: "",
     country: "Jordan",
-    paymentMethod: '',
+    paymentMethod: "",
     cardNumber: "",
     expiryDate: "",
     cvv: "",
@@ -55,94 +58,104 @@ const CheckoutPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Validate form data
-  const validateForm = useCallback((data: FormData): FormErrors => {
-    const errors: FormErrors = {};
+  const validateForm = useCallback(
+    (data: FormData): FormErrors => {
+      const errors: FormErrors = {};
 
-    // Email validation
-    if (!data.email) {
-      errors.email = t("checkout.errors.emailRequired");
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      errors.email = t("checkout.errors.emailInvalid");
-    }
-
-    // Name validation
-    if (!data.firstName.trim()) {
-      errors.firstName = t("checkout.errors.firstNameRequired");
-    } else if (data.firstName.trim().length < 2) {
-      errors.firstName = t("checkout.errors.firstNameMinLength");
-    }
-
-    if (!data.lastName.trim()) {
-      errors.lastName = t("checkout.errors.lastNameRequired");
-    } else if (data.lastName.trim().length < 2) {
-      errors.lastName = t("checkout.errors.lastNameMinLength");
-    }
-
-    // Phone validation
-    if (!data.phone) {
-      errors.phone = t("checkout.errors.phoneRequired");
-    } else if (!/^[\+]?[1-9][\d]{0,15}$/.test(data.phone.replace(/\s/g, ''))) {
-      errors.phone = t("checkout.errors.phoneInvalid");
-    }
-
-    // Address validation
-    if (!data.address.trim()) {
-      errors.address = t("checkout.errors.addressRequired");
-    } else if (data.address.trim().length < 10) {
-      errors.address = t("checkout.errors.addressMinLength");
-    }
-
-    if (!data.city.trim()) {
-      errors.city = t("checkout.errors.cityRequired");
-    }
-
-    if (!data.country) {
-      errors.country = t("checkout.errors.countryRequired");
-    }
-
-    // Payment method validation
-    if (!data.paymentMethod) {
-      errors.paymentMethod = t("checkout.paymentMethodRequired");
-    }
-
-    // Credit card validation (only if card payment is selected)
-    if (data.paymentMethod === 'card') {
-      if (!data.cardNumber || data.cardNumber.replace(/\s/g, '').length < 16) {
-        errors.cardNumber = "Card number is required and must be 16 digits";
+      // Email validation
+      if (!data.email) {
+        errors.email = t("checkout.errors.emailRequired");
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+        errors.email = t("checkout.errors.emailInvalid");
       }
 
-      if (!data.expiryDate || !/^\d{2}\/\d{2}$/.test(data.expiryDate)) {
-        errors.expiryDate = "Expiry date is required (MM/YY)";
+      // Name validation
+      if (!data.firstName.trim()) {
+        errors.firstName = t("checkout.errors.firstNameRequired");
+      } else if (data.firstName.trim().length < 2) {
+        errors.firstName = t("checkout.errors.firstNameMinLength");
       }
 
-      if (!data.cvv || data.cvv.length < 3) {
-        errors.cvv = "CVV is required and must be 3-4 digits";
+      if (!data.lastName.trim()) {
+        errors.lastName = t("checkout.errors.lastNameRequired");
+      } else if (data.lastName.trim().length < 2) {
+        errors.lastName = t("checkout.errors.lastNameMinLength");
       }
 
-      if (!data.cardHolderName.trim()) {
-        errors.cardHolderName = "Cardholder name is required";
+      // Phone validation
+      if (!data.phone) {
+        errors.phone = t("checkout.errors.phoneRequired");
+      } else if (
+        !/^[\+]?[1-9][\d]{0,15}$/.test(data.phone.replace(/\s/g, ""))
+      ) {
+        errors.phone = t("checkout.errors.phoneInvalid");
       }
-    }
 
-    return errors;
-  }, [t]);
+      // Address validation
+      if (!data.address.trim()) {
+        errors.address = t("checkout.errors.addressRequired");
+      } else if (data.address.trim().length < 10) {
+        errors.address = t("checkout.errors.addressMinLength");
+      }
+
+      if (!data.city.trim()) {
+        errors.city = t("checkout.errors.cityRequired");
+      }
+
+      if (!data.country) {
+        errors.country = t("checkout.errors.countryRequired");
+      }
+
+      // Payment method validation
+      if (!data.paymentMethod) {
+        errors.paymentMethod = t("checkout.paymentMethodRequired");
+      }
+
+      // Credit card validation (only if card payment is selected)
+      if (data.paymentMethod === "card") {
+        if (
+          !data.cardNumber ||
+          data.cardNumber.replace(/\s/g, "").length < 16
+        ) {
+          errors.cardNumber = "Card number is required and must be 16 digits";
+        }
+
+        if (!data.expiryDate || !/^\d{2}\/\d{2}$/.test(data.expiryDate)) {
+          errors.expiryDate = "Expiry date is required (MM/YY)";
+        }
+
+        if (!data.cvv || data.cvv.length < 3) {
+          errors.cvv = "CVV is required and must be 3-4 digits";
+        }
+
+        if (!data.cardHolderName.trim()) {
+          errors.cardHolderName = "Cardholder name is required";
+        }
+      }
+
+      return errors;
+    },
+    [t]
+  );
 
   const formatPrice = (price: number | undefined | null) => {
     const safePrice = price ?? 0;
-    return isRTL ? `${safePrice.toFixed(2)} د.أ` : `JOD ${safePrice.toFixed(2)}`;
+    return isRTL
+      ? `${safePrice.toFixed(2)} د.أ`
+      : `JOD ${safePrice.toFixed(2)}`;
   };
 
   // Format card number with spaces
   const formatCardNumber = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
     const matches = v.match(/\d{4,16}/g);
-    const match = matches && matches[0] || '';
+    const match = (matches && matches[0]) || "";
     const parts = [];
     for (let i = 0, len = match.length; i < len; i += 4) {
       parts.push(match.substring(i, i + 4));
     }
     if (parts.length) {
-      return parts.join(' ');
+      return parts.join(" ");
     } else {
       return v;
     }
@@ -150,149 +163,156 @@ const CheckoutPage: React.FC = () => {
 
   // Format expiry date
   const formatExpiryDate = (value: string) => {
-    const v = value.replace(/\D/g, '');
+    const v = value.replace(/\D/g, "");
     if (v.length >= 2) {
-      return v.substring(0, 2) + '/' + v.substring(2, 4);
+      return v.substring(0, 2) + "/" + v.substring(2, 4);
     }
     return v;
   };
 
-  const handleInputChange = useCallback((
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    let formattedValue = value;
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      let formattedValue = value;
 
-    // Format card number
-    if (name === 'cardNumber') {
-      formattedValue = formatCardNumber(value);
-    }
-    
-    // Format expiry date
-    if (name === 'expiryDate') {
-      formattedValue = formatExpiryDate(value);
-    }
-
-    // CVV should only be digits
-    if (name === 'cvv') {
-      formattedValue = value.replace(/\D/g, '').substring(0, 4);
-    }
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: formattedValue,
-    }));
-
-    // Clear error for this field when user starts typing
-    if (formErrors[name]) {
-      setFormErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
-  }, [formErrors]);
-
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (isSubmitting || isProcessing) {
-      return;
-    }
-
-    // Validate form
-    const errors = validateForm(formData);
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
-
-    setIsSubmitting(true);
-    setIsProcessing(true);
-
-    try {
-      if (!cart || cart.items.length === 0) {
-        throw new Error('Cart is empty');
+      // Format card number
+      if (name === "cardNumber") {
+        formattedValue = formatCardNumber(value);
       }
 
-      // Prepare order data for backend
-      const orderData: CreateOrderRequest = {
-        customer: {
-          email: formData.email,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phone: formData.phone
-        },
-        shippingAddress: {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          addressLine1: formData.address,
-          city: formData.city,
-          state: formData.city, // Using city as state for now
-          postalCode: formData.postalCode,
-          country: formData.country,
-          phone: formData.phone
-        },
-        billingAddress: {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          addressLine1: formData.address,
-          city: formData.city,
-          state: formData.city, // Using city as state for now
-          postalCode: formData.postalCode,
-          country: formData.country,
-          phone: formData.phone
-        },
-        items: cart.items.map(item => ({
-          productId: item.productId,
-          title: item.title,
-          price: item.price,
-          quantity: item.quantity
-        })),
-        shippingMethod: 'standard',
-        currency: 'JOD',
-        paymentMethod: formData.paymentMethod === 'cod' ? 'cod' : 'stripe'
-      };
+      // Format expiry date
+      if (name === "expiryDate") {
+        formattedValue = formatExpiryDate(value);
+      }
 
-      // Create order
-      console.log('Creating order with data:', orderData);
-      const { orderId, order } = await checkoutService.createOrder(orderData);
-      console.log('Order created:', { orderId, order });
+      // CVV should only be digits
+      if (name === "cvv") {
+        formattedValue = value.replace(/\D/g, "").substring(0, 4);
+      }
 
-      // Process payment if not COD
-      if (formData.paymentMethod === 'card') {
-        const paymentData = {
-          paymentMethodId: `card_${Date.now()}`, // Mock payment method ID
-          paymentType: 'stripe' as const,
-          savePaymentMethod: false
+      setFormData((prev) => ({
+        ...prev,
+        [name]: formattedValue,
+      }));
+
+      // Clear error for this field when user starts typing
+      if (formErrors[name]) {
+        setFormErrors((prev) => ({
+          ...prev,
+          [name]: "",
+        }));
+      }
+    },
+    [formErrors]
+  );
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      if (isSubmitting || isProcessing) {
+        return;
+      }
+
+      // Validate form
+      const errors = validateForm(formData);
+      if (Object.keys(errors).length > 0) {
+        setFormErrors(errors);
+        return;
+      }
+
+      setIsSubmitting(true);
+      setIsProcessing(true);
+
+      try {
+        if (!cart || cart.items.length === 0) {
+          throw new Error("Cart is empty");
+        }
+
+        // Prepare order data for backend
+        const orderData: CreateOrderRequest = {
+          customer: {
+            email: formData.email,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            phone: formData.phone,
+          },
+          shippingAddress: {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            addressLine1: formData.address,
+            city: formData.city,
+            state: formData.city, // Using city as state for now
+            postalCode: formData.postalCode,
+            country: formData.country,
+            phone: formData.phone,
+          },
+          billingAddress: {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            addressLine1: formData.address,
+            city: formData.city,
+            state: formData.city, // Using city as state for now
+            postalCode: formData.postalCode,
+            country: formData.country,
+            phone: formData.phone,
+          },
+          items: cart.items.map((item) => ({
+            productId: item.productId,
+            title: item.title,
+            sku: item.productId, // Use productId as SKU for now
+            price: item.price,
+            quantity: item.quantity,
+          })),
+          shippingMethod: "standard",
+          currency: "JOD",
+          paymentMethod: formData.paymentMethod === "cod" ? "cod" : "stripe",
         };
 
-        console.log('Processing payment:', paymentData);
-        const paymentResult = await checkoutService.processPayment(orderId, paymentData);
-        console.log('Payment processed:', paymentResult);
+        // Create order
+        console.log("Creating order with data:", orderData);
+        const result = await checkoutService.createOrder(orderData);
+        const orderResponse = result.data;
+        console.log("Order created:", orderResponse);
 
-        if (!paymentResult.success) {
-          throw new Error('Payment processing failed');
+        // For COD orders, no payment processing needed
+        if (formData.paymentMethod === "card") {
+          // Note: Card payment would need proper payment provider integration
+          console.log(
+            "Card payment selected but no payment processor configured"
+          );
         }
-      }
 
-      // Clear cart after successful checkout
-      await clearCart();
+        // Clear cart after successful checkout
+        await clearCart();
 
-      // Redirect to success page
-      if (typeof window !== "undefined") {
-        window.location.href = `/${locale}/checkout/success?orderId=${orderId}`;
+        // Redirect to success page
+        if (typeof window !== "undefined") {
+          window.location.href = `/${locale}/checkout/success?orderId=${orderResponse.id}`;
+        }
+      } catch (error) {
+        console.error("Checkout error:", error);
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error occurred";
+        setFormErrors({
+          general: `${t("checkout.error")}: ${errorMessage}`,
+        });
+      } finally {
+        setIsSubmitting(false);
+        setIsProcessing(false);
       }
-    } catch (error) {
-      console.error("Checkout error:", error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      setFormErrors({
-        general: `${t("checkout.error")}: ${errorMessage}`,
-      });
-    } finally {
-      setIsSubmitting(false);
-      setIsProcessing(false);
-    }
-  }, [formData, validateForm, clearCart, locale, isSubmitting, isProcessing, t, cart]);
+    },
+    [
+      formData,
+      validateForm,
+      clearCart,
+      locale,
+      isSubmitting,
+      isProcessing,
+      t,
+      cart,
+    ]
+  );
 
   // Clear errors when component unmounts
   useEffect(() => {
@@ -427,7 +447,11 @@ const CheckoutPage: React.FC = () => {
                       disabled={isSubmitting}
                     />
                     {formErrors.email && (
-                      <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                      <p
+                        className={`mt-1 text-sm text-red-600 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
                         {formErrors.email}
                       </p>
                     )}
@@ -454,7 +478,11 @@ const CheckoutPage: React.FC = () => {
                       disabled={isSubmitting}
                     />
                     {formErrors.phone && (
-                      <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                      <p
+                        className={`mt-1 text-sm text-red-600 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
                         {formErrors.phone}
                       </p>
                     )}
@@ -484,7 +512,11 @@ const CheckoutPage: React.FC = () => {
                       disabled={isSubmitting}
                     />
                     {formErrors.firstName && (
-                      <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                      <p
+                        className={`mt-1 text-sm text-red-600 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
                         {formErrors.firstName}
                       </p>
                     )}
@@ -511,7 +543,11 @@ const CheckoutPage: React.FC = () => {
                       disabled={isSubmitting}
                     />
                     {formErrors.lastName && (
-                      <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                      <p
+                        className={`mt-1 text-sm text-red-600 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
                         {formErrors.lastName}
                       </p>
                     )}
@@ -551,7 +587,11 @@ const CheckoutPage: React.FC = () => {
                         disabled={isSubmitting}
                       />
                       {formErrors.address && (
-                        <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                        <p
+                          className={`mt-1 text-sm text-red-600 ${
+                            isRTL ? "font-cairo text-right" : ""
+                          }`}
+                        >
                           {formErrors.address}
                         </p>
                       )}
@@ -580,7 +620,11 @@ const CheckoutPage: React.FC = () => {
                           disabled={isSubmitting}
                         />
                         {formErrors.city && (
-                          <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                          <p
+                            className={`mt-1 text-sm text-red-600 ${
+                              isRTL ? "font-cairo text-right" : ""
+                            }`}
+                          >
                             {formErrors.city}
                           </p>
                         )}
@@ -628,7 +672,11 @@ const CheckoutPage: React.FC = () => {
                           <option value="Lebanon">Lebanon</option>
                         </select>
                         {formErrors.country && (
-                          <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                          <p
+                            className={`mt-1 text-sm text-red-600 ${
+                              isRTL ? "font-cairo text-right" : ""
+                            }`}
+                          >
                             {formErrors.country}
                           </p>
                         )}
@@ -651,58 +699,118 @@ const CheckoutPage: React.FC = () => {
                   <div className="space-y-4 mb-6">
                     <div className="flex flex-col gap-3">
                       {/* Cash on Delivery */}
-                      <label className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
-                        formData.paymentMethod === 'cod' ? 'border-black bg-gray-50' : 'border-gray-300 hover:border-gray-400'
-                      }`}>
+                      <label
+                        className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
+                          formData.paymentMethod === "cod"
+                            ? "border-black bg-gray-50"
+                            : "border-gray-300 hover:border-gray-400"
+                        }`}
+                      >
                         <input
                           type="radio"
                           name="paymentMethod"
                           value="cod"
-                          checked={formData.paymentMethod === 'cod'}
+                          checked={formData.paymentMethod === "cod"}
                           onChange={handleInputChange}
-                          className={`${isRTL ? "ml-3" : "mr-3"} text-black focus:ring-black focus:ring-2`}
+                          className={`${
+                            isRTL ? "ml-3" : "mr-3"
+                          } text-black focus:ring-black focus:ring-2`}
                         />
                         <div className="flex items-center">
-                          <div className={`w-8 h-8 bg-green-100 rounded-full flex items-center justify-center ${isRTL ? "ml-3" : "mr-3"}`}>
-                            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                          <div
+                            className={`w-8 h-8 bg-green-100 rounded-full flex items-center justify-center ${
+                              isRTL ? "ml-3" : "mr-3"
+                            }`}
+                          >
+                            <svg
+                              className="w-4 h-4 text-green-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
+                              />
                             </svg>
                           </div>
                           <div>
-                            <span className={`font-medium text-gray-900 ${isRTL ? "font-cairo" : ""}`}>
+                            <span
+                              className={`font-medium text-gray-900 ${
+                                isRTL ? "font-cairo" : ""
+                              }`}
+                            >
                               {t("checkout.cashOnDelivery")}
                             </span>
-                            <p className={`text-sm text-gray-600 ${isRTL ? "font-cairo" : ""}`}>
-                              {isRTL ? "ادفع عند استلام الطلب" : "Pay when you receive your order"}
+                            <p
+                              className={`text-sm text-gray-600 ${
+                                isRTL ? "font-cairo" : ""
+                              }`}
+                            >
+                              {isRTL
+                                ? "ادفع عند استلام الطلب"
+                                : "Pay when you receive your order"}
                             </p>
                           </div>
                         </div>
                       </label>
 
                       {/* Credit Card */}
-                      <label className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
-                        formData.paymentMethod === 'card' ? 'border-black bg-gray-50' : 'border-gray-300 hover:border-gray-400'
-                      }`}>
+                      <label
+                        className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
+                          formData.paymentMethod === "card"
+                            ? "border-black bg-gray-50"
+                            : "border-gray-300 hover:border-gray-400"
+                        }`}
+                      >
                         <input
                           type="radio"
                           name="paymentMethod"
                           value="card"
-                          checked={formData.paymentMethod === 'card'}
+                          checked={formData.paymentMethod === "card"}
                           onChange={handleInputChange}
-                          className={`${isRTL ? "ml-3" : "mr-3"} text-black focus:ring-black focus:ring-2`}
+                          className={`${
+                            isRTL ? "ml-3" : "mr-3"
+                          } text-black focus:ring-black focus:ring-2`}
                         />
                         <div className="flex items-center">
-                          <div className={`w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center ${isRTL ? "ml-3" : "mr-3"}`}>
-                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                          <div
+                            className={`w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center ${
+                              isRTL ? "ml-3" : "mr-3"
+                            }`}
+                          >
+                            <svg
+                              className="w-4 h-4 text-blue-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                              />
                             </svg>
                           </div>
                           <div>
-                            <span className={`font-medium text-gray-900 ${isRTL ? "font-cairo" : ""}`}>
+                            <span
+                              className={`font-medium text-gray-900 ${
+                                isRTL ? "font-cairo" : ""
+                              }`}
+                            >
                               {t("checkout.creditCard")}
                             </span>
-                            <p className={`text-sm text-gray-600 ${isRTL ? "font-cairo" : ""}`}>
-                              {isRTL ? "فيزا، ماستركارد، أو كارت أمريكان إكسبريس" : "Visa, Mastercard, or American Express"}
+                            <p
+                              className={`text-sm text-gray-600 ${
+                                isRTL ? "font-cairo" : ""
+                              }`}
+                            >
+                              {isRTL
+                                ? "فيزا، ماستركارد، أو كارت أمريكان إكسبريس"
+                                : "Visa, Mastercard, or American Express"}
                             </p>
                           </div>
                         </div>
@@ -710,14 +818,18 @@ const CheckoutPage: React.FC = () => {
                     </div>
 
                     {formErrors.paymentMethod && (
-                      <p className={`text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                      <p
+                        className={`text-sm text-red-600 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
                         {formErrors.paymentMethod}
                       </p>
                     )}
                   </div>
 
                   {/* Credit Card Details */}
-                  {formData.paymentMethod === 'card' && (
+                  {formData.paymentMethod === "card" && (
                     <div className="space-y-4">
                       <div>
                         <label
@@ -742,7 +854,11 @@ const CheckoutPage: React.FC = () => {
                           disabled={isSubmitting}
                         />
                         {formErrors.cardNumber && (
-                          <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                          <p
+                            className={`mt-1 text-sm text-red-600 ${
+                              isRTL ? "font-cairo text-right" : ""
+                            }`}
+                          >
                             {formErrors.cardNumber}
                           </p>
                         )}
@@ -772,7 +888,11 @@ const CheckoutPage: React.FC = () => {
                             disabled={isSubmitting}
                           />
                           {formErrors.expiryDate && (
-                            <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                            <p
+                              className={`mt-1 text-sm text-red-600 ${
+                                isRTL ? "font-cairo text-right" : ""
+                              }`}
+                            >
                               {formErrors.expiryDate}
                             </p>
                           )}
@@ -801,7 +921,11 @@ const CheckoutPage: React.FC = () => {
                             disabled={isSubmitting}
                           />
                           {formErrors.cvv && (
-                            <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                            <p
+                              className={`mt-1 text-sm text-red-600 ${
+                                isRTL ? "font-cairo text-right" : ""
+                              }`}
+                            >
                               {formErrors.cvv}
                             </p>
                           )}
@@ -829,7 +953,11 @@ const CheckoutPage: React.FC = () => {
                             disabled={isSubmitting}
                           />
                           {formErrors.cardHolderName && (
-                            <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                            <p
+                              className={`mt-1 text-sm text-red-600 ${
+                                isRTL ? "font-cairo text-right" : ""
+                              }`}
+                            >
                               {formErrors.cardHolderName}
                             </p>
                           )}
@@ -851,7 +979,9 @@ const CheckoutPage: React.FC = () => {
                     {isSubmitting || isProcessing ? (
                       <div className="flex items-center justify-center gap-2">
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        {isProcessing ? t("checkout.processing") : t("checkout.submitting")}
+                        {isProcessing
+                          ? t("checkout.processing")
+                          : t("checkout.submitting")}
                       </div>
                     ) : (
                       t("checkout.placeOrder")
@@ -875,48 +1005,78 @@ const CheckoutPage: React.FC = () => {
 
               {/* Cart Items */}
               <div className="space-y-4 mb-6">
-                {cart.items.map((item) => (
-                  <div key={item.id} className="flex gap-3">
-                    <div className="relative w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                      <Image
-                        src={item.image}
-                        alt={isRTL ? item.titleAr || item.title : item.title}
-                        fill
-                        className="object-cover"
-                        sizes="48px"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4
-                        className={`font-medium text-gray-900 text-sm ${
-                          isRTL ? "font-cairo text-right" : ""
-                        }`}
-                      >
-                        {isRTL ? item.titleAr || item.title : item.title}
-                      </h4>
-                      <div
-                        className={`flex justify-between items-center mt-1 ${
-                          isRTL ? "flex-row-reverse" : ""
-                        }`}
-                      >
-                        <span
-                          className={`text-sm text-gray-500 ${
-                            isRTL ? "font-cairo" : ""
+                {cart.items.map((item) => {
+                  // Handle the nested product structure from the API
+                  const extendedItem = item as typeof item & {
+                    product?: {
+                      title?: string;
+                      titleAr?: string;
+                      images?: Array<{ url: string }>;
+                    };
+                    unitPrice?: number;
+                  };
+
+                  const product = extendedItem.product || item;
+                  const productWithImages = product as typeof product & {
+                    images?: Array<{ url: string }>;
+                  };
+                  const productTitle = product.title || item.title;
+                  const productTitleAr = product.titleAr || item.titleAr;
+                  const productImage =
+                    productWithImages.images?.[0]?.url ||
+                    item.image ||
+                    "/product-holder.webp";
+                  const itemPrice = extendedItem.unitPrice || item.price || 0;
+
+                  return (
+                    <div key={item.id} className="flex gap-3">
+                      <div className="relative w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                        <Image
+                          src={productImage}
+                          alt={
+                            isRTL
+                              ? productTitleAr || productTitle
+                              : productTitle
+                          }
+                          fill
+                          className="object-cover"
+                          sizes="48px"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4
+                          className={`font-medium text-gray-900 text-sm ${
+                            isRTL ? "font-cairo text-right" : ""
                           }`}
                         >
-                          {t("checkout.qty")}: {item.quantity}
-                        </span>
-                        <span
-                          className={`font-semibold text-gray-900 text-sm ${
-                            isRTL ? "font-cairo" : ""
+                          {isRTL
+                            ? productTitleAr || productTitle
+                            : productTitle}
+                        </h4>
+                        <div
+                          className={`flex justify-between items-center mt-1 ${
+                            isRTL ? "flex-row-reverse" : ""
                           }`}
                         >
-                          {formatPrice((item.price || 0) * item.quantity)}
-                        </span>
+                          <span
+                            className={`text-sm text-gray-500 ${
+                              isRTL ? "font-cairo" : ""
+                            }`}
+                          >
+                            {t("checkout.qty")}: {item.quantity}
+                          </span>
+                          <span
+                            className={`font-semibold text-gray-900 text-sm ${
+                              isRTL ? "font-cairo" : ""
+                            }`}
+                          >
+                            {formatPrice(itemPrice * item.quantity)}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Order Totals */}
