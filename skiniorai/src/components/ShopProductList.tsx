@@ -28,6 +28,7 @@ export default function ShopProductList({ locale }: { locale: string }) {
   const isRTL = locale === "ar";
   const searchParams = useSearchParams();
   const isDealsPage = searchParams.get("deals") === "true";
+  const urlCategory = searchParams.get("category") || "all";
 
   const [productsResult, setProductsResult] = useState<ProductsResult | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,7 @@ export default function ShopProductList({ locale }: { locale: string }) {
   // Initialize filter state
   const [filters, setFilters] = useState<FilterState>({
     query: "",
-    category: "all",
+    category: urlCategory as string | "all",
     brand: "all",
     priceRange: [0, 1000],
     skinTypes: [],
@@ -147,13 +148,14 @@ export default function ShopProductList({ locale }: { locale: string }) {
     const initialFilters: ProductQueryParams = { 
       page: 1, 
       limit: PAGE_SIZE, 
-      isActive: true 
+      isActive: true,
+      category: urlCategory !== 'all' ? urlCategory : undefined
     };
     
     if (isDealsPage) {
       initialFilters.onSale = true;
     }
-    
+
     loadProducts(initialFilters)
       .then((result) => {
         if (!mounted) return;
@@ -187,7 +189,37 @@ export default function ShopProductList({ locale }: { locale: string }) {
       mounted = false;
       if (debounceRef.current) window.clearTimeout(debounceRef.current);
     };
-  }, [t, loadProducts, isDealsPage]);
+  }, [t, loadProducts, isDealsPage, urlCategory]);
+
+  // If the `category` query param changes, sync it into the filters state and reload
+  useEffect(() => {
+    const cat = urlCategory as string;
+
+    // Avoid updating if category already matches to prevent loops
+    if (filters.category === cat) return;
+
+    // Update local filter state
+    const updatedFilters = { ...filters, category: cat };
+    setFilters(updatedFilters);
+    setPage(1);
+
+    // Reload products for the new category
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const apiFilters = convertToApiFilters(updatedFilters, 1, isDealsPage);
+        const result = await loadProducts(apiFilters);
+        setProductsResult(result);
+        setAllProducts(result.products || []);
+      } catch (err) {
+        console.error('Error applying category from URL:', err);
+        setError('Failed to apply category');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [urlCategory, isDealsPage, convertToApiFilters, loadProducts, filters]);
 
   // Filter change handlers
   const handleFiltersChange = useCallback(async (newFilters: Partial<FilterState>) => {
