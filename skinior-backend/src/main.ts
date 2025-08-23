@@ -54,6 +54,7 @@ async function bootstrap() {
       origin: [
         'https://skinior.com',
         'https://www.skinior.com',
+        'https://admin.skinior.com',
         /\.skinior\.com$/
       ],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -72,7 +73,21 @@ async function bootstrap() {
   } else {
     // Development CORS - Permissive
     app.enableCors({
-      origin: true, // Allow all origins in development
+      origin: [
+        'https://admin.skinior.com',
+        'https://www.skinior.com',
+        'https://skinior.com',
+        'http://localhost:3000',
+        'http://localhost:3007', 
+        'http://localhost:3008',
+        'http://localhost:4200',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:3007',
+        'http://127.0.0.1:3008', 
+        'http://127.0.0.1:4200',
+        /^http:\/\/localhost:\d+$/,
+        /^http:\/\/127\.0\.0\.1:\d+$/,
+      ],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
       allowedHeaders: [
         'Origin',
@@ -89,7 +104,7 @@ async function bootstrap() {
       preflightContinue: false,
       optionsSuccessStatus: 204,
     });
-    console.log('🔓 CORS: Development mode - allowing all origins');
+    console.log('🔓 CORS: Development mode - allowing localhost origins and common dev ports');
   }
 
   // Enable global validation pipe

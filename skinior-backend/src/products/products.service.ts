@@ -375,9 +375,15 @@ export class ProductsService {
   }
 
   async deleteProduct(id: string) {
-    return this.prismaService.product.delete({
-      where: { id },
-    });
+    try {
+      await this.prismaService.product.delete({ where: { id } });
+    } catch (error: any) {
+      // Prisma returns P2025 when record to delete is not found
+      if (error?.code === 'P2025') {
+        throw new NotFoundException(`Product with ID ${id} not found`);
+      }
+      throw error;
+    }
   }
 
   // Enhanced methods for Agent16 integration
@@ -847,5 +853,292 @@ export class ProductsService {
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .trim();
+  }
+
+  async getAllProductsWithFilters(filters: {
+    page: number;
+    limit: number;
+    search?: string;
+    category?: string;
+    brand?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    skinType?: string;
+    concerns?: string[];
+    isFeatured?: boolean;
+    isNew?: boolean;
+    isActive?: boolean;
+    onSale?: boolean;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }) {
+    const { page, limit, sortBy = 'createdAt', sortOrder = 'desc' } = filters;
+    const skip = (page - 1) * limit;
+
+    // Build where clause
+    const where: any = {
+      isActive: filters.isActive !== false ? true : false,
+    };
+
+    // Build conditions array for AND logic
+    const andConditions: any[] = [];
+
+    // Search functionality (OR within search fields)
+    if (filters.search) {
+      andConditions.push({
+        OR: [
+          {
+            title: {
+              contains: filters.search,
+              mode: 'insensitive',
+            },
+          },
+          {
+            titleAr: {
+              contains: filters.search,
+              mode: 'insensitive',
+            },
+          },
+          {
+            descriptionEn: {
+              contains: filters.search,
+              mode: 'insensitive',
+            },
+          },
+          {
+            descriptionAr: {
+              contains: filters.search,
+              mode: 'insensitive',
+            },
+          },
+          {
+            activeIngredients: {
+              contains: filters.search,
+              mode: 'insensitive',
+            },
+          },
+          {
+            sku: {
+              contains: filters.search,
+              mode: 'insensitive',
+            },
+          },
+          {
+            barcode: {
+              contains: filters.search,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      });
+    }
+
+    // Category filter (OR within category matches)
+    if (filters.category) {
+      andConditions.push({
+        OR: [
+          {
+            category: {
+              id: filters.category,
+            },
+          },
+          {
+            category: {
+              slug: {
+                equals: filters.category,
+                mode: 'insensitive',
+              },
+            },
+          },
+          {
+            category: {
+              name: {
+                contains: filters.category,
+                mode: 'insensitive',
+              },
+            },
+          },
+        ],
+      });
+    }
+
+    // Brand filter (OR within brand matches)
+    if (filters.brand) {
+      andConditions.push({
+        OR: [
+          {
+            brand: {
+              id: filters.brand,
+            },
+          },
+          {
+            brand: {
+              slug: {
+                equals: filters.brand,
+                mode: 'insensitive',
+              },
+            },
+          },
+          {
+            brand: {
+              name: {
+                contains: filters.brand,
+                mode: 'insensitive',
+              },
+            },
+          },
+        ],
+      });
+    }
+
+    // Price range filter
+    if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
+      where.price = {};
+      if (filters.minPrice !== undefined) {
+        where.price.gte = filters.minPrice;
+      }
+      if (filters.maxPrice !== undefined) {
+        where.price.lte = filters.maxPrice;
+      }
+    }
+
+    // Skin type filter
+    if (filters.skinType) {
+      where.skinType = {
+        contains: filters.skinType,
+        mode: 'insensitive',
+      };
+    }
+
+    // Concerns filter (JSON array search)
+    if (filters.concerns && filters.concerns.length > 0) {
+      andConditions.push({
+        OR: filters.concerns.map(concern => ({
+          concerns: {
+            contains: concern,
+            mode: 'insensitive',
+          },
+        })),
+      });
+    }
+
+    // Featured filter
+    if (filters.isFeatured !== undefined) {
+      where.isFeatured = filters.isFeatured;
+    }
+
+    // New products filter
+    if (filters.isNew !== undefined) {
+      where.isNew = filters.isNew;
+    }
+
+    // On sale filter (products with compareAtPrice)
+    if (filters.onSale !== undefined) {
+      if (filters.onSale) {
+        where.compareAtPrice = {
+          not: null,
+          gt: 0,
+        };
+      } else {
+        where.compareAtPrice = null;
+      }
+    }
+
+    // Combine all AND conditions
+    if (andConditions.length > 0) {
+      where.AND = andConditions;
+    }
+
+    // Build order by clause
+    const orderBy: any = {};
+    switch (sortBy) {
+      case 'price':
+        orderBy.price = sortOrder;
+        break;
+      case 'title':
+        orderBy.title = sortOrder;
+        break;
+      case 'rating':
+        // We'll sort by average rating later in the addProductStats method
+        orderBy.createdAt = sortOrder;
+        break;
+      case 'createdAt':
+      default:
+        orderBy.createdAt = sortOrder;
+        break;
+    }
+
+    // Execute query with total count
+    const [products, total] = await Promise.all([
+      this.prismaService.product.findMany({
+        where,
+        include: {
+          images: {
+            orderBy: { sortOrder: 'asc' },
+          },
+          category: true,
+          brand: true,
+          reviews: {
+            where: { isPublished: true },
+            orderBy: { createdAt: 'desc' },
+          },
+          attributeValues: {
+            include: {
+              attributeValue: {
+                include: {
+                  attribute: true,
+                },
+              },
+            },
+            orderBy: {
+              attributeValue: {
+                attribute: {
+                  sortOrder: 'asc',
+                },
+              },
+            },
+          },
+        },
+        orderBy,
+        skip,
+        take: limit,
+      }),
+      this.prismaService.product.count({ where }),
+    ]);
+
+    // Add product stats
+    let processedProducts = this.addProductStats(products);
+
+    // Sort by rating if requested (post-processing)
+    if (sortBy === 'rating') {
+      processedProducts = processedProducts.sort((a, b) => {
+        const aRating = a.stats?.averageRating || 0;
+        const bRating = b.stats?.averageRating || 0;
+        return sortOrder === 'asc' ? aRating - bRating : bRating - aRating;
+      });
+    }
+
+    // Calculate pagination info
+    const pages = Math.ceil(total / limit);
+    const hasNext = page < pages;
+    const hasPrev = page > 1;
+
+    return {
+      products: processedProducts,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages,
+        hasNext,
+        hasPrev,
+      },
+      filters: {
+        applied: Object.fromEntries(
+          Object.entries(filters).filter(([_, value]) => value !== undefined && value !== null)
+        ),
+        total: total,
+      },
+    };
   }
 }

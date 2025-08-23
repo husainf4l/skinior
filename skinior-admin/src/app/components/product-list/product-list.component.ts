@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
@@ -10,8 +10,14 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { signal, computed, effect } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../interfaces/product.interface';
+import { ProductQueryParams } from '../../services/product.service';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-product-list',
@@ -27,7 +33,10 @@ import { Product } from '../../interfaces/product.interface';
     MatPaginatorModule,
     MatChipsModule,
     MatTooltipModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatCheckboxModule,
+    MatSnackBarModule,
+    MatDialogModule
   ],
   template: `
     <div class="product-list-container apple-fade-in">
@@ -37,12 +46,73 @@ import { Product } from '../../interfaces/product.interface';
           <h1 class="page-title apple-title">Products</h1>
           <p class="page-subtitle apple-body">Manage your skincare product catalog</p>
         </div>
-        <button 
-          class="add-button apple-button apple-button-primary"
-          (click)="navigateToAddProduct()">
-          <mat-icon>add</mat-icon>
-          Add Product
-        </button>
+        <div class="header-actions">
+          <button 
+            *ngIf="!isSelectionMode()"
+            class="apple-button apple-button-secondary"
+            (click)="toggleSelectionMode()"
+            matTooltip="Select multiple products">
+            <mat-icon>checklist</mat-icon>
+            Select
+          </button>
+          <button 
+            class="add-button apple-button apple-button-primary"
+            (click)="navigateToAddProduct()">
+            <mat-icon>add</mat-icon>
+            Add Product
+          </button>
+        </div>
+      </div>
+
+      <!-- Bulk Actions Bar -->
+      <div class="bulk-actions-bar apple-card" *ngIf="isSelectionMode()">
+        <div class="bulk-selection-info">
+          <mat-checkbox
+            [checked]="isAllSelected()"
+            [indeterminate]="isIndeterminate()"
+            (change)="toggleSelectAll()">
+          </mat-checkbox>
+          <span class="selection-text apple-body">
+            {{ selectedCount() > 0 ? selectedCount() + ' selected' : 'Select all' }}
+          </span>
+        </div>
+        <div class="bulk-actions">
+          <button 
+            class="apple-button apple-button-danger"
+            [disabled]="selectedCount() === 0 || isDeleting()"
+            (click)="deleteSelectedProducts()">
+            <mat-spinner diameter="16" *ngIf="isDeleting()"></mat-spinner>
+            <mat-icon *ngIf="!isDeleting()">delete</mat-icon>
+            Delete Selected ({{ selectedCount() }})
+          </button>
+          <button 
+            class="apple-button apple-button-secondary"
+            (click)="toggleSelectionMode()">
+            <mat-icon>close</mat-icon>
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      <!-- Danger Zone - Delete All Products -->
+      <div class="danger-zone apple-card" *ngIf="!isSelectionMode() && totalProducts() > 0">
+        <div class="danger-zone-content">
+          <div class="danger-info">
+            <mat-icon class="danger-icon">warning</mat-icon>
+            <div class="danger-text">
+              <h3 class="danger-title">Danger Zone</h3>
+              <p class="danger-description">Permanently delete all {{ totalProducts() }} products from the database. This action cannot be undone.</p>
+            </div>
+          </div>
+          <button 
+            class="apple-button apple-button-danger danger-button"
+            [disabled]="isDeleting()"
+            (click)="deleteAllProducts()">
+            <mat-spinner diameter="16" *ngIf="isDeleting()"></mat-spinner>
+            <mat-icon *ngIf="!isDeleting()">delete_forever</mat-icon>
+            Delete All Products
+          </button>
+        </div>
       </div>
 
       <!-- Search and Filters -->
@@ -95,37 +165,44 @@ import { Product } from '../../interfaces/product.interface';
         <div class="apple-list apple-slide-up">
           <div 
             *ngFor="let product of paginatedProducts(); trackBy: trackByProductId" 
-            class="product-item apple-list-item">
+            class="product-item apple-list-item"
+            [class.selected]="isSelectionMode() && selectedProducts().has(product.id)">
             
-            <div class="product-content">
+            <!-- Selection Checkbox -->
+            <div class="product-selection" *ngIf="isSelectionMode()">
+              <mat-checkbox
+                [checked]="selectedProducts().has(product.id)"
+                (change)="toggleProductSelection(product.id)">
+              </mat-checkbox>
+            </div>
+            
+            <div class="product-content" [class.with-selection]="isSelectionMode()">
               <div class="product-main">
-                <div class="product-image-container">
-                  <img 
-                    [src]="getMainImage(product) || '/assets/images/no-image.svg'" 
-                    [alt]="product.title"
-                    class="product-image"
-                    (error)="onImageError($event)"
-                  />
-                </div>
-                
-                <div class="product-info">
+                  <div class="product-image-container">
+                    <img 
+                      [src]="getMainImage(product) || '/assets/images/no-image.svg'" 
+                      [alt]="product?.title || 'Product image'"
+                      class="product-image"
+                      (error)="onImageError($event)"
+                    />
+                  </div>                <div class="product-info">
                   <div class="product-header">
-                    <h3 class="product-title apple-headline">{{ product.title }}</h3>
+                    <h3 class="product-title apple-headline">{{ product?.title || 'Untitled Product' }}</h3>
                     <div class="product-badges">
-                      <span class="apple-badge apple-badge-primary" *ngIf="product.isFeatured">
+                      <span class="apple-badge apple-badge-primary" *ngIf="product?.isFeatured">
                         <mat-icon>star</mat-icon>
                         Featured
                       </span>
-                      <span class="apple-badge apple-badge-success" *ngIf="product.isNew">
+                      <span class="apple-badge apple-badge-success" *ngIf="product?.isNew">
                         <mat-icon>fiber_new</mat-icon>
                         New
                       </span>
                       <span 
                         class="apple-badge"
-                        [class.apple-badge-success]="(product.stockQuantity || 0) > 10"
-                        [class.apple-badge-warning]="(product.stockQuantity || 0) <= 10 && (product.stockQuantity || 0) > 0"
-                        [class.apple-badge-danger]="(product.stockQuantity || 0) === 0">
-                        {{ (product.stockQuantity || 0) === 0 ? 'Out of Stock' : (product.stockQuantity || 0) + ' in stock' }}
+                        [class.apple-badge-success]="(product?.stockQuantity || 0) > 10"
+                        [class.apple-badge-warning]="(product?.stockQuantity || 0) <= 10 && (product?.stockQuantity || 0) > 0"
+                        [class.apple-badge-danger]="(product?.stockQuantity || 0) === 0">
+                        {{ (product?.stockQuantity || 0) === 0 ? 'Out of Stock' : (product?.stockQuantity || 0) + ' in stock' }}
                       </span>
                     </div>
                   </div>
@@ -138,19 +215,19 @@ import { Product } from '../../interfaces/product.interface';
                     <div class="product-details">
                       <div class="detail-item">
                         <mat-icon class="detail-icon">local_offer</mat-icon>
-                        <span class="apple-caption">SKU: {{ product.sku || 'N/A' }}</span>
+                        <span class="apple-caption">SKU: {{ product?.sku || 'N/A' }}</span>
                       </div>
                       <div class="detail-item">
                         <mat-icon class="detail-icon">category</mat-icon>
-                        <span class="apple-caption">{{ product.category || product.categoryId || 'Uncategorized' }}</span>
+                        <span class="apple-caption">{{ product?.category || product?.categoryId || 'Uncategorized' }}</span>
                       </div>
-                      <div class="detail-item" *ngIf="product.skinType">
+                      <div class="detail-item" *ngIf="product?.skinType">
                         <mat-icon class="detail-icon">face</mat-icon>
-                        <span class="apple-caption">{{ product.skinType }}</span>
+                        <span class="apple-caption">{{ product?.skinType }}</span>
                       </div>
-                      <div class="detail-item" *ngIf="product.activeIngredients">
+                      <div class="detail-item" *ngIf="product?.activeIngredients">
                         <mat-icon class="detail-icon">science</mat-icon>
-                        <span class="apple-caption">{{ product.activeIngredients | slice:0:30 }}{{ (product.activeIngredients || '').length > 30 ? '...' : '' }}</span>
+                        <span class="apple-caption">{{ product?.activeIngredients | slice:0:30 }}{{ (product?.activeIngredients || '').length > 30 ? '...' : '' }}</span>
                       </div>
                     </div>
                   </div>
@@ -160,20 +237,22 @@ import { Product } from '../../interfaces/product.interface';
               <div class="product-actions">
                 <div class="price-section">
                   <div class="current-price apple-headline">
-                    \${{ product.price | number:'1.2-2' }}
+                    \${{ product?.price | number:'1.2-2' }}
                   </div>
-                  <div class="compare-price apple-caption" *ngIf="product.compareAtPrice && product.compareAtPrice > product.price">
-                    <span class="strikethrough">\${{ product.compareAtPrice | number:'1.2-2' }}</span>
+                  <div class="compare-price apple-caption" *ngIf="product?.compareAtPrice && (product?.compareAtPrice || 0) > (product?.price || 0)">
+                    <span class="strikethrough">\${{ product?.compareAtPrice | number:'1.2-2' }}</span>
                   </div>
                 </div>
                 
                 <div class="action-buttons">
                   <button 
                     class="apple-button apple-button-secondary"
+                    [disabled]="editingProductId() === product.id"
                     (click)="editProduct(product)"
                     matTooltip="Edit product">
-                    <mat-icon>edit</mat-icon>
-                    Edit
+                    <mat-spinner diameter="16" *ngIf="editingProductId() === product.id"></mat-spinner>
+                    <mat-icon *ngIf="editingProductId() !== product.id">edit</mat-icon>
+                    {{ editingProductId() === product.id ? 'Loading...' : 'Edit' }}
                   </button>
                   <button 
                     class="apple-button apple-button-secondary"
@@ -183,6 +262,7 @@ import { Product } from '../../interfaces/product.interface';
                     View
                   </button>
                   <button 
+                    *ngIf="!isSelectionMode()"
                     class="apple-button apple-button-danger"
                     (click)="deleteProduct(product)"
                     matTooltip="Delete product">
@@ -225,9 +305,9 @@ import { Product } from '../../interfaces/product.interface';
       </div>
 
       <!-- Pagination -->
-      <div class="pagination-section apple-card" *ngIf="filteredProducts().length > pageSize()">
+      <div class="pagination-section apple-card" *ngIf="totalProducts() > pageSize()">
         <mat-paginator
-          [length]="filteredProducts().length"
+          [length]="totalProducts()"
           [pageSize]="pageSize()"
           [pageSizeOptions]="[10, 25, 50, 100]"
           [pageIndex]="currentPage()"
@@ -447,6 +527,15 @@ import { Product } from '../../interfaces/product.interface';
       font-size: 14px;
     }
 
+    .action-buttons .apple-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .action-buttons .apple-button mat-spinner {
+      margin-right: 4px;
+    }
+
     /* Empty State */
     .empty-state, .loading-state {
       padding: var(--apple-spacing-2xl);
@@ -543,12 +632,134 @@ import { Product } from '../../interfaces/product.interface';
         justify-content: center;
       }
     }
+
+    /* Bulk Selection Styles */
+    .header-actions {
+      display: flex;
+      gap: var(--apple-spacing-md);
+      align-items: center;
+    }
+
+    .bulk-actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--apple-spacing-md);
+      margin-bottom: var(--apple-spacing-lg);
+      background: var(--apple-background-secondary);
+      border: 1px solid var(--apple-border);
+    }
+
+    .bulk-selection-info {
+      display: flex;
+      align-items: center;
+      gap: var(--apple-spacing-sm);
+    }
+
+    .selection-text {
+      font-weight: 500;
+      color: var(--apple-text-primary);
+    }
+
+    .bulk-actions {
+      display: flex;
+      gap: var(--apple-spacing-sm);
+    }
+
+    .product-item.selected {
+      background: var(--apple-background-tertiary);
+      border-color: var(--apple-color-primary);
+    }
+
+    .product-selection {
+      padding: var(--apple-spacing-md);
+      border-right: 1px solid var(--apple-border);
+    }
+
+    .product-content.with-selection {
+      flex: 1;
+    }
+
+    .product-item {
+      display: flex;
+      align-items: center;
+    }
+
+    /* Danger Zone Styles */
+    .danger-zone {
+      background: linear-gradient(135deg, #fef2f2, #fee2e2);
+      border: 2px solid #fca5a5;
+      border-radius: 12px;
+      margin-bottom: var(--apple-spacing-lg);
+    }
+
+    .danger-zone-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--apple-spacing-lg);
+    }
+
+    .danger-info {
+      display: flex;
+      align-items: center;
+      gap: var(--apple-spacing-md);
+    }
+
+    .danger-icon {
+      color: #dc2626;
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+
+    .danger-text {
+      flex: 1;
+    }
+
+    .danger-title {
+      margin: 0 0 var(--apple-spacing-xs) 0;
+      color: #dc2626;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .danger-description {
+      margin: 0;
+      color: #7f1d1d;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .danger-button {
+      background: #dc2626 !important;
+      border-color: #dc2626 !important;
+      font-weight: 600;
+    }
+
+    .danger-button:hover:not(:disabled) {
+      background: #b91c1c !important;
+      border-color: #b91c1c !important;
+    }
+
+    @media (max-width: 768px) {
+      .danger-zone-content {
+        flex-direction: column;
+        gap: var(--apple-spacing-md);
+        text-align: center;
+      }
+    }
   `]
 })
 export class ProductListComponent implements OnInit {
   // Injected services
   private readonly productService = inject(ProductService);
   private readonly router = inject(Router);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
+
+  // Search debouncing
+  private searchSubject = new Subject<string>();
 
   // Signals for reactive state management
   private readonly allProducts = signal<Product[]>([]);
@@ -557,82 +768,119 @@ export class ProductListComponent implements OnInit {
   readonly selectedFilter = signal<'all' | 'featured' | 'low-stock' | 'new'>('all');
   readonly currentPage = signal(0);
   readonly pageSize = signal(10);
+  readonly editingProductId = signal<string | null>(null);
+  readonly totalProducts = signal(0);
+  
+  // Bulk selection
+  readonly selectedProducts = signal<Set<string>>(new Set());
+  readonly isSelectionMode = signal(false);
+  readonly isDeleting = signal(false);
 
   // Computed properties
-  readonly filteredProducts = computed(() => {
-    let products = this.allProducts();
-    const query = this.searchQuery().toLowerCase().trim();
-    const filter = this.selectedFilter();
-
-    // Apply text search
-    if (query) {
-      products = products.filter(product =>
-        product.title.toLowerCase().includes(query) ||
-        (product.descriptionEn || '').toLowerCase().includes(query) ||
-        (product.sku || '').toLowerCase().includes(query) ||
-        (product.categoryId || '').toLowerCase().includes(query) ||
-        (product.activeIngredients || '').toLowerCase().includes(query) ||
-        (product.skinType || '').toLowerCase().includes(query)
-      );
-    }
-
-    // Apply filters
-    switch (filter) {
-      case 'featured':
-        products = products.filter(product => product.isFeatured);
-        break;
-      case 'low-stock':
-        products = products.filter(product => (product.stockQuantity || 0) <= 10);
-        break;
-      case 'new':
-        products = products.filter(product => product.isNew);
-        break;
-    }
-
-    return products;
+  readonly isAllSelected = computed(() => {
+    const selected = this.selectedProducts();
+    const products = this.allProducts();
+    return products.length > 0 && selected.size === products.length;
   });
 
-  readonly paginatedProducts = computed(() => {
-    const products = this.filteredProducts();
-    const page = this.currentPage();
-    const size = this.pageSize();
-    const startIndex = page * size;
-    
-    return products.slice(startIndex, startIndex + size);
+  readonly isIndeterminate = computed(() => {
+    const selected = this.selectedProducts();
+    const products = this.allProducts();
+    return selected.size > 0 && selected.size < products.length;
   });
+
+  readonly selectedCount = computed(() => this.selectedProducts().size);
+
+  // Use server-side pagination instead of client-side filtering
+  readonly paginatedProducts = computed(() => this.allProducts());
 
   ngOnInit(): void {
     this.loadProducts();
+    
+    // Set up debounced search
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(query => {
+      this.searchQuery.set(query);
+      this.currentPage.set(0);
+      this.loadProducts();
+    });
   }
 
   private loadProducts(): void {
     this.loading.set(true);
     
-    this.productService.getAllProducts().subscribe({
-      next: (products) => {
+    const params: ProductQueryParams = {
+      page: this.currentPage() + 1, // API uses 1-based pagination
+      limit: this.pageSize(),
+    };
+
+    // Add search query if present
+    const query = this.searchQuery().trim();
+    if (query) {
+      params.search = query;
+    }
+
+    // Add filters based on the backend API
+    const filter = this.selectedFilter();
+    switch (filter) {
+      case 'featured':
+        params.isFeatured = true;
+        break;
+      case 'low-stock':
+        // For low stock, we'll fetch all and filter client-side since backend doesn't have this filter
+        // Or we could fetch all products and filter them
+        break;
+      case 'new':
+        params.isNew = true;
+        break;
+    }
+
+    // Always get active products by default
+    params.isActive = true;
+
+    this.productService.getProducts(params).subscribe({
+      next: (result) => {
+        let products = Array.isArray(result.products) ? result.products : [];
+        
+        // Apply client-side low-stock filter if needed
+        if (filter === 'low-stock') {
+          products = products.filter(product => (product.stockQuantity || 0) <= 10);
+        }
+        
         this.allProducts.set(products);
+        if (result.pagination) {
+          this.totalProducts.set(result.pagination.total);
+        } else {
+          this.totalProducts.set(products.length);
+        }
         this.loading.set(false);
       },
       error: (error) => {
         console.error('Error loading products:', error);
+        this.allProducts.set([]);
+        this.totalProducts.set(0);
         this.loading.set(false);
       }
     });
   }
 
   updateSearchQuery(query: string): void {
-    this.searchQuery.set(query);
-    this.currentPage.set(0); // Reset to first page
+    // Use debounced search instead of immediate API call
+    this.searchSubject.next(query);
   }
 
   setFilter(filter: 'all' | 'featured' | 'low-stock' | 'new'): void {
     this.selectedFilter.set(filter);
     this.currentPage.set(0); // Reset to first page
+    this.loadProducts(); // Reload with new filter
   }
 
   onPageChange(event: PageEvent): void {
     this.currentPage.set(event.pageIndex);
     this.pageSize.set(event.pageSize);
+    this.loadProducts(); // Reload with new pagination
   }
 
   navigateToAddProduct(): void {
@@ -640,11 +888,119 @@ export class ProductListComponent implements OnInit {
   }
 
   editProduct(product: Product): void {
-    this.router.navigate(['/products/edit', product.id]);
+    // Set loading state for this specific product
+    this.editingProductId.set(product.id);
+    
+    // First get the latest product data from the backend
+    this.productService.getProductById(product.id).subscribe({
+      next: (productData) => {
+        // Navigate to edit route with the updated product data
+        this.router.navigate(['/products/edit', product.id], {
+          state: { productData }
+        });
+        this.editingProductId.set(null);
+      },
+      error: (error) => {
+        console.error('Error fetching product for edit:', error);
+        alert('Failed to load product data for editing. Please try again.');
+        this.editingProductId.set(null);
+      }
+    });
   }
 
   viewProduct(product: Product): void {
     this.router.navigate(['/products', product.id]);
+  }
+
+  toggleSelectionMode(): void {
+    this.isSelectionMode.set(!this.isSelectionMode());
+    if (!this.isSelectionMode()) {
+      this.selectedProducts.set(new Set());
+    }
+  }
+
+  toggleSelectAll(): void {
+    if (this.isAllSelected()) {
+      this.selectedProducts.set(new Set());
+    } else {
+      const allIds = this.allProducts().map(p => p.id);
+      this.selectedProducts.set(new Set(allIds));
+    }
+  }
+
+  toggleProductSelection(productId: string): void {
+    const selected = new Set(this.selectedProducts());
+    if (selected.has(productId)) {
+      selected.delete(productId);
+    } else {
+      selected.add(productId);
+    }
+    this.selectedProducts.set(selected);
+  }
+
+  deleteSelectedProducts(): void {
+    const selectedIds = Array.from(this.selectedProducts());
+    if (selectedIds.length === 0) return;
+
+    const confirmed = confirm(`Are you sure you want to delete ${selectedIds.length} selected product(s)?`);
+    if (!confirmed) return;
+
+    this.isDeleting.set(true);
+    this.productService.deleteProducts(selectedIds).subscribe({
+      next: () => {
+        this.snackBar.open(`${selectedIds.length} product(s) deleted successfully`, 'Close', { duration: 3000 });
+        this.selectedProducts.set(new Set());
+        this.isSelectionMode.set(false);
+        this.isDeleting.set(false);
+        this.loadProducts();
+      },
+      error: (error) => {
+        console.error('Error deleting products:', error);
+        this.snackBar.open('Failed to delete products. Please try again.', 'Close', { duration: 5000 });
+        this.isDeleting.set(false);
+      }
+    });
+  }
+
+  deleteAllProducts(): void {
+    const totalCount = this.totalProducts();
+    const confirmed = confirm(
+      `⚠️ DANGER: This will permanently delete ALL ${totalCount} products from the database!\n\n` +
+      `This action cannot be undone and will also delete all associated images.\n\n` +
+      `Type "DELETE ALL PRODUCTS" to confirm:`
+    );
+    
+    if (!confirmed) return;
+
+    // Additional confirmation with text input
+    const confirmText = prompt(
+      `Please type "DELETE ALL PRODUCTS" (without quotes) to confirm this destructive action:`
+    );
+    
+    if (confirmText !== 'DELETE ALL PRODUCTS') {
+      this.snackBar.open('Deletion cancelled. Text did not match.', 'Close', { duration: 3000 });
+      return;
+    }
+
+    this.isDeleting.set(true);
+    this.productService.deleteAllProducts().subscribe({
+      next: (response) => {
+        const deletedCount = response.data?.deletedProductsCount || totalCount;
+        const deletedImages = response.data?.deletedImagesCount || 0;
+        this.snackBar.open(
+          `All ${deletedCount} products and ${deletedImages} images deleted successfully`, 
+          'Close', 
+          { duration: 5000 }
+        );
+        this.isDeleting.set(false);
+        this.loadProducts();
+      },
+      error: (error) => {
+        console.error('Error deleting all products:', error);
+        this.snackBar.open('Failed to delete all products. Please try again.', 'Close', { duration: 5000 });
+        this.isDeleting.set(false);
+      }
+    });
   }
 
   deleteProduct(product: Product): void {
@@ -653,13 +1009,13 @@ export class ProductListComponent implements OnInit {
 
     this.productService.deleteProduct(product.id).subscribe({
       next: () => {
-        // Remove from local state
-        const updatedProducts = this.allProducts().filter(p => p.id !== product.id);
-        this.allProducts.set(updatedProducts);
+        this.snackBar.open('Product deleted successfully', 'Close', { duration: 3000 });
+        // Reload products after deletion
+        this.loadProducts();
       },
       error: (error) => {
         console.error('Error deleting product:', error);
-        alert('Failed to delete product. Please try again.');
+        this.snackBar.open('Failed to delete product. Please try again.', 'Close', { duration: 5000 });
       }
     });
   }
@@ -669,9 +1025,9 @@ export class ProductListComponent implements OnInit {
   }
 
   getMainImage(product: Product): string | null {
-    if (product.images && product.images.length > 0) {
-      const mainImage = product.images.find(img => img.isMain);
-      return mainImage?.url || product.images[0].url;
+    if (product?.images && Array.isArray(product.images) && product.images.length > 0) {
+      const mainImage = product.images.find(img => img?.isMain);
+      return mainImage?.url || product.images[0]?.url || null;
     }
     return null;
   }

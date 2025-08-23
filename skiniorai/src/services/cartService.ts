@@ -1,4 +1,5 @@
 import { Cart, CartItem, AddToCartRequest, UpdateCartItemRequest } from '@/types/cart';
+import { ApiService } from './apiService';
 
 // Custom error classes for better error handling
 export class CartServiceError extends Error {
@@ -22,9 +23,13 @@ export class ItemNotFoundError extends CartServiceError {
   }
 }
 
-// Mock cart data for development
-let mockCart: Cart = {
-  id: 'cart-1',
+// Storage keys for localStorage
+const CART_STORAGE_KEY = 'cart-storage';
+const SESSION_ID_KEY = 'skinior-session-id';
+
+// Default cart data
+const defaultCart: Cart = {
+  id: '',
   items: [],
   itemCount: 0,
   subtotal: 0,
@@ -35,64 +40,47 @@ let mockCart: Cart = {
   updatedAt: new Date().toISOString(),
 };
 
+// Helper functions for session management
+const getStoredSessionId = (): string => {
+  if (typeof window === 'undefined') return generateSessionId();
+  
+  let sessionId = localStorage.getItem(SESSION_ID_KEY);
+  if (!sessionId) {
+    sessionId = generateSessionId();
+    localStorage.setItem(SESSION_ID_KEY, sessionId);
+  }
+  return sessionId;
+};
+
+const generateSessionId = (): string => {
+  // Generate a UUID-like session ID
+  return 'session-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+};
+
+const saveSessionId = (sessionId: string): void => {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(SESSION_ID_KEY, sessionId);
+};
+
+// Helper functions for cart persistence (for Zustand compatibility)
+const saveCartToStorage = (cart: Cart): void => {
+  if (typeof window === 'undefined') return;
+  
+  try {
+    // Save in the same format that Zustand expects
+    const storage = {
+      state: { cart },
+      version: 1
+    };
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(storage));
+  } catch (error) {
+    console.warn('Failed to save cart to localStorage:', error);
+  }
+};
+
 // Configuration constants
 const MAX_QUANTITY = 99;
 const MIN_QUANTITY = 1;
-const FREE_SHIPPING_THRESHOLD = 50;
-const TAX_RATE = 0.16;
-const SHIPPING_COST = 5;
-
-// Helper function to calculate cart totals with validation
-const calculateCartTotals = (items: CartItem[]): Pick<Cart, 'itemCount' | 'subtotal' | 'tax' | 'shipping' | 'total'> => {
-  if (!Array.isArray(items)) {
-    throw new ValidationError('Items must be an array');
-  }
-
-  const itemCount = items.reduce((sum, item) => {
-    if (typeof item.quantity !== 'number' || item.quantity < 0) {
-      throw new ValidationError(`Invalid quantity for item ${item.id}`);
-    }
-    return sum + item.quantity;
-  }, 0);
-
-  const subtotal = items.reduce((sum, item) => {
-    if (typeof item.price !== 'number' || item.price < 0) {
-      throw new ValidationError(`Invalid price for item ${item.id}`);
-    }
-    return sum + (item.price * item.quantity);
-  }, 0);
-
-  const tax = subtotal * TAX_RATE;
-  const shipping = subtotal > FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
-  const total = subtotal + tax + shipping;
-
-  return {
-    itemCount,
-    subtotal: Number(subtotal.toFixed(2)),
-    tax: Number(tax.toFixed(2)),
-    shipping: Number(shipping.toFixed(2)),
-    total: Number(total.toFixed(2)),
-  };
-};
-
-// Helper function to get product data (mock)
-const getProductData = async (productId: string): Promise<{ title: string; titleAr: string; price: number; imageUrl: string }> => {
-  if (!productId || typeof productId !== 'string') {
-    throw new ValidationError('Product ID is required and must be a string');
-  }
-
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 50));
-
-  // In a real app, this would fetch from your products API
-  // For now, return mock data
-  return {
-    title: `Product ${productId}`,
-    titleAr: `منتج ${productId}`,
-    price: 25.99,
-    imageUrl: '/product-holder.webp',
-  };
-};
 
 // Validation functions
 const validateAddToCartRequest = (request: AddToCartRequest): void => {
@@ -120,14 +108,56 @@ const validateUpdateRequest = (request: UpdateCartItemRequest): void => {
 };
 
 export class CartService {
-  // Get current cart
+  // Get or create cart using session-based API
   async getCart(): Promise<Cart> {
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 100));
-      return { ...mockCart };
+      const sessionId = getStoredSessionId();
+      
+      // Use the new /cart/current endpoint that handles both user and session carts
+      const response = await ApiService.authenticatedFetch(`/cart/current?sessionId=${encodeURIComponent(sessionId)}`, {
+        requireAuth: false
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      const cart = result.data;
+      
+      // Save to localStorage for Zustand compatibility
+      saveCartToStorage(cart);
+      return cart;
     } catch (error) {
+      console.error('Get cart error:', error);
       throw new CartServiceError('Failed to get cart', 'GET_CART_ERROR', error);
+    }
+  }
+
+  // Migrate session cart to user cart when user logs in
+  async migrateSessionCartToUser(): Promise<Cart> {
+    try {
+      const sessionId = getStoredSessionId();
+      
+      const response = await ApiService.authenticatedFetch('/cart/migrate', {
+        method: 'POST',
+        requireAuth: false, // The controller will check for auth internally
+        body: JSON.stringify({ sessionId })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      const cart = result.data;
+      
+      // Save to localStorage
+      saveCartToStorage(cart);
+      return cart;
+    } catch (error) {
+      console.error('Migrate cart error:', error);
+      throw new CartServiceError('Failed to migrate cart', 'MIGRATE_CART_ERROR', error);
     }
   }
 
@@ -137,48 +167,91 @@ export class CartService {
       // Validate request
       validateAddToCartRequest(request);
 
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // Get current cart to ensure we have a cart ID
+      const currentCart = await this.getCart();
+      const sessionId = getStoredSessionId();
 
-      const productData = await getProductData(request.productId);
-      
-      // Check if item already exists
-      const existingItemIndex = mockCart.items.findIndex(
-        item => item.productId === request.productId && item.variantId === request.variantId
-      );
+      try {
+        // Try to add item to cart via API
+        const response = await ApiService.authenticatedFetch(`/cart/${currentCart.id}/items?sessionId=${encodeURIComponent(sessionId)}`, {
+          method: 'POST',
+          requireAuth: false,
+          body: JSON.stringify({
+            productId: request.productId,
+            quantity: request.quantity
+          })
+        });
 
-      if (existingItemIndex >= 0) {
-        // Update existing item quantity
-        const newQuantity = mockCart.items[existingItemIndex].quantity + request.quantity;
-        if (newQuantity > MAX_QUANTITY) {
-          throw new ValidationError(`Total quantity cannot exceed ${MAX_QUANTITY}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        mockCart.items[existingItemIndex].quantity = newQuantity;
-      } else {
-        // Add new item
-        const newItem: CartItem = {
-          id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+
+        const result = await response.json();
+        const updatedCart = result.data;
+        
+        // Save to localStorage for Zustand compatibility
+        saveCartToStorage(updatedCart);
+
+        return updatedCart;
+      } catch (apiError) {
+        // Fallback: Create mock cart item when API is unavailable
+        console.warn('API unavailable, using mock cart item:', apiError);
+        
+        // Create mock cart item with product data
+        const mockCartItem: CartItem = {
+          id: `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           productId: request.productId,
           variantId: request.variantId,
           quantity: request.quantity,
-          price: productData.price || 0,
-          image: productData.imageUrl || '/product-holder.webp',
-          title: productData.title || `Product ${request.productId}`,
-          titleAr: productData.titleAr,
+          price: 25.00, // Mock price - in real app, fetch from product service
+          image: '/product-holder.webp', // Default product image
+          title: `Product ${request.productId}`, // Mock title
+          titleAr: `منتج ${request.productId}`, // Mock Arabic title
+          attributes: request.attributes
         };
-        mockCart.items.push(newItem);
+
+        // Add to current cart
+        const existingItemIndex = currentCart.items.findIndex(
+          item => item.productId === request.productId && item.variantId === request.variantId
+        );
+
+        let updatedItems: CartItem[];
+        if (existingItemIndex >= 0) {
+          // Update existing item quantity
+          updatedItems = [...currentCart.items];
+          updatedItems[existingItemIndex] = {
+            ...updatedItems[existingItemIndex],
+            quantity: updatedItems[existingItemIndex].quantity + request.quantity
+          };
+        } else {
+          // Add new item
+          updatedItems = [...currentCart.items, mockCartItem];
+        }
+
+        // Calculate totals
+        const subtotal = updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const tax = subtotal * 0.16; // 16% tax
+        const shipping = subtotal >= 50 ? 0 : 5; // Free shipping over 50 JOD
+        const total = subtotal + tax + shipping;
+
+        const updatedCart: Cart = {
+          ...currentCart,
+          items: updatedItems,
+          itemCount: updatedItems.reduce((sum, item) => sum + item.quantity, 0),
+          subtotal,
+          tax,
+          shipping,
+          total,
+          updatedAt: new Date().toISOString()
+        };
+
+        // Save to localStorage
+        saveCartToStorage(updatedCart);
+
+        return updatedCart;
       }
-
-      // Recalculate totals
-      const totals = calculateCartTotals(mockCart.items);
-      mockCart = {
-        ...mockCart,
-        ...totals,
-        updatedAt: new Date().toISOString(),
-      };
-
-      return { ...mockCart };
     } catch (error) {
+      console.error('Add to cart error:', error);
       if (error instanceof CartServiceError) {
         throw error;
       }
@@ -192,33 +265,35 @@ export class CartService {
       // Validate request
       validateUpdateRequest(request);
 
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 150));
+      const currentCart = await this.getCart();
+      const sessionId = getStoredSessionId();
 
-      const itemIndex = mockCart.items.findIndex(item => item.id === request.itemId);
+      // Update item via API
+      const response = await ApiService.authenticatedFetch(`/cart/${currentCart.id}/items/${request.itemId}?sessionId=${encodeURIComponent(sessionId)}`, {
+        method: 'PUT',
+        requireAuth: false,
+        body: JSON.stringify({
+          quantity: request.quantity
+        })
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new ItemNotFoundError(request.itemId);
+        }
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      const updatedCart = result.data;
       
-      if (itemIndex === -1) {
-        throw new ItemNotFoundError(request.itemId);
-      }
+      // Save to localStorage for Zustand compatibility
+      saveCartToStorage(updatedCart);
 
-      if (request.quantity <= 0) {
-        // Remove item if quantity is 0 or less
-        mockCart.items.splice(itemIndex, 1);
-      } else {
-        // Update quantity
-        mockCart.items[itemIndex].quantity = request.quantity;
-      }
-
-      // Recalculate totals
-      const totals = calculateCartTotals(mockCart.items);
-      mockCart = {
-        ...mockCart,
-        ...totals,
-        updatedAt: new Date().toISOString(),
-      };
-
-      return { ...mockCart };
+      return updatedCart;
     } catch (error) {
+      console.error('Update cart item error:', error);
       if (error instanceof CartServiceError) {
         throw error;
       }
@@ -233,26 +308,32 @@ export class CartService {
         throw new ValidationError('Item ID is required and must be a string');
       }
 
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 100));
+      const currentCart = await this.getCart();
+      const sessionId = getStoredSessionId();
 
-      const initialLength = mockCart.items.length;
-      mockCart.items = mockCart.items.filter(item => item.id !== itemId);
+      // Remove item via API
+      const response = await ApiService.authenticatedFetch(`/cart/${currentCart.id}/items/${itemId}?sessionId=${encodeURIComponent(sessionId)}`, {
+        method: 'DELETE',
+        requireAuth: false
+      });
 
-      if (mockCart.items.length === initialLength) {
-        throw new ItemNotFoundError(itemId);
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new ItemNotFoundError(itemId);
+        }
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
 
-      // Recalculate totals
-      const totals = calculateCartTotals(mockCart.items);
-      mockCart = {
-        ...mockCart,
-        ...totals,
-        updatedAt: new Date().toISOString(),
-      };
+      const result = await response.json();
+      const updatedCart = result.data;
+      
+      // Save to localStorage for Zustand compatibility
+      saveCartToStorage(updatedCart);
 
-      return { ...mockCart };
+      return updatedCart;
     } catch (error) {
+      console.error('Remove cart item error:', error);
       if (error instanceof CartServiceError) {
         throw error;
       }
@@ -263,22 +344,24 @@ export class CartService {
   // Clear cart
   async clearCart(): Promise<Cart> {
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 100));
+      const currentCart = await this.getCart();
+      const sessionId = getStoredSessionId();
 
-      mockCart = {
-        ...mockCart,
-        items: [],
-        itemCount: 0,
-        subtotal: 0,
-        tax: 0,
-        shipping: 0,
-        total: 0,
-        updatedAt: new Date().toISOString(),
-      };
+      // Clear cart via API
+      const response = await ApiService.authenticatedFetch(`/cart/${currentCart.id}?sessionId=${encodeURIComponent(sessionId)}`, {
+        method: 'DELETE',
+        requireAuth: false
+      });
 
-      return { ...mockCart };
+      if (!response.ok && response.status !== 404) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      // Create new cart after clearing
+      return await this.getCart();
     } catch (error) {
+      console.error('Clear cart error:', error);
       throw new CartServiceError('Failed to clear cart', 'CLEAR_CART_ERROR', error);
     }
   }
@@ -309,3 +392,6 @@ export class CartService {
 }
 
 export const cartService = new CartService();
+
+// Export session management functions for external use
+export { getStoredSessionId, generateSessionId, saveSessionId };

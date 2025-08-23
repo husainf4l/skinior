@@ -106,9 +106,9 @@
               </div>
 
               <!-- Validation Errors -->
-              <div *ngIf="validationResult.errors.length > 0" class="validation-errors">
+              <div *ngIf="validationResult?.validation?.errors && validationResult.validation.errors.length > 0" class="validation-errors">
                 <h4>Validation Errors:</h4>
-                <mat-table [dataSource]="validationResult.errors" class="validation-table">
+                <mat-table [dataSource]="validationResult.validation.errors" class="validation-table">
                   <ng-container matColumnDef="row">
                     <mat-header-cell *matHeaderCellDef>Row</mat-header-cell>
                     <mat-cell *matCellDef="let error">{{ error.row }}</mat-cell>
@@ -135,9 +135,9 @@
               </div>
 
               <!-- Validation Warnings -->
-              <div *ngIf="validationResult.warnings.length > 0" class="validation-warnings">
+              <div *ngIf="validationResult?.validation?.warnings && validationResult.validation.warnings.length > 0" class="validation-warnings">
                 <h4>Warnings:</h4>
-                <mat-table [dataSource]="validationResult.warnings" class="validation-table">
+                <mat-table [dataSource]="validationResult.validation.warnings" class="validation-table">
                   <ng-container matColumnDef="row">
                     <mat-header-cell *matHeaderCellDef>Row</mat-header-cell>
                     <mat-cell *matCellDef="let warning">{{ warning.row }}</mat-cell>

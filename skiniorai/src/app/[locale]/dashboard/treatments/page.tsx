@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useLocale } from "next-intl";
 import Link from "next/link";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { useTreatments } from "@/hooks/useDashboard";
 import {
   DashboardSkeleton,
-  TreatmentCardSkeleton,
+  // TreatmentCardSkeleton,  // Currently unused
   ErrorState,
   EmptyState,
 } from "@/components/dashboard/DashboardSkeleton";
@@ -15,14 +15,15 @@ import {
 export default function TreatmentsPage() {
   const locale = useLocale();
   const isRTL = locale === "ar";
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [selectedTreatment, setSelectedTreatment] = useState<any>(null);
+  // State variables removed as they were unused
+  // const [showCreateForm, setShowCreateForm] = React.useState(false);
+  // const [selectedTreatment, setSelectedTreatment] = React.useState<unknown>(null);
 
   const {
     treatments,
     loading,
     error,
-    createTreatment,
+    // createTreatment,  // Currently unused
     updateTreatment,
     refetch,
   } = useTreatments();
@@ -125,7 +126,7 @@ export default function TreatmentsPage() {
               </p>
             </div>
             <button
-              onClick={() => setShowCreateForm(true)}
+              onClick={() => {}}
               className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors flex items-center space-x-2"
             >
               <svg
@@ -192,7 +193,7 @@ export default function TreatmentsPage() {
                     {isRTL ? "نشط" : "Active"}
                   </p>
                   <p className="text-3xl font-semibold text-gray-900">
-                    {treatments?.filter((t: any) => t.status === "active").length || 0}
+                    {treatments?.filter((t) => t.status === "active").length || 0}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
@@ -224,7 +225,7 @@ export default function TreatmentsPage() {
                     {isRTL ? "مكتمل" : "Completed"}
                   </p>
                   <p className="text-3xl font-semibold text-gray-900">
-                    {treatments?.filter((t: any) => t.status === "completed").length || 0}
+                    {treatments?.filter((t) => t.status === "completed").length || 0}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
@@ -258,7 +259,7 @@ export default function TreatmentsPage() {
                   <p className="text-3xl font-semibold text-gray-900">
                     {treatments && treatments.length > 0
                       ? Math.round(
-                          treatments.reduce((acc: number, t: any) => acc + (t.progress || 0), 0) /
+                          treatments.reduce((acc: number, t) => acc + (t.progress || 0), 0) /
                             treatments.length
                         )
                       : 0}%
@@ -297,7 +298,7 @@ export default function TreatmentsPage() {
             <div className="p-6">
               {treatments && treatments.length > 0 ? (
                 <div className="space-y-6">
-                  {treatments.map((treatment: any) => (
+                  {treatments.map((treatment) => (
                     <div
                       key={treatment.id}
                       className="p-6 border border-gray-100 rounded-xl hover:shadow-md transition-shadow"
@@ -324,7 +325,7 @@ export default function TreatmentsPage() {
                               {treatment.name}
                             </h3>
                             <p className="text-sm text-gray-600">
-                              {isRTL ? "بدأ في" : "Started"} {formatDate(treatment.startDate)}
+                              {isRTL ? "بدأ في" : "Started"} {formatDate(treatment.startDate || treatment.createdAt)}
                             </p>
                           </div>
                         </div>
@@ -337,7 +338,7 @@ export default function TreatmentsPage() {
                             {getStatusText(treatment.status)}
                           </span>
                           <button
-                            onClick={() => setSelectedTreatment(treatment)}
+                            onClick={() => {}}
                             className="text-blue-600 hover:text-blue-700 text-sm font-medium"
                           >
                             {isRTL ? "عرض التفاصيل" : "View Details"}
@@ -430,7 +431,7 @@ export default function TreatmentsPage() {
                       : "You haven't created any treatment plans yet. Start by creating a personalized treatment plan."
                   }
                   actionLabel={isRTL ? "إنشاء خطة علاج" : "Create Treatment Plan"}
-                  onAction={() => setShowCreateForm(true)}
+                  onAction={() => {}}
                   icon={
                     <svg
                       className="w-8 h-8 text-gray-400"
@@ -536,7 +537,7 @@ export default function TreatmentsPage() {
               </Link>
 
               <button
-                onClick={() => setShowCreateForm(true)}
+                onClick={() => {}}
                 className="flex items-center p-4 bg-white rounded-xl hover:shadow-md transition-shadow"
               >
                 <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">

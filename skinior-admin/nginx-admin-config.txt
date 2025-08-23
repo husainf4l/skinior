@@ -1,0 +1,20 @@
+    # Admin Panel - serve static files
+    location = /admin { return 301 /admin/; }
+    
+    location /admin/ {
+        alias /var/www/skinior-admin/;
+        index index.html;
+        try_files $uri $uri/ /admin/index.html;
+        
+        # Cache static assets
+        location ~* \.(css|js|png|jpg|jpeg|gif|ico|svg|woff2?)$ {
+            expires 1y;
+            add_header Cache-Control "public, max-age=31536000, immutable";
+        }
+    }
+    
+    # Ensure index.html is not cached
+    location = /admin/index.html {
+        alias /var/www/skinior-admin/index.html;
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+    }

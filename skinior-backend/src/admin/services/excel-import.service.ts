@@ -10,6 +10,7 @@ export interface ExcelProductRow {
   compareAtPrice?: number;
   currency?: string;
   sku?: string;
+  barcode?: string;
   isActive?: boolean;
   isFeatured?: boolean;
   isNew?: boolean;
@@ -19,6 +20,7 @@ export interface ExcelProductRow {
   activeIngredients?: string;
   skinType?: string;
   usage?: string;
+  concerns?: string;
   features?: string;
   ingredients?: string;
   howToUse?: string;
@@ -27,8 +29,9 @@ export interface ExcelProductRow {
   howToUseAr?: string;
   metaTitle?: string;
   metaDescription?: string;
-  concerns?: string;
   imageUrls?: string;
+  // Product attributes (for variants like size, color etc.)
+  attributes?: string; // JSON string or comma-separated attribute values
   [key: string]: any; // Allow additional string keys
 }
 
@@ -132,11 +135,11 @@ export class ExcelImportService {
       }
       
       // Optional field validation
-      if (product.compareAtPrice !== undefined && !isNaN(product.compareAtPrice)) {
+      if (product.compareAtPrice !== undefined && product.compareAtPrice !== null && !isNaN(product.compareAtPrice)) {
         if (product.compareAtPrice < 0) {
           rowErrors.push(`Row ${rowNumber}: Compare at price cannot be negative`);
         }
-        if (product.price && product.compareAtPrice <= product.price) {
+        if (product.price && product.compareAtPrice > 0 && product.compareAtPrice <= product.price) {
           rowWarnings.push(`Row ${rowNumber}: Compare at price should be higher than regular price`);
         }
       }
@@ -150,6 +153,10 @@ export class ExcelImportService {
       // Email/SKU format validation
       if (product.sku && product.sku.length > 100) {
         rowWarnings.push(`Row ${rowNumber}: SKU is very long, consider shortening it`);
+      }
+      
+      if (product.barcode && product.barcode.length > 50) {
+        rowWarnings.push(`Row ${rowNumber}: Barcode is very long, consider shortening it`);
       }
       
       // Currency validation
@@ -182,93 +189,101 @@ export class ExcelImportService {
    */
   generateTemplate(): Buffer {
     const headers = [
-      'Title*',
-      'Title (Arabic)',
-      'Description (English)',
-      'Description (Arabic)',
-      'Price*',
-      'Compare At Price',
-      'Currency',
-      'SKU',
-      'Is Active',
-      'Is Featured',
-      'Is New',
-      'Stock Quantity',
-      'Category Name',
-      'Brand Name',
-      'Active Ingredients',
-      'Skin Type',
-      'Usage',
-      'Features',
-      'Ingredients',
-      'How To Use',
-      'Features (Arabic)',
-      'Ingredients (Arabic)',
-      'How To Use (Arabic)',
-      'Meta Title',
-      'Meta Description',
-      'Concerns',
-      'Image URLs',
+      'Title*',                    // maps to: title
+      'Title (Arabic)',           // maps to: titleAr
+      'Description (English)',    // maps to: descriptionEn
+      'Description (Arabic)',     // maps to: descriptionAr
+      'Price*',                   // maps to: price
+      'Compare At Price',         // maps to: compareAtPrice
+      'Currency',                 // maps to: currency
+      'SKU',                      // maps to: sku
+      'Barcode',                  // maps to: barcode
+      'Is Active',                // maps to: isActive
+      'Is Featured',              // maps to: isFeatured
+      'Is New',                   // maps to: isNew
+      'Stock Quantity',           // maps to: stockQuantity
+      'Category Name',            // maps to: categoryName
+      'Brand Name',               // maps to: brandName
+      'Active Ingredients',       // maps to: activeIngredients
+      'Skin Type',                // maps to: skinType
+      'Usage',                    // maps to: usage
+      'Concerns',                 // maps to: concerns
+      'Features',                 // maps to: features
+      'Ingredients',              // maps to: ingredients
+      'How To Use',               // maps to: howToUse
+      'Features (Arabic)',        // maps to: featuresAr
+      'Ingredients (Arabic)',     // maps to: ingredientsAr
+      'How To Use (Arabic)',      // maps to: howToUseAr
+      'Meta Title',               // maps to: metaTitle
+      'Meta Description',         // maps to: metaDescription
+      'Image URLs',               // maps to: imageUrls
+      'Attributes',               // maps to: attributes
     ];
     
     const sampleData = [
       [
-        'Vitamin C Brightening Serum',
-        'سيروم فيتامين سي المضيء',
-        'A powerful vitamin C serum that brightens and evens skin tone',
-        'سيروم فيتامين سي قوي يضيء ويوحد لون البشرة',
-        45.99,
-        59.99,
-        'JOD',
-        'VCS001',
-        'TRUE',
-        'TRUE',
-        'FALSE',
-        100,
-        'Serums',
-        'The Ordinary',
-        '25% Vitamin C, Hyaluronic Acid',
-        'All skin types',
-        'Morning',
-        'Brightening, Anti-aging, Hydrating',
-        'Vitamin C, Water, Glycerin',
-        'Apply 2-3 drops to clean skin in the morning',
-        'مضيء، مضاد للشيخوخة، مرطب',
-        'فيتامين سي، ماء، جليسرين',
-        'ضع 2-3 قطرات على البشرة النظيفة في الصباح',
-        'Best Vitamin C Serum for Brightening',
-        'Shop our best-selling vitamin C serum for brighter, more even skin tone',
-        'Dark spots, Dullness, Fine lines',
-        'https://example.com/image1.jpg, https://example.com/image2.jpg',
+        // English product example
+        'Vitamin C Brightening Serum',                                      // Title*
+        'سيروم فيتامين سي المضيء',                                           // Title (Arabic)
+        'A powerful vitamin C serum that brightens and evens skin tone',    // Description (English)
+        'سيروم فيتامين سي قوي يضيء ويوحد لون البشرة ويمنحها إشراقاً طبيعياً',  // Description (Arabic)
+        45.99,                                                              // Price*
+        59.99,                                                              // Compare At Price
+        'JOD',                                                              // Currency
+        'VCS001',                                                           // SKU
+        '1234567890123',                                                    // Barcode
+        'TRUE',                                                             // Is Active
+        'TRUE',                                                             // Is Featured
+        'FALSE',                                                            // Is New
+        100,                                                                // Stock Quantity
+        'Serums',                                                           // Category Name
+        'The Ordinary',                                                     // Brand Name
+        '25% Vitamin C, Hyaluronic Acid',                                  // Active Ingredients
+        'All skin types',                                                   // Skin Type
+        'Morning',                                                          // Usage
+        'Dark spots, Dullness, Fine lines',                                // Concerns
+        'Brightening, Anti-aging, Hydrating',                              // Features
+        'Vitamin C, Water, Glycerin, Hyaluronic Acid',                     // Ingredients
+        'Apply 2-3 drops to clean skin in the morning',                    // How To Use
+        'مضيء، مضاد للشيخوخة، مرطب',                                        // Features (Arabic)
+        'فيتامين سي، ماء، جليسرين، حمض الهيالورونيك',                        // Ingredients (Arabic)
+        'ضع 2-3 قطرات على البشرة النظيفة في الصباح',                       // How To Use (Arabic)
+        'Best Vitamin C Serum for Brightening',                            // Meta Title
+        'Shop our best-selling vitamin C serum for brighter, more even skin tone', // Meta Description
+        'https://example.com/image1.jpg, https://example.com/image2.jpg',  // Image URLs
+        'Size:30ml, Type:Serum',                                           // Attributes
       ],
       [
-        'Retinol Night Cream',
-        'كريم الريتينول الليلي',
-        'Anti-aging night cream with retinol',
-        'كريم ليلي مضاد للشيخوخة مع الريتينول',
-        38.50,
-        '',
-        'JOD',
-        'RNC002',
-        'TRUE',
-        'FALSE',
-        'TRUE',
-        75,
-        'Moisturizers',
-        'CeraVe',
-        '1% Retinol, Ceramides',
-        'Normal to dry skin',
-        'Night',
-        'Anti-aging, Smoothing, Firming',
-        'Retinol, Ceramides, Niacinamide',
-        'Apply to face and neck before bed',
-        'مضاد للشيخوخة، تنعيم، شد',
-        'ريتينول، سيراميد، نياسيناميد',
-        'يُطبق على الوجه والرقبة قبل النوم',
-        'Best Retinol Night Cream',
-        'Transform your skin overnight with our gentle retinol cream',
-        'Wrinkles, Fine lines, Uneven texture',
-        'https://example.com/retinol1.jpg',
+        // Arabic product example
+        'Retinol Night Cream',                                             // Title*
+        'كريم الريتينول الليلي المغذي',                                     // Title (Arabic)
+        'Anti-aging night cream with retinol for smoother, firmer skin',   // Description (English)
+        'كريم ليلي مضاد للشيخوخة مع الريتينول لبشرة أكثر نعومة وثباتاً',      // Description (Arabic)
+        38.50,                                                             // Price*
+        45.00,                                                             // Compare At Price
+        'JOD',                                                             // Currency
+        'RNC002',                                                          // SKU
+        '9876543210987',                                                   // Barcode
+        'TRUE',                                                            // Is Active
+        'FALSE',                                                           // Is Featured
+        'TRUE',                                                            // Is New
+        75,                                                                // Stock Quantity
+        'Moisturizers',                                                    // Category Name
+        'CeraVe',                                                          // Brand Name
+        '1% Retinol, Ceramides, Niacinamide',                            // Active Ingredients
+        'Normal to dry skin',                                             // Skin Type
+        'Night',                                                          // Usage
+        'Wrinkles, Fine lines, Uneven texture',                          // Concerns
+        'Anti-aging, Smoothing, Firming, Moisturizing',                  // Features
+        'Retinol, Ceramides, Niacinamide, Shea Butter',                  // Ingredients
+        'Apply to face and neck before bed, start 2-3 times per week',   // How To Use
+        'مضاد للشيخوخة، تنعيم، شد، ترطيب',                               // Features (Arabic)
+        'ريتينول، سيراميد، نياسيناميد، زبدة الشيا',                        // Ingredients (Arabic)
+        'يُطبق على الوجه والرقبة قبل النوم، ابدأ 2-3 مرات أسبوعياً',       // How To Use (Arabic)
+        'Best Retinol Night Cream for Anti-Aging',                       // Meta Title
+        'Transform your skin overnight with our gentle retinol cream for visible anti-aging results', // Meta Description
+        'https://example.com/retinol1.jpg, https://example.com/retinol2.jpg', // Image URLs
+        'Size:50ml, Type:Cream, Texture:Rich',                           // Attributes
       ],
     ];
     
@@ -293,21 +308,30 @@ export class ExcelImportService {
       [''],
       ['Optional Fields:'],
       ['- All other fields are optional but recommended'],
+      ['- Compare At Price: Leave empty if no discount, otherwise must be higher than regular price'],
       ['- Boolean fields: Use TRUE/FALSE or 1/0'],
       ['- Image URLs: Separate multiple URLs with commas'],
       ['- Features/Concerns: Separate multiple items with commas'],
+      ['- Attributes: Format as "Name:Value, Name:Value" (e.g., "Size:30ml, Color:Blue")'],
       [''],
       ['Data Format Guidelines:'],
       ['- Use consistent currency codes (USD, JOD, EUR, SAR)'],
       ['- Stock quantities should be whole numbers'],
-      ['- SKUs should be unique'],
+      ['- SKUs and Barcodes should be unique'],
       ['- Categories and Brands will be created if they don\'t exist'],
+      ['- Product attributes will be created automatically from the Attributes field'],
+      [''],
+      ['New Fields Added:'],
+      ['- Barcode: Product barcode for inventory management'],
+      ['- Concerns: Skin concerns this product addresses (comma-separated)'],
+      ['- Attributes: Product variants like size, color, type (format: "Name:Value, Name:Value")'],
       [''],
       ['Tips:'],
       ['- Remove empty rows before importing'],
       ['- Ensure data types match expected formats'],
       ['- Test with a small batch first'],
       ['- Check the validation results carefully'],
+      ['- Use consistent naming for attributes across products'],
     ];
     
     const instructionsSheet = XLSX.utils.aoa_to_sheet(instructionsData);
@@ -323,56 +347,92 @@ export class ExcelImportService {
   private normalizeHeader(header: string): string {
     if (!header || typeof header !== 'string') return '';
     
-    const normalized = header.toLowerCase().trim().replace(/[*\s]/g, '');
+    // Remove asterisks, parentheses, and normalize spaces
+    const normalized = header.toLowerCase().trim()
+      .replace(/[*\(\)]/g, '')
+      .replace(/\s+/g, '')
+      .replace(/-/g, '');
     
     const headerMap: { [key: string]: string } = {
+      // Basic fields
       'title': 'title',
       'titlearabic': 'titleAr',
       'titleinarabic': 'titleAr',
+      
+      // Description fields
       'descriptionenglish': 'descriptionEn',
       'description': 'descriptionEn',
       'descriptionen': 'descriptionEn',
       'descriptionarabic': 'descriptionAr',
       'descriptionar': 'descriptionAr',
+      
+      // Price fields
       'price': 'price',
       'compareatprice': 'compareAtPrice',
       'compareprice': 'compareAtPrice',
       'currency': 'currency',
+      
+      // Product identifiers
       'sku': 'sku',
+      'barcode': 'barcode',
+      
+      // Boolean flags
       'isactive': 'isActive',
       'active': 'isActive',
       'isfeatured': 'isFeatured',
       'featured': 'isFeatured',
       'isnew': 'isNew',
       'new': 'isNew',
+      
+      // Inventory
       'stockquantity': 'stockQuantity',
       'stock': 'stockQuantity',
       'quantity': 'stockQuantity',
+      
+      // Category and Brand
       'categoryname': 'categoryName',
       'category': 'categoryName',
       'brandname': 'brandName',
       'brand': 'brandName',
+      
+      // Skincare specific
       'activeingredients': 'activeIngredients',
-      'ingredients': 'activeIngredients',
       'skintype': 'skinType',
       'usage': 'usage',
+      'concerns': 'concerns',
+      
+      // Product details
       'features': 'features',
+      'ingredients': 'ingredients',
       'ingredientslist': 'ingredients',
       'howtouse': 'howToUse',
+      
+      // Arabic versions
       'featuresarabic': 'featuresAr',
       'featuresar': 'featuresAr',
       'ingredientsarabic': 'ingredientsAr',
       'ingredientsar': 'ingredientsAr',
       'howtousearabic': 'howToUseAr',
       'howtousear': 'howToUseAr',
+      
+      // SEO fields
       'metatitle': 'metaTitle',
       'metadescription': 'metaDescription',
-      'concerns': 'concerns',
+      
+      // Media and variants
       'imageurls': 'imageUrls',
       'images': 'imageUrls',
+      'attributes': 'attributes',
     };
     
-    return headerMap[normalized] || normalized;
+    const mapped = headerMap[normalized];
+    if (mapped) {
+      return mapped;
+    }
+    
+    // Debug logging for unmapped headers
+    console.log(`⚠️  Unmapped header: "${header}" -> normalized: "${normalized}"`);
+    return normalized;
   }
   
   /**
@@ -384,10 +444,22 @@ export class ExcelImportService {
     try {
       switch (header) {
         case 'price':
+          const priceValue = typeof value === 'number' ? value : parseFloat(value);
+          if (!isNaN(priceValue)) {
+            product[header] = priceValue;
+          }
+          break;
+          
         case 'compareAtPrice':
+          const compareValue = typeof value === 'number' ? value : parseFloat(value);
+          if (!isNaN(compareValue) && compareValue >= 0) {
+            product[header] = compareValue;
+          }
+          break;
+          
         case 'stockQuantity':
           const numValue = typeof value === 'number' ? value : parseFloat(value);
-          if (!isNaN(numValue)) {
+          if (!isNaN(numValue) && numValue > 0) {
             product[header] = numValue;
           }
           break;
@@ -404,6 +476,7 @@ export class ExcelImportService {
         case 'features':
         case 'concerns':
         case 'imageUrls':
+        case 'attributes':
           // Convert comma-separated strings to arrays
           if (typeof value === 'string') {
             const arrayValue = value.split(',').map(s => s.trim()).filter(s => s.length > 0);

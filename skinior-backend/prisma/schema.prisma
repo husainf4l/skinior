@@ -250,6 +250,7 @@ model OrderItem {
 model Cart {
   id           String     @id @default(uuid())
   customerId   String?
+  sessionId    String? // For anonymous users
   currency     String     @default("USD")
   discountCode String?
   items        CartItem[]
@@ -258,6 +259,7 @@ model Cart {
   expiresAt    DateTime   @default(dbgenerated("NOW() + INTERVAL '30 days'"))
 
   @@index([customerId])
+  @@index([sessionId])
   @@index([expiresAt])
 }
 

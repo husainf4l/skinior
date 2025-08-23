@@ -52,13 +52,30 @@ const validateUpdateRequest = (request: UpdateCartItemRequest): boolean => {
 
 export const useCartStore = create<CartStore>()(
   persist(
-    (set, get) => ({
-      // Initial state
-      cart: null,
-      isLoading: false,
-      isDrawerOpen: false,
-      error: null,
-      optimisticUpdates: new Set(),
+    (set, get) => {
+      // Auto-load cart on store initialization
+      const autoLoadCart = async () => {
+        const state = get();
+        if (!state.cart && !state.isLoading) {
+          try {
+            const cart = await cartService.getCart();
+            set({ cart });
+          } catch (error) {
+            console.warn('Failed to auto-load cart:', error);
+          }
+        }
+      };
+
+      // Initialize auto-load after store is created
+      setTimeout(() => autoLoadCart(), 0);
+
+      return {
+        // Initial state
+        cart: null,
+        isLoading: false,
+        isDrawerOpen: false,
+        error: null,
+        optimisticUpdates: new Set(),
 
       // Validation methods
       validateCartItem: validateAddToCartRequest,
@@ -259,16 +276,17 @@ export const useCartStore = create<CartStore>()(
 
       // Error handling
       clearError: () => set({ error: null }),
-    }),
+      };
+    },
     {
       name: 'cart-storage',
       partialize: (state) => ({ cart: state.cart }), // Only persist cart data, not loading states
       version: 1, // Add version for future migrations
-      migrate: (persistedState: any, version: number) => {
+      migrate: (persistedState: unknown, version: number) => {
         // Handle future migrations here
         if (version === 0) {
           // Migrate from version 0 to 1
-          return { ...persistedState, version: 1 };
+          return { ...(persistedState as Record<string, unknown>), version: 1 };
         }
         return persistedState;
       },

@@ -21,7 +21,7 @@ export default function CartDrawer() {
   const cartError = useCartError();
   const optimisticUpdates = useCartOptimisticUpdates();
   const isRTL = locale === "ar";
-  
+
   const [localError, setLocalError] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
 
@@ -40,55 +40,66 @@ export default function CartDrawer() {
     }
   }, [isOpen, clearError]);
 
-  const formatPrice = (price: number) => {
-    return isRTL ? `${price.toFixed(2)} د.أ` : `JOD ${price.toFixed(2)}`;
+  const formatPrice = (price: number | undefined | null) => {
+    const safePrice = price ?? 0;
+    return isRTL
+      ? `${safePrice.toFixed(2)} د.أ`
+      : `JOD ${safePrice.toFixed(2)}`;
   };
 
-  const handleQuantityChange = useCallback(async (itemId: string, newQuantity: number) => {
-    if (!itemId || typeof newQuantity !== 'number') {
-      setLocalError('Invalid quantity');
-      return;
-    }
-
-    setIsUpdating(itemId);
-    setLocalError(null);
-    clearError();
-
-    try {
-      if (newQuantity <= 0) {
-        await removeItem(itemId);
-      } else {
-        await updateItem({ itemId, quantity: newQuantity });
+  const handleQuantityChange = useCallback(
+    async (itemId: string, newQuantity: number) => {
+      if (!itemId || typeof newQuantity !== "number") {
+        setLocalError("Invalid quantity");
+        return;
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update quantity';
-      setLocalError(errorMessage);
-      console.error('Quantity update error:', error);
-    } finally {
-      setIsUpdating(null);
-    }
-  }, [removeItem, updateItem, clearError]);
 
-  const handleRemoveItem = useCallback(async (itemId: string) => {
-    if (!itemId) {
-      setLocalError('Invalid item ID');
-      return;
-    }
+      setIsUpdating(itemId);
+      setLocalError(null);
+      clearError();
 
-    setIsUpdating(itemId);
-    setLocalError(null);
-    clearError();
+      try {
+        if (newQuantity <= 0) {
+          await removeItem(itemId);
+        } else {
+          await updateItem({ itemId, quantity: newQuantity });
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to update quantity";
+        setLocalError(errorMessage);
+        console.error("Quantity update error:", error);
+      } finally {
+        setIsUpdating(null);
+      }
+    },
+    [removeItem, updateItem, clearError]
+  );
 
-    try {
-      await removeItem(itemId);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to remove item';
-      setLocalError(errorMessage);
-      console.error('Remove item error:', error);
-    } finally {
-      setIsUpdating(null);
-    }
-  }, [removeItem, clearError]);
+  const handleRemoveItem = useCallback(
+    async (itemId: string) => {
+      if (!itemId) {
+        setLocalError("Invalid item ID");
+        return;
+      }
+
+      setIsUpdating(itemId);
+      setLocalError(null);
+      clearError();
+
+      try {
+        await removeItem(itemId);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to remove item";
+        setLocalError(errorMessage);
+        console.error("Remove item error:", error);
+      } finally {
+        setIsUpdating(null);
+      }
+    },
+    [removeItem, clearError]
+  );
 
   const handleClose = useCallback(() => {
     setLocalError(null);
@@ -131,7 +142,8 @@ export default function CartDrawer() {
                   Shopping Cart
                 </h2>
                 <p className="text-sm text-gray-500">
-                  {cart?.itemCount || 0} {cart?.itemCount === 1 ? "item" : "items"}
+                  {cart?.itemCount || 0}{" "}
+                  {cart?.itemCount === 1 ? "item" : "items"}
                 </p>
               </div>
 
@@ -183,8 +195,18 @@ export default function CartDrawer() {
                   className="ml-auto text-red-500 hover:text-red-700"
                   aria-label="Dismiss error"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -238,30 +260,36 @@ export default function CartDrawer() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {cart.items.map((item, index) => {
+                  {cart.items.map((item) => {
                     const isItemUpdating = isUpdating === item.id;
                     const isOptimistic = optimisticUpdates.has(item.id);
-                    
+
                     return (
                       <div
                         key={item.id}
                         className={`group relative p-4 border border-gray-200 rounded-lg bg-white ${
-                          isItemUpdating || isOptimistic ? 'opacity-75 pointer-events-none' : ''
+                          isItemUpdating || isOptimistic
+                            ? "opacity-75 pointer-events-none"
+                            : ""
                         }`}
                       >
                         <div className="flex items-start gap-4">
                           {/* Product Image */}
-                          <div className="relative overflow-hidden rounded-lg flex-shrink-0">
+                          <div className="relative w-20 h-20 overflow-hidden rounded-lg flex-shrink-0 bg-gray-100">
                             <Image
-                              src={item.image}
+                              src={item.image || "/product-holder.webp"}
                               alt={
                                 isRTL
-                                  ? item.titleAr || item.title
-                                  : item.title
+                                  ? item.titleAr || item.title || "Product"
+                                  : item.title || "Product"
                               }
                               width={80}
                               height={80}
                               className="object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = "/product-holder.webp";
+                              }}
                             />
                           </div>
 
@@ -279,38 +307,78 @@ export default function CartDrawer() {
                                 className="text-gray-400 hover:text-red-500 p-1 disabled:opacity-50"
                                 aria-label="Remove item"
                               >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={2}
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M6 18L18 6M6 6l12 12"
+                                  />
                                 </svg>
                               </button>
                             </div>
-                            
+
                             <p className="text-sm font-semibold text-gray-900 mb-3">
-                              {formatPrice(item.price)}
+                              {formatPrice(item.price || 0)}
                             </p>
 
                             {/* Simple Quantity Controls */}
                             <div className="flex items-center justify-between">
                               <div className="flex items-center border border-gray-200 rounded-lg">
                                 <button
-                                  onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                                  onClick={() =>
+                                    handleQuantityChange(
+                                      item.id,
+                                      item.quantity - 1
+                                    )
+                                  }
                                   disabled={isItemUpdating || isOptimistic}
                                   className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-50"
                                 >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={2}
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M20 12H4"
+                                    />
                                   </svg>
                                 </button>
                                 <span className="px-3 text-sm font-medium text-gray-900">
                                   {item.quantity}
                                 </span>
                                 <button
-                                  onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                                  onClick={() =>
+                                    handleQuantityChange(
+                                      item.id,
+                                      item.quantity + 1
+                                    )
+                                  }
                                   disabled={isItemUpdating || isOptimistic}
                                   className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-50"
                                 >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={2}
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M12 4v16m8-8H4"
+                                    />
                                   </svg>
                                 </button>
                               </div>
@@ -332,11 +400,15 @@ export default function CartDrawer() {
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium">{formatPrice(cart.subtotal)}</span>
+                  <span className="font-medium">
+                    {formatPrice(cart.subtotal || 0)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Tax</span>
-                  <span className="font-medium">{formatPrice(cart.tax)}</span>
+                  <span className="font-medium">
+                    {formatPrice(cart.tax || 0)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Shipping</span>
@@ -344,14 +416,14 @@ export default function CartDrawer() {
                     {cart.shipping === 0 ? (
                       <span className="text-green-600">Free</span>
                     ) : (
-                      formatPrice(cart.shipping)
+                      formatPrice(cart.shipping || 0)
                     )}
                   </span>
                 </div>
                 <hr className="my-3" />
                 <div className="flex justify-between text-lg font-semibold">
                   <span>Total</span>
-                  <span>{formatPrice(cart.total)}</span>
+                  <span>{formatPrice(cart.total || 0)}</span>
                 </div>
               </div>
 

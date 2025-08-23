@@ -1,10 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { productsService } from "@/services/productsService";
-import { type Product } from "@/types/product";
+import { type Product, type ProductQueryParams, type ProductsResult } from "@/types/product";
 import ProductCard from "./ProductCard";
 import ProductFilters from "./shop/ProductFilters";
 
@@ -29,10 +29,11 @@ export default function ShopProductList({ locale }: { locale: string }) {
   const searchParams = useSearchParams();
   const isDealsPage = searchParams.get("deals") === "true";
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const [productsResult, setProductsResult] = useState<ProductsResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   // Initialize filter state
   const [filters, setFilters] = useState<FilterState>({
@@ -50,25 +51,126 @@ export default function ShopProductList({ locale }: { locale: string }) {
 
   const debounceRef = useRef<number | null>(null);
 
+  // Load products with API filters
+  const loadProducts = useCallback(async (apiFilters: ProductQueryParams) => {
+    try {
+      const result = await productsService.getProducts(apiFilters);
+      return result;
+    } catch (err) {
+      console.error('Error loading filtered products:', err);
+      throw err;
+    }
+  }, []);
+
+  // Convert filter state to API filters
+  const convertToApiFilters = useCallback((filterState: FilterState, currentPage: number, dealsOnly: boolean): ProductQueryParams => {
+    const apiFilters: ProductQueryParams = {
+      page: currentPage,
+      limit: PAGE_SIZE,
+      isActive: true
+    };
+
+    if (dealsOnly) {
+      apiFilters.onSale = true;
+    }
+
+    if (filterState.query.trim()) {
+      apiFilters.search = filterState.query.trim();
+    }
+
+    if (filterState.category && filterState.category !== 'all') {
+      apiFilters.category = filterState.category;
+    }
+
+    if (filterState.brand && filterState.brand !== 'all') {
+      apiFilters.brand = filterState.brand;
+    }
+
+    if (filterState.priceRange[0] > 0) {
+      apiFilters.minPrice = filterState.priceRange[0];
+    }
+
+    if (filterState.priceRange[1] < 1000) {
+      apiFilters.maxPrice = filterState.priceRange[1];
+    }
+
+    if (filterState.skinTypes.length > 0) {
+      apiFilters.skinType = filterState.skinTypes.join(',');
+    }
+
+    if (filterState.concerns.length > 0) {
+      apiFilters.concernsFilter = filterState.concerns;
+    }
+
+    if (filterState.onSale) {
+      apiFilters.onSale = true;
+    }
+
+    if (filterState.isNew) {
+      apiFilters.isNew = true;
+    }
+
+    // Map sort values to API format
+    switch (filterState.sort) {
+      case 'price_asc':
+        apiFilters.sortBy = 'price';
+        apiFilters.sortOrder = 'asc';
+        break;
+      case 'price_desc':
+        apiFilters.sortBy = 'price';
+        apiFilters.sortOrder = 'desc';
+        break;
+      case 'newest':
+        apiFilters.sortBy = 'createdAt';
+        apiFilters.sortOrder = 'desc';
+        break;
+      case 'rating':
+        apiFilters.sortBy = 'rating';
+        apiFilters.sortOrder = 'desc';
+        break;
+      case 'relevance':
+      default:
+        // Use default server sorting
+        break;
+    }
+
+    return apiFilters;
+  }, []);
+
+  // Initial load - just load the first page of products
   useEffect(() => {
     let mounted = true;
     setLoading(true);
     setError(null);
 
-    productsService
-      .getProducts()
-      .then((data) => {
+    // Load initial filtered products based on page type
+    const initialFilters: ProductQueryParams = { 
+      page: 1, 
+      limit: PAGE_SIZE, 
+      isActive: true 
+    };
+    
+    if (isDealsPage) {
+      initialFilters.onSale = true;
+    }
+    
+    loadProducts(initialFilters)
+      .then((result) => {
         if (!mounted) return;
-        setProducts(data || []);
+        setProductsResult(result);
         
-        // Initialize price range based on actual product data
-        if (data && data.length > 0) {
-          const prices = data.map(p => p.price);
+        // For now, we'll use the current products for filters
+        // In a production setup, you might want a separate endpoint for filter metadata
+        setAllProducts(result.products || []);
+        
+        // Initialize price range - you could get this from API metadata instead
+        if (result.products && result.products.length > 0) {
+          const prices = result.products.map(p => p.price);
           const minPrice = Math.min(...prices);
           const maxPrice = Math.max(...prices);
           setFilters(prev => ({
             ...prev,
-            priceRange: [minPrice, maxPrice]
+            priceRange: [Math.max(0, minPrice - 10), maxPrice + 10] // Add some padding
           }));
         }
       })
@@ -85,147 +187,72 @@ export default function ShopProductList({ locale }: { locale: string }) {
       mounted = false;
       if (debounceRef.current) window.clearTimeout(debounceRef.current);
     };
-  }, [t]);
+  }, [t, loadProducts, isDealsPage]);
 
   // Filter change handlers
-  const handleFiltersChange = useCallback((newFilters: Partial<FilterState>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+  const handleFiltersChange = useCallback(async (newFilters: Partial<FilterState>) => {
+    const updatedFilters = { ...filters, ...newFilters };
+    setFilters(updatedFilters);
     setPage(1);
-  }, []);
+    
+    setLoading(true);
+    try {
+      const apiFilters = convertToApiFilters(updatedFilters, 1, isDealsPage);
+      const result = await loadProducts(apiFilters);
+      setProductsResult(result);
+    } catch (err) {
+      console.error('Error applying filters:', err);
+      setError('Failed to apply filters');
+    } finally {
+      setLoading(false);
+    }
+  }, [filters, isDealsPage, loadProducts, convertToApiFilters]);
 
   const handleQueryChange = useCallback((query: string) => {
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
-    debounceRef.current = window.setTimeout(() => {
-      setFilters(prev => ({ ...prev, query }));
+    debounceRef.current = window.setTimeout(async () => {
+      const updatedFilters = { ...filters, query };
+      setFilters(updatedFilters);
       setPage(1);
+      
+      setLoading(true);
+      try {
+        const apiFilters = convertToApiFilters(updatedFilters, 1, isDealsPage);
+        const result = await loadProducts(apiFilters);
+        setProductsResult(result);
+      } catch (err) {
+        console.error('Error applying search:', err);
+        setError('Failed to apply search');
+      } finally {
+        setLoading(false);
+      }
     }, 300);
-  }, []);
+  }, [filters, isDealsPage, loadProducts, convertToApiFilters]);
 
-  // Advanced filtering + sorting
-  const filtered = useMemo(() => {
-    let list = products.slice();
-
-    // Filter for deals if on deals page
-    if (isDealsPage) {
-      list = list.filter(
-        (p) => p.compareAtPrice && p.compareAtPrice > p.price && p.isActive
-      );
-    }
-
-    // Text search
-    if (filters.query.trim()) {
-      const q = filters.query.trim().toLowerCase();
-      list = list.filter((p) => {
-        return (
-          p.title?.toLowerCase().includes(q) ||
-          p.titleAr?.toLowerCase().includes(q) ||
-          p.sku?.toLowerCase().includes(q) ||
-          p.activeIngredients?.toLowerCase().includes(q) ||
-          p.descriptionEn?.toLowerCase().includes(q) ||
-          p.descriptionAr?.toLowerCase().includes(q) ||
-          p.brand?.name?.toLowerCase().includes(q) ||
-          p.category?.name?.toLowerCase().includes(q)
-        );
-      });
-    }
-
-    // Category filter
-    if (filters.category && filters.category !== "all") {
-      list = list.filter(
-        (p) =>
-          String(p.categoryId) === String(filters.category) ||
-          String(p.category?.id) === String(filters.category)
-      );
-    }
-
-    // Brand filter
-    if (filters.brand && filters.brand !== "all") {
-      list = list.filter(
-        (p) =>
-          String(p.brandId) === String(filters.brand) ||
-          String(p.brand?.id) === String(filters.brand)
-      );
-    }
-
-    // Price range filter
-    list = list.filter(
-      (p) => p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]
-    );
-
-    // Skin type filter
-    if (filters.skinTypes.length > 0) {
-      list = list.filter((p) => {
-        if (!p.skinType) return false;
-        const productSkinTypes = p.skinType.split(',').map(s => s.trim().toLowerCase());
-        return filters.skinTypes.some(filterType => 
-          productSkinTypes.includes(filterType.toLowerCase())
-        );
-      });
-    }
-
-    // Concerns filter
-    if (filters.concerns.length > 0) {
-      list = list.filter((p) => {
-        if (!p.concerns || !Array.isArray(p.concerns)) return false;
-        const productConcerns = p.concerns.map(c => c.toLowerCase());
-        return filters.concerns.some(filterConcern => 
-          productConcerns.includes(filterConcern.toLowerCase())
-        );
-      });
-    }
-
-    // Stock filter
-    if (filters.inStock) {
-      list = list.filter((p) => p.isInStock && p.stockQuantity > 0);
-    }
-
-    // Sale filter
-    if (filters.onSale) {
-      list = list.filter((p) => p.compareAtPrice && p.compareAtPrice > p.price);
-    }
-
-    // New products filter
-    if (filters.isNew) {
-      list = list.filter((p) => p.isNew);
-    }
-
-    // Sorting
-    switch (filters.sort) {
-      case "price_asc":
-        list.sort((a, b) => a.price - b.price);
-        break;
-      case "price_desc":
-        list.sort((a, b) => b.price - a.price);
-        break;
-      case "newest":
-        list.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-        break;
-      case "rating":
-        list.sort((a, b) => (b.reviewStats?.averageRating || 0) - (a.reviewStats?.averageRating || 0));
-        break;
-      case "relevance":
-      default:
-        // keep original order (server relevance)
-        break;
-    }
-
-    return list;
-  }, [products, filters, isDealsPage]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-
-  // Clamp page
+  // Handle page changes
   useEffect(() => {
-    if (page > totalPages) setPage(totalPages);
-  }, [page, totalPages]);
+    if (!productsResult || page === productsResult.pagination.page) return;
+    
+    setLoading(true);
+    const apiFilters = convertToApiFilters(filters, page, isDealsPage);
+    
+    loadProducts(apiFilters)
+      .then(result => {
+        setProductsResult(result);
+      })
+      .catch(err => {
+        console.error('Error loading page:', err);
+        setError('Failed to load page');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [page, filters, isDealsPage, productsResult, convertToApiFilters, loadProducts]);
 
-  const visibleProducts = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    return filtered.slice(start, start + PAGE_SIZE);
-  }, [filtered, page]);
+  const products = Array.isArray(productsResult?.products) ? productsResult.products : [];
+  const pagination = productsResult?.pagination;
+  const totalPages = pagination?.pages || 1;
+  const totalCount = pagination?.total || 0;
 
   if (loading) {
     return (
@@ -295,7 +322,7 @@ export default function ShopProductList({ locale }: { locale: string }) {
     >
       {/* Apple-style filters */}
       <ProductFilters
-        products={products}
+        products={Array.isArray(allProducts) ? allProducts : []}
         locale={locale}
         filters={filters}
         onFiltersChange={handleFiltersChange}
@@ -348,26 +375,21 @@ export default function ShopProductList({ locale }: { locale: string }) {
           <p className={`text-lg text-gray-600 ${isRTL ? "font-cairo" : ""}`}>
             {isDealsPage
               ? isRTL
-                ? `${filtered.length} منتج مخفض`
-                : `${filtered.length} deals found`
-              : t("shop.resultsCount", { count: filtered.length }) ??
-                `${filtered.length} products found`}
+                ? `${totalCount} منتج مخفض`
+                : `${totalCount} deals found`
+              : t("shop.resultsCount", { count: totalCount }) ??
+                `${totalCount} products found`}
           </p>
-          {filtered.length !== products.length && !isDealsPage && (
-            <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-              {isRTL ? `من ${products.length} منتج` : `of ${products.length} total`}
-            </span>
-          )}
         </div>
-        {filtered.length > 0 && totalPages > 1 && (
+        {totalCount > 0 && totalPages > 1 && (
           <div className="text-sm text-gray-500">
-            {isRTL ? "صفحة" : "Page"} {page} {isRTL ? "من" : "of"} {totalPages}
+            {isRTL ? "صفحة" : "Page"} {pagination?.page || page} {isRTL ? "من" : "of"} {totalPages}
           </div>
         )}
       </div>
 
       {/* Enhanced grid */}
-      {visibleProducts.length === 0 ? (
+      {products.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20">
           <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
             <svg
@@ -401,7 +423,7 @@ export default function ShopProductList({ locale }: { locale: string }) {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {visibleProducts.map((p, index) => (
+          {products.map((p, index) => (
             <div
               key={p.id}
               className="animate-fade-in-up"
@@ -421,7 +443,7 @@ export default function ShopProductList({ locale }: { locale: string }) {
         >
           <button
             onClick={() => setPage((s) => Math.max(1, s - 1))}
-            disabled={page === 1}
+            disabled={page === 1 || loading}
             className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:shadow-md"
             aria-label={t("shop.prev") || "Previous"}
           >
@@ -457,8 +479,9 @@ export default function ShopProductList({ locale }: { locale: string }) {
                 <button
                   key={idx}
                   onClick={() => setPage(idx)}
+                  disabled={loading}
                   aria-current={page === idx ? "page" : undefined}
-                  className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full border transition-all duration-200 hover:shadow-md text-sm sm:text-base ${
+                  className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full border transition-all duration-200 hover:shadow-md text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed ${
                     page === idx
                       ? "bg-blue-500 text-white border-blue-500 shadow-lg"
                       : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
@@ -472,7 +495,7 @@ export default function ShopProductList({ locale }: { locale: string }) {
 
           <button
             onClick={() => setPage((s) => Math.min(totalPages, s + 1))}
-            disabled={page === totalPages}
+            disabled={page === totalPages || loading}
             className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:shadow-md"
             aria-label={t("shop.next") || "Next"}
           >

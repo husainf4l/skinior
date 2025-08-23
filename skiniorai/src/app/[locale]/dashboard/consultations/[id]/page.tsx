@@ -11,6 +11,7 @@ import {
   ErrorState,
   EmptyState,
 } from "@/components/dashboard/DashboardSkeleton";
+import { Consultation } from "@/types";
 
 export default function ConsultationDetailPage() {
   const locale = useLocale();
@@ -19,7 +20,7 @@ export default function ConsultationDetailPage() {
   const router = useRouter();
   const consultationId = params.id as string;
 
-  const [consultation, setConsultation] = useState<any>(null);
+  const [consultation, setConsultation] = useState<Consultation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -333,7 +334,7 @@ export default function ConsultationDetailPage() {
                     {isRTL ? "نتائج تحليل البشرة" : "Skin Analysis Results"}
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {Object.entries(consultation.skinAnalysis).map(([key, value]: [string, any]) => (
+                    {Object.entries(consultation.skinAnalysis).map(([key, value]) => (
                       <div key={key} className="p-4 border border-gray-100 rounded-lg">
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-sm font-medium text-gray-700 capitalize">
@@ -366,7 +367,7 @@ export default function ConsultationDetailPage() {
                     {isRTL ? "التوصيات" : "Recommendations"}
                   </h2>
                   <div className="space-y-4">
-                    {consultation.recommendations.map((rec: any, index: number) => (
+                    {consultation.recommendations.map((rec, index: number) => (
                       <div key={rec.id || index} className="p-4 border border-gray-100 rounded-lg hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center space-x-3">

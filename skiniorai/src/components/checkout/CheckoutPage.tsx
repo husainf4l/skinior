@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useCart, useCartStore } from "@/lib/store/cart-store";
+import { checkoutService, CreateOrderRequest } from "@/services/checkoutService";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -15,6 +16,11 @@ interface FormData {
   city: string;
   postalCode: string;
   country: string;
+  paymentMethod: 'cod' | 'card' | '';
+  cardNumber: string;
+  expiryDate: string;
+  cvv: string;
+  cardHolderName: string;
 }
 
 interface FormErrors {
@@ -37,6 +43,11 @@ const CheckoutPage: React.FC = () => {
     city: "",
     postalCode: "",
     country: "Jordan",
+    paymentMethod: '',
+    cardNumber: "",
+    expiryDate: "",
+    cvv: "",
+    cardHolderName: "",
   });
 
   const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -89,20 +100,87 @@ const CheckoutPage: React.FC = () => {
       errors.country = t("checkout.errors.countryRequired");
     }
 
+    // Payment method validation
+    if (!data.paymentMethod) {
+      errors.paymentMethod = t("checkout.paymentMethodRequired");
+    }
+
+    // Credit card validation (only if card payment is selected)
+    if (data.paymentMethod === 'card') {
+      if (!data.cardNumber || data.cardNumber.replace(/\s/g, '').length < 16) {
+        errors.cardNumber = "Card number is required and must be 16 digits";
+      }
+
+      if (!data.expiryDate || !/^\d{2}\/\d{2}$/.test(data.expiryDate)) {
+        errors.expiryDate = "Expiry date is required (MM/YY)";
+      }
+
+      if (!data.cvv || data.cvv.length < 3) {
+        errors.cvv = "CVV is required and must be 3-4 digits";
+      }
+
+      if (!data.cardHolderName.trim()) {
+        errors.cardHolderName = "Cardholder name is required";
+      }
+    }
+
     return errors;
   }, [t]);
 
-  const formatPrice = (price: number) => {
-    return isRTL ? `${price.toFixed(2)} د.أ` : `JOD ${price.toFixed(2)}`;
+  const formatPrice = (price: number | undefined | null) => {
+    const safePrice = price ?? 0;
+    return isRTL ? `${safePrice.toFixed(2)} د.أ` : `JOD ${safePrice.toFixed(2)}`;
+  };
+
+  // Format card number with spaces
+  const formatCardNumber = (value: string) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const matches = v.match(/\d{4,16}/g);
+    const match = matches && matches[0] || '';
+    const parts = [];
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+    if (parts.length) {
+      return parts.join(' ');
+    } else {
+      return v;
+    }
+  };
+
+  // Format expiry date
+  const formatExpiryDate = (value: string) => {
+    const v = value.replace(/\D/g, '');
+    if (v.length >= 2) {
+      return v.substring(0, 2) + '/' + v.substring(2, 4);
+    }
+    return v;
   };
 
   const handleInputChange = useCallback((
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    let formattedValue = value;
+
+    // Format card number
+    if (name === 'cardNumber') {
+      formattedValue = formatCardNumber(value);
+    }
+    
+    // Format expiry date
+    if (name === 'expiryDate') {
+      formattedValue = formatExpiryDate(value);
+    }
+
+    // CVV should only be digits
+    if (name === 'cvv') {
+      formattedValue = value.replace(/\D/g, '').substring(0, 4);
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: formattedValue,
     }));
 
     // Clear error for this field when user starts typing
@@ -132,26 +210,89 @@ const CheckoutPage: React.FC = () => {
     setIsProcessing(true);
 
     try {
-      // Simulate checkout process
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      if (!cart || cart.items.length === 0) {
+        throw new Error('Cart is empty');
+      }
+
+      // Prepare order data for backend
+      const orderData: CreateOrderRequest = {
+        customer: {
+          email: formData.email,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phone: formData.phone
+        },
+        shippingAddress: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          addressLine1: formData.address,
+          city: formData.city,
+          state: formData.city, // Using city as state for now
+          postalCode: formData.postalCode,
+          country: formData.country,
+          phone: formData.phone
+        },
+        billingAddress: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          addressLine1: formData.address,
+          city: formData.city,
+          state: formData.city, // Using city as state for now
+          postalCode: formData.postalCode,
+          country: formData.country,
+          phone: formData.phone
+        },
+        items: cart.items.map(item => ({
+          productId: item.productId,
+          title: item.title,
+          price: item.price,
+          quantity: item.quantity
+        })),
+        shippingMethod: 'standard',
+        currency: 'JOD',
+        paymentMethod: formData.paymentMethod === 'cod' ? 'cod' : 'stripe'
+      };
+
+      // Create order
+      console.log('Creating order with data:', orderData);
+      const { orderId, order } = await checkoutService.createOrder(orderData);
+      console.log('Order created:', { orderId, order });
+
+      // Process payment if not COD
+      if (formData.paymentMethod === 'card') {
+        const paymentData = {
+          paymentMethodId: `card_${Date.now()}`, // Mock payment method ID
+          paymentType: 'stripe' as const,
+          savePaymentMethod: false
+        };
+
+        console.log('Processing payment:', paymentData);
+        const paymentResult = await checkoutService.processPayment(orderId, paymentData);
+        console.log('Payment processed:', paymentResult);
+
+        if (!paymentResult.success) {
+          throw new Error('Payment processing failed');
+        }
+      }
 
       // Clear cart after successful checkout
       await clearCart();
 
       // Redirect to success page
       if (typeof window !== "undefined") {
-        window.location.href = `/${locale}/checkout/success`;
+        window.location.href = `/${locale}/checkout/success?orderId=${orderId}`;
       }
     } catch (error) {
       console.error("Checkout error:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       setFormErrors({
-        general: t("checkout.errors.checkoutFailed"),
+        general: `${t("checkout.error")}: ${errorMessage}`,
       });
     } finally {
       setIsSubmitting(false);
       setIsProcessing(false);
     }
-  }, [formData, validateForm, clearCart, locale, isSubmitting, isProcessing, t]);
+  }, [formData, validateForm, clearCart, locale, isSubmitting, isProcessing, t, cart]);
 
   // Clear errors when component unmounts
   useEffect(() => {
@@ -496,6 +637,208 @@ const CheckoutPage: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Payment Method */}
+                <div className="pt-6 border-t border-gray-200">
+                  <h3
+                    className={`text-lg font-semibold text-gray-900 mb-4 ${
+                      isRTL ? "font-cairo" : ""
+                    }`}
+                  >
+                    {t("checkout.paymentMethod")}
+                  </h3>
+
+                  {/* Payment Method Selection */}
+                  <div className="space-y-4 mb-6">
+                    <div className="flex flex-col gap-3">
+                      {/* Cash on Delivery */}
+                      <label className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
+                        formData.paymentMethod === 'cod' ? 'border-black bg-gray-50' : 'border-gray-300 hover:border-gray-400'
+                      }`}>
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value="cod"
+                          checked={formData.paymentMethod === 'cod'}
+                          onChange={handleInputChange}
+                          className={`${isRTL ? "ml-3" : "mr-3"} text-black focus:ring-black focus:ring-2`}
+                        />
+                        <div className="flex items-center">
+                          <div className={`w-8 h-8 bg-green-100 rounded-full flex items-center justify-center ${isRTL ? "ml-3" : "mr-3"}`}>
+                            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <span className={`font-medium text-gray-900 ${isRTL ? "font-cairo" : ""}`}>
+                              {t("checkout.cashOnDelivery")}
+                            </span>
+                            <p className={`text-sm text-gray-600 ${isRTL ? "font-cairo" : ""}`}>
+                              {isRTL ? "ادفع عند استلام الطلب" : "Pay when you receive your order"}
+                            </p>
+                          </div>
+                        </div>
+                      </label>
+
+                      {/* Credit Card */}
+                      <label className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
+                        formData.paymentMethod === 'card' ? 'border-black bg-gray-50' : 'border-gray-300 hover:border-gray-400'
+                      }`}>
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value="card"
+                          checked={formData.paymentMethod === 'card'}
+                          onChange={handleInputChange}
+                          className={`${isRTL ? "ml-3" : "mr-3"} text-black focus:ring-black focus:ring-2`}
+                        />
+                        <div className="flex items-center">
+                          <div className={`w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center ${isRTL ? "ml-3" : "mr-3"}`}>
+                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <span className={`font-medium text-gray-900 ${isRTL ? "font-cairo" : ""}`}>
+                              {t("checkout.creditCard")}
+                            </span>
+                            <p className={`text-sm text-gray-600 ${isRTL ? "font-cairo" : ""}`}>
+                              {isRTL ? "فيزا، ماستركارد، أو كارت أمريكان إكسبريس" : "Visa, Mastercard, or American Express"}
+                            </p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    {formErrors.paymentMethod && (
+                      <p className={`text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                        {formErrors.paymentMethod}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Credit Card Details */}
+                  {formData.paymentMethod === 'card' && (
+                    <div className="space-y-4">
+                      <div>
+                        <label
+                          className={`block text-sm font-medium text-gray-700 mb-2 ${
+                            isRTL ? "font-cairo text-right" : ""
+                          }`}
+                        >
+                          {t("checkout.cardNumber")} *
+                        </label>
+                        <input
+                          type="text"
+                          name="cardNumber"
+                          value={formData.cardNumber}
+                          onChange={handleInputChange}
+                          className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                            formErrors.cardNumber
+                              ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                              : "border-gray-300 focus:ring-black/20 focus:border-black"
+                          }`}
+                          placeholder="1234 5678 9012 3456"
+                          maxLength={19}
+                          disabled={isSubmitting}
+                        />
+                        {formErrors.cardNumber && (
+                          <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                            {formErrors.cardNumber}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <label
+                            className={`block text-sm font-medium text-gray-700 mb-2 ${
+                              isRTL ? "font-cairo text-right" : ""
+                            }`}
+                          >
+                            {t("checkout.expiryDate")} *
+                          </label>
+                          <input
+                            type="text"
+                            name="expiryDate"
+                            value={formData.expiryDate}
+                            onChange={handleInputChange}
+                            className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                              formErrors.expiryDate
+                                ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                                : "border-gray-300 focus:ring-black/20 focus:border-black"
+                            }`}
+                            placeholder="MM/YY"
+                            maxLength={5}
+                            disabled={isSubmitting}
+                          />
+                          {formErrors.expiryDate && (
+                            <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                              {formErrors.expiryDate}
+                            </p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label
+                            className={`block text-sm font-medium text-gray-700 mb-2 ${
+                              isRTL ? "font-cairo text-right" : ""
+                            }`}
+                          >
+                            {t("checkout.cvv")} *
+                          </label>
+                          <input
+                            type="text"
+                            name="cvv"
+                            value={formData.cvv}
+                            onChange={handleInputChange}
+                            className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                              formErrors.cvv
+                                ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                                : "border-gray-300 focus:ring-black/20 focus:border-black"
+                            }`}
+                            placeholder="123"
+                            maxLength={4}
+                            disabled={isSubmitting}
+                          />
+                          {formErrors.cvv && (
+                            <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                              {formErrors.cvv}
+                            </p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label
+                            className={`block text-sm font-medium text-gray-700 mb-2 ${
+                              isRTL ? "font-cairo text-right" : ""
+                            }`}
+                          >
+                            {t("checkout.cardHolderName")} *
+                          </label>
+                          <input
+                            type="text"
+                            name="cardHolderName"
+                            value={formData.cardHolderName}
+                            onChange={handleInputChange}
+                            className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                              formErrors.cardHolderName
+                                ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                                : "border-gray-300 focus:ring-black/20 focus:border-black"
+                            }`}
+                            placeholder="John Doe"
+                            disabled={isSubmitting}
+                          />
+                          {formErrors.cardHolderName && (
+                            <p className={`mt-1 text-sm text-red-600 ${isRTL ? "font-cairo text-right" : ""}`}>
+                              {formErrors.cardHolderName}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* Submit Button */}
                 <div className="pt-6">
                   <button
@@ -568,7 +911,7 @@ const CheckoutPage: React.FC = () => {
                             isRTL ? "font-cairo" : ""
                           }`}
                         >
-                          {formatPrice(item.price * item.quantity)}
+                          {formatPrice((item.price || 0) * item.quantity)}
                         </span>
                       </div>
                     </div>
@@ -589,7 +932,7 @@ const CheckoutPage: React.FC = () => {
                     {t("cart.subtotal")}
                   </span>
                   <span className={`font-medium ${isRTL ? "font-cairo" : ""}`}>
-                    {formatPrice(cart.subtotal)}
+                    {formatPrice(cart.subtotal || 0)}
                   </span>
                 </div>
 
@@ -605,7 +948,7 @@ const CheckoutPage: React.FC = () => {
                   </span>
                   <span className={`font-medium ${isRTL ? "font-cairo" : ""}`}>
                     {cart.shipping > 0
-                      ? formatPrice(cart.shipping)
+                      ? formatPrice(cart.shipping || 0)
                       : t("checkout.freeShipping")}
                   </span>
                 </div>
@@ -624,7 +967,7 @@ const CheckoutPage: React.FC = () => {
                     <span
                       className={`font-medium ${isRTL ? "font-cairo" : ""}`}
                     >
-                      {formatPrice(cart.tax)}
+                      {formatPrice(cart.tax || 0)}
                     </span>
                   </div>
                 )}
@@ -644,7 +987,7 @@ const CheckoutPage: React.FC = () => {
                   <span
                     className={`text-gray-900 ${isRTL ? "font-cairo" : ""}`}
                   >
-                    {formatPrice(cart.total)}
+                    {formatPrice(cart.total || 0)}
                   </span>
                 </div>
               </div>

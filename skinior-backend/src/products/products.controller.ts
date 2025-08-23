@@ -379,11 +379,162 @@ export class ProductsController {
   @Get()
   @Public()
   @ApiOperation({ 
-    summary: 'Get all products (legacy)',
-    description: 'Legacy endpoint for getting all products'
+    summary: 'Get products with pagination, filters, and search',
+    description: 'Retrieves products with comprehensive pagination, filtering, and search capabilities'
   })
-  async getAllProducts() {
-    return this.productsService.getAllProducts();
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number (1-based)',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of products per page',
+    example: 20,
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    description: 'Search query for product title, description, or ingredients',
+    example: 'vitamin c serum',
+  })
+  @ApiQuery({
+    name: 'category',
+    required: false,
+    description: 'Filter by category ID or slug',
+    example: 'serums',
+  })
+  @ApiQuery({
+    name: 'brand',
+    required: false,
+    description: 'Filter by brand ID or slug',
+    example: 'the-ordinary',
+  })
+  @ApiQuery({
+    name: 'minPrice',
+    required: false,
+    description: 'Minimum price filter',
+    example: 10.00,
+  })
+  @ApiQuery({
+    name: 'maxPrice',
+    required: false,
+    description: 'Maximum price filter',
+    example: 100.00,
+  })
+  @ApiQuery({
+    name: 'skinType',
+    required: false,
+    description: 'Filter by skin type',
+    example: 'oily',
+  })
+  @ApiQuery({
+    name: 'concerns',
+    required: false,
+    description: 'Filter by skin concerns (comma-separated)',
+    example: 'acne,dark-spots',
+  })
+  @ApiQuery({
+    name: 'isFeatured',
+    required: false,
+    description: 'Filter featured products only',
+    example: true,
+  })
+  @ApiQuery({
+    name: 'isNew',
+    required: false,
+    description: 'Filter new products only',
+    example: true,
+  })
+  @ApiQuery({
+    name: 'isActive',
+    required: false,
+    description: 'Filter active products only (default: true)',
+    example: true,
+  })
+  @ApiQuery({
+    name: 'onSale',
+    required: false,
+    description: 'Filter products on sale (with compareAtPrice)',
+    example: true,
+  })
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    description: 'Sort field (price, createdAt, title, rating)',
+    example: 'price',
+  })
+  @ApiQuery({
+    name: 'sortOrder',
+    required: false,
+    description: 'Sort order (asc, desc)',
+    example: 'asc',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Products retrieved successfully with pagination info',
+  })
+  async getAllProducts(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+    @Query('category') category?: string,
+    @Query('brand') brand?: string,
+    @Query('minPrice') minPrice?: string,
+    @Query('maxPrice') maxPrice?: string,
+    @Query('skinType') skinType?: string,
+    @Query('concerns') concerns?: string,
+    @Query('isFeatured') isFeatured?: string,
+    @Query('isNew') isNew?: string,
+    @Query('isActive') isActive?: string,
+    @Query('onSale') onSale?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortOrder') sortOrder?: string,
+  ): Promise<{
+    success: boolean;
+    data: {
+      products: any[];
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        pages: number;
+        hasNext: boolean;
+        hasPrev: boolean;
+      };
+      filters: any;
+    };
+    message: string;
+    timestamp: string;
+  }> {
+    const filters = {
+      page: page ? parseInt(page) : 1,
+      limit: limit ? parseInt(limit) : 20,
+      search,
+      category,
+      brand,
+      minPrice: minPrice ? parseFloat(minPrice) : undefined,
+      maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+      skinType,
+      concerns: concerns ? concerns.split(',').map(c => c.trim()) : undefined,
+      isFeatured: isFeatured === 'true' ? true : isFeatured === 'false' ? false : undefined,
+      isNew: isNew === 'true' ? true : isNew === 'false' ? false : undefined,
+      isActive: isActive === 'false' ? false : true, // default to true
+      onSale: onSale === 'true' ? true : onSale === 'false' ? false : undefined,
+      sortBy: sortBy || 'createdAt',
+      sortOrder: (sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc',
+    };
+
+    const result = await this.productsService.getAllProductsWithFilters(filters);
+    
+    return {
+      success: true,
+      data: result,
+      message: 'Products retrieved successfully',
+      timestamp: new Date().toISOString(),
+    };
   }
 
   @Post('legacy')
@@ -414,6 +565,87 @@ export class ProductsController {
     description: 'Legacy endpoint for deleting products'
   })
   async deleteProduct(@Param('id') id: string): Promise<void> {
+    await this.productsService.deleteProduct(id);
+  }
+
+  @Post()
+  @ApiOperation({
+    summary: 'Create product',
+    description: 'Creates a new product'
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Product created successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid product data',
+  })
+  async createNewProduct(@Body() data: any): Promise<{
+    success: boolean;
+    data: any;
+    message: string;
+    timestamp: string;
+  }> {
+    const product = await this.productsService.createProduct(data);
+    return {
+      success: true,
+      data: product,
+      message: 'Product created successfully',
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Put(':id')
+  @ApiOperation({
+    summary: 'Update product',
+    description: 'Updates a product by ID'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Product identifier',
+    example: '684ca6c6-fe72-45e0-9625-47341ed67893',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Product updated successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Product not found',
+  })
+  async updateProductById(
+    @Param('id') id: string,
+    @Body() data: any
+  ): Promise<{
+    success: boolean;
+    data: any;
+    message: string;
+    timestamp: string;
+  }> {
+    const product = await this.productsService.updateProduct(id, data);
+    return {
+      success: true,
+      data: product,
+      message: 'Product updated successfully',
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Delete product',
+    description: 'Deletes a product by ID'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Product identifier',
+    example: '684ca6c6-fe72-45e0-9625-47341ed67893',
+  })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Product deleted successfully' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found' })
+  async removeProduct(@Param('id') id: string): Promise<void> {
     await this.productsService.deleteProduct(id);
   }
 }

@@ -49,6 +49,17 @@ export default function ProductFilters({
     let minPrice = Number.MAX_SAFE_INTEGER;
     let maxPrice = 0;
 
+    // Ensure products is an array before processing
+    if (!Array.isArray(products)) {
+      return {
+        categories: [{ id: "all", name: t("shop.allCategories") || "All Categories", count: 0 }],
+        brands: [{ id: "all", name: t("shop.allBrands") || "All Brands", count: 0 }],
+        skinTypes: [],
+        concerns: [],
+        priceRange: { min: 0, max: 1000 }
+      };
+    }
+
     products.forEach((product) => {
       // Categories
       if (product.category) {
@@ -135,10 +146,11 @@ export default function ProductFilters({
   }, [filters.priceRange, onFiltersChange]);
 
   const clearAllFilters = useCallback(() => {
+    const priceRange = filterOptions?.priceRange || { min: 0, max: 1000 };
     onFiltersChange({
       category: "all",
       brand: "all",
-      priceRange: [filterOptions.priceRange.min, filterOptions.priceRange.max],
+      priceRange: [priceRange.min, priceRange.max],
       skinTypes: [],
       concerns: [],
       inStock: false,
@@ -146,22 +158,23 @@ export default function ProductFilters({
       isNew: false,
     });
     onQueryChange("");
-  }, [filterOptions.priceRange, onFiltersChange, onQueryChange]);
+  }, [filterOptions?.priceRange, onFiltersChange, onQueryChange]);
 
   const hasActiveFilters = useMemo(() => {
+    const priceRange = filterOptions?.priceRange || { min: 0, max: 1000 };
     return (
       filters.query.trim() !== "" ||
       filters.category !== "all" ||
       filters.brand !== "all" ||
-      filters.priceRange[0] !== filterOptions.priceRange.min ||
-      filters.priceRange[1] !== filterOptions.priceRange.max ||
+      filters.priceRange[0] !== priceRange.min ||
+      filters.priceRange[1] !== priceRange.max ||
       filters.skinTypes.length > 0 ||
       filters.concerns.length > 0 ||
       filters.inStock ||
       filters.onSale ||
       filters.isNew
     );
-  }, [filters, filterOptions.priceRange]);
+  }, [filters, filterOptions?.priceRange]);
 
   return (
     <div className="space-y-6">

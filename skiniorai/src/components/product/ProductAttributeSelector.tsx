@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { useTranslations } from "next-intl";
+// import { useTranslations } from "next-intl";  // Currently unused
 import { type Product, type ProductAttributeValue } from "@/types/product";
 
 interface AttributeSelection {

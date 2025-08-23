@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { DashboardService, DashboardOverviewData } from '@/services/dashboardService';
+import { useState, useEffect, useCallback } from 'react';
+import { DashboardService, DashboardOverviewData, CreateTreatmentData, UpdateTreatmentData, CreateFollowUpData } from '@/services/dashboardService';
+import { Treatment, ConsultationListItem } from '@/types';
 
 // Dashboard Overview Hook
 export const useDashboardOverview = (range: '7d' | '30d' | '90d' = '7d') => {
@@ -7,7 +8,7 @@ export const useDashboardOverview = (range: '7d' | '30d' | '90d' = '7d') => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -22,22 +23,22 @@ export const useDashboardOverview = (range: '7d' | '30d' | '90d' = '7d') => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [range]);
 
   useEffect(() => {
     fetchData();
-  }, [range]);
+  }, [range, fetchData]);
 
   return { data, loading, error, refetch: fetchData };
 };
 
 // Treatments Hook
 export const useTreatments = () => {
-  const [treatments, setTreatments] = useState<any[]>([]);
+  const [treatments, setTreatments] = useState<Treatment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchTreatments = async () => {
+  const fetchTreatments = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -51,13 +52,13 @@ export const useTreatments = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchTreatments();
-  }, []);
+  }, [fetchTreatments]);
 
-  const createTreatment = async (treatmentData: any) => {
+  const createTreatment = async (treatmentData: CreateTreatmentData) => {
     try {
       const response = await DashboardService.createTreatment(treatmentData);
       // Refresh the list
@@ -69,7 +70,7 @@ export const useTreatments = () => {
     }
   };
 
-  const updateTreatment = async (id: string, updateData: any) => {
+  const updateTreatment = async (id: string, updateData: UpdateTreatmentData) => {
     try {
       const response = await DashboardService.updateTreatment(id, updateData);
       // Refresh the list
@@ -93,12 +94,12 @@ export const useTreatments = () => {
 
 // Consultations Hook
 export const useConsultations = (limit?: number) => {
-  const [consultations, setConsultations] = useState<any[]>([]);
+  const [consultations, setConsultations] = useState<ConsultationListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<any>(null);
+  const [pagination, setPagination] = useState<{ total: number; page: number; limit: number; cursor?: string } | null>(null);
 
-  const fetchConsultations = async (cursor?: string) => {
+  const fetchConsultations = useCallback(async (cursor?: string) => {
     try {
       setLoading(true);
       setError(null);
@@ -113,13 +114,13 @@ export const useConsultations = (limit?: number) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit]);
 
   useEffect(() => {
     fetchConsultations();
-  }, [limit]);
+  }, [limit, fetchConsultations]);
 
-  const createFollowUp = async (consultationId: string, followUpData: any) => {
+  const createFollowUp = async (consultationId: string, followUpData: CreateFollowUpData) => {
     try {
       const response = await DashboardService.createFollowUp(consultationId, followUpData);
       // Refresh the list
@@ -143,10 +144,11 @@ export const useConsultations = (limit?: number) => {
 };
 
 // Error handling utility
-export const handleApiError = (error: any, showToast?: (message: string, type: 'error' | 'success') => void) => {
-  const message = error?.message || 'An unexpected error occurred';
+export const handleApiError = (error: unknown, showToast?: (message: string, type: 'error' | 'success') => void) => {
+  const errorObj = error as { message?: string; statusCode?: number };
+  const message = errorObj?.message || 'An unexpected error occurred';
   
-  switch (error?.statusCode) {
+  switch (errorObj?.statusCode) {
     case 401:
       // Redirect to login
       window.location.href = '/login';

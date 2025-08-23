@@ -178,7 +178,66 @@ export interface ProductCardData {
   attributes?: Record<string, ProductAttributeValue[]>;
 }
 
+// (This interface was moved below to avoid conflicts)
+
+export interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
+
 // API Response types
+// For API responses (filter data returned by backend)
+export interface ProductFilters {
+  categories: string[];
+  brands: string[];
+  skinTypes: string[];
+  concerns: string[];
+  priceRange: {
+    min: number;
+    max: number;
+  };
+}
+
+// For API requests (query parameters sent to backend)
+export interface ProductQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  category?: string;
+  brand?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  skinType?: string;
+  concernsFilter?: string[];
+  isFeatured?: boolean;
+  isNew?: boolean;
+  isActive?: boolean;
+  onSale?: boolean;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface ProductsApiResponse {
+  success: boolean;
+  data: {
+    products: Product[];
+    pagination: PaginationInfo;
+    filters: ProductFilters;
+  };
+  message: string;
+  timestamp: string;
+}
+
+export interface ProductsResult {
+  products: Product[];
+  pagination: PaginationInfo;
+  filters: ProductFilters;
+}
+
 export type ProductResponse = Product;
 export type ProductsResponse = Product[];
 export type FeaturedProductsResponse = Product[];

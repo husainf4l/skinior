@@ -89,7 +89,7 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
         {/* Main Product Image */}
         <Image
           src={isHovered && hoverImage ? hoverImage : mainImage}
-          alt={name}
+          alt={name || "Product image"}
           fill
           className={`object-cover transition-all duration-500 ease-out group-hover:scale-105 ${
             isImageLoaded ? "opacity-100" : "opacity-0"
@@ -106,7 +106,7 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
         {hoverImage && (
           <Image
             src={hoverImage}
-            alt={`${name} hover`}
+            alt={`${name || "Product"} hover image`}
             fill
             className={`object-cover transition-all duration-500 ease-out group-hover:scale-105 ${
               isHovered ? "opacity-100" : "opacity-0"

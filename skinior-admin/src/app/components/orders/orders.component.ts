@@ -98,14 +98,14 @@ import { Order } from '../../interfaces/admin.interface';
           <mat-card-title>Orders ({{ totalOrders }})</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <div class="table-container" *ngIf="orders.length > 0">
+          <div class="table-container" *ngIf="orders && orders.length > 0">
             <table mat-table [dataSource]="orders" class="orders-table">
               <!-- Order Number Column -->
               <ng-container matColumnDef="orderNumber">
                 <th mat-header-cell *matHeaderCellDef>Order Number</th>
                 <td mat-cell *matCellDef="let order">
                   <div class="order-number">
-                    <span class="order-id">#{{ order.orderNumber || order.id.slice(-8).toUpperCase() }}</span>
+                    <span class="order-id">#{{ order.orderNumber || (order.id ? order.id.slice(-8).toUpperCase() : 'N/A') }}</span>
                   </div>
                 </td>
               </ng-container>
@@ -188,7 +188,7 @@ import { Order } from '../../interfaces/admin.interface';
           </div>
 
           <!-- No Orders Message -->
-          <div *ngIf="orders.length === 0" class="no-data">
+          <div *ngIf="!orders || orders.length === 0" class="no-data">
             <mat-icon>receipt_long</mat-icon>
             <h3>No Orders Found</h3>
             <p>There are no orders matching your current filters.</p>
@@ -196,7 +196,7 @@ import { Order } from '../../interfaces/admin.interface';
 
           <!-- Pagination -->
           <mat-paginator 
-            *ngIf="orders.length > 0"
+            *ngIf="orders && orders.length > 0"
             [length]="totalOrders"
             [pageSize]="pageSize"
             [pageIndex]="currentPage"
@@ -420,8 +420,8 @@ export class OrdersComponent implements OnInit {
       this.selectedPaymentStatus
     ).subscribe({
       next: (response) => {
-        this.orders = response.data.orders;
-        this.totalOrders = response.data.pagination.total;
+        this.orders = response.data?.orders || [];
+        this.totalOrders = response.data?.pagination?.total || 0;
         this.loading = false;
       },
       error: (error) => {

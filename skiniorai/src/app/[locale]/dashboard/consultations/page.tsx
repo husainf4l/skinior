@@ -14,7 +14,7 @@ import {
 export default function ConsultationsPage() {
   const locale = useLocale();
   const isRTL = locale === "ar";
-  const [selectedConsultation, setSelectedConsultation] = useState<any>(null);
+  // Removed unused selectedConsultation state
   const [filterStatus, setFilterStatus] = useState<string>("all");
 
   const {
@@ -99,7 +99,7 @@ export default function ConsultationsPage() {
   };
 
   // Filter consultations
-  const filteredConsultations = consultations?.filter((consultation: any) => {
+  const filteredConsultations = consultations?.filter((consultation) => {
     if (filterStatus === "all") return true;
     return consultation.status === filterStatus;
   }) || [];
@@ -227,7 +227,7 @@ export default function ConsultationsPage() {
                     {isRTL ? "مكتملة" : "Completed"}
                   </p>
                   <p className="text-3xl font-semibold text-gray-900">
-                    {consultations?.filter((c: any) => c.status === "completed").length || 0}
+                    {consultations?.filter((c) => c.status === "completed").length || 0}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
@@ -261,7 +261,7 @@ export default function ConsultationsPage() {
                   <p className="text-3xl font-semibold text-gray-900">
                     {consultations && consultations.length > 0
                       ? Math.round(
-                          consultations.reduce((acc: number, c: any) => acc + (c.improvementScore || 0), 0) /
+                          consultations.reduce((acc: number, c) => acc + (c.improvementScore || 0), 0) /
                             consultations.length
                         )
                       : 0}%
@@ -297,7 +297,7 @@ export default function ConsultationsPage() {
                   </p>
                   <p className="text-lg font-semibold text-gray-900">
                     {consultations && consultations.length > 0
-                      ? formatDate(consultations[0].createdAt).split(",")[0]
+                      ? formatDate(consultations[0].createdAt || consultations[0].date).split(",")[0]
                       : "N/A"}
                   </p>
                 </div>
@@ -353,23 +353,23 @@ export default function ConsultationsPage() {
 
             {filteredConsultations.length > 0 ? (
               <div className="space-y-6">
-                {filteredConsultations.map((consultation: any) => (
+                {filteredConsultations.map((consultation) => (
                   <div
                     key={consultation.id}
                     className="p-6 border border-gray-100 rounded-xl hover:shadow-lg transition-shadow cursor-pointer"
-                    onClick={() => setSelectedConsultation(consultation)}
+                    onClick={() => {}}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center">
-                          {getAnalysisIcon(consultation.analysisType)}
+                          {getAnalysisIcon(consultation.analysisType || consultation.type || "default")}
                         </div>
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900">
                             {consultation.analysisType || "Skin Analysis"}
                           </h3>
                           <p className="text-sm text-gray-600">
-                            {formatDate(consultation.createdAt)}
+                            {formatDate(consultation.createdAt || consultation.date)}
                           </p>
                         </div>
                       </div>
@@ -420,11 +420,11 @@ export default function ConsultationsPage() {
                           {isRTL ? "التوصيات الرئيسية:" : "Key Recommendations:"}
                         </p>
                         <div className="space-y-2">
-                          {consultation.recommendations.slice(0, 3).map((rec: any, index: number) => (
+                          {consultation.recommendations.slice(0, 3).map((rec: string | { title: string }, index: number) => (
                             <div key={index} className="flex items-center space-x-2">
                               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                               <span className="text-sm text-gray-600">
-                                {rec.title || rec}
+                                {typeof rec === 'string' ? rec : rec.title}
                               </span>
                             </div>
                           ))}
@@ -440,13 +440,13 @@ export default function ConsultationsPage() {
                     {/* Skin Analysis Summary */}
                     {consultation.skinAnalysis && (
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
-                        {Object.entries(consultation.skinAnalysis).slice(0, 3).map(([key, value]: [string, any]) => (
+                        {Object.entries(consultation.skinAnalysis).slice(0, 3).map(([key, value]) => (
                           <div key={key} className="text-center">
                             <p className="text-sm font-medium text-gray-700 capitalize">
                               {key.replace(/([A-Z])/g, ' $1').trim()}
                             </p>
                             <p className="text-lg font-semibold text-gray-900">
-                              {typeof value === 'number' ? `${value}%` : value}
+                              {typeof value === 'number' ? `${value}%` : String(value)}
                             </p>
                           </div>
                         ))}

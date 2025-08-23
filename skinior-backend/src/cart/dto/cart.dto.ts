@@ -17,4 +17,16 @@ export class CreateCartDto {
   @IsString()
   @IsOptional()
   customerId?: string;
+
+  @IsString()
+  @IsOptional()
+  sessionId?: string;
+}
+
+export class MigrateCartDto {
+  @IsString()
+  sessionId: string;
+
+  @IsString()
+  userId: string;
 }

@@ -302,6 +302,55 @@ export class AdminProductsService {
     }
   }
 
+  async deleteAllProducts(productIds?: string[]): Promise<{ deletedCount: number; deletedImageCount: number }> {
+    try {
+      // Build where clause based on whether specific IDs are provided
+      const whereClause = productIds && productIds.length > 0 
+        ? { id: { in: productIds } } 
+        : {};
+
+      // First, get products with their images (either all or specific ones)
+      const products = await this.prismaService.product.findMany({
+        where: whereClause,
+        include: {
+          images: true,
+        },
+      });
+
+      if (products.length === 0) {
+        return { deletedCount: 0, deletedImageCount: 0 };
+      }
+
+      // Collect all image URLs for AWS S3 deletion
+      const allImageUrls: string[] = [];
+      products.forEach(product => {
+        product.images.forEach(image => {
+          allImageUrls.push(image.url);
+        });
+      });
+
+      // Delete all images from AWS S3 if there are any
+      if (allImageUrls.length > 0) {
+        await this.awsService.deleteMultipleFiles(allImageUrls);
+      }
+
+      // Delete products from database (this will cascade delete images, attributes, etc.)
+      const deleteResult = await this.prismaService.product.deleteMany({
+        where: whereClause,
+      });
+
+      return {
+        deletedCount: deleteResult.count,
+        deletedImageCount: allImageUrls.length,
+      };
+    } catch (error) {
+      const operation = productIds && productIds.length > 0 
+        ? `delete ${productIds.length} products` 
+        : 'delete all products';
+      throw new InternalServerErrorException(`Failed to ${operation}: ${error.message}`);
+    }
+  }
+
   async uploadProductImages(
     productId: string,
     images: Express.Multer.File[],
@@ -556,27 +605,30 @@ export class AdminProductsService {
     });
 
     try {
-      await this.prismaService.$transaction(async (tx) => {
-        // First, collect all unique categories and brands
-        const uniqueCategories = new Set(
-          products
-            .map(p => p.categoryName)
-            .filter(name => name && name.trim())
-        );
-        
-        const uniqueBrands = new Set(
-          products
-            .map(p => p.brandName)
-            .filter(name => name && name.trim())
-        );
+      // First, collect all unique categories and brands
+      const uniqueCategories = new Set(
+        products
+          .map(p => p.categoryName)
+          .filter(name => name && name.trim())
+      );
+      
+      const uniqueBrands = new Set(
+        products
+          .map(p => p.brandName)
+          .filter(name => name && name.trim())
+      );
 
-        // Create missing categories if enabled
-        const categoryMap = new Map<string, string>();
-        if (options.createMissingCategories) {
-          for (const categoryName of uniqueCategories) {
-            if (!categoryName) continue; // Skip undefined/empty categories
-            
-            const existing = await tx.category.findFirst({
+      // Create missing categories and brands in separate transactions
+      const categoryMap = new Map<string, string>();
+      const brandMap = new Map<string, string>();
+
+      // Handle categories
+      if (options.createMissingCategories) {
+        for (const categoryName of uniqueCategories) {
+          if (!categoryName) continue;
+          
+          try {
+            const existing = await this.prismaService.category.findFirst({
               where: { name: { equals: categoryName, mode: 'insensitive' } },
             });
             
@@ -584,9 +636,9 @@ export class AdminProductsService {
               categoryMap.set(categoryName, existing.id);
             } else {
               const slug = this.generateSlug(categoryName);
-              const uniqueSlug = await this.ensureUniqueCategorySlug(slug, tx);
+              const uniqueSlug = await this.ensureUniqueCategorySlug(slug);
               
-              const newCategory = await tx.category.create({
+              const newCategory = await this.prismaService.category.create({
                 data: {
                   name: categoryName,
                   slug: uniqueSlug,
@@ -596,33 +648,36 @@ export class AdminProductsService {
               categoryMap.set(categoryName, newCategory.id);
               results.categoriesCreated.push(categoryName);
             }
+          } catch (error) {
+            console.warn(`Failed to create category ${categoryName}:`, error.message);
           }
-        } else {
-          // Just map existing categories
-          const validCategories = Array.from(uniqueCategories).filter(Boolean) as string[];
-          const existingCategories = await tx.category.findMany({
-            where: { 
-              name: { in: validCategories, mode: 'insensitive' } 
-            },
-          });
-          
-          existingCategories.forEach(cat => {
-            const matchingName = validCategories.find(
-              name => name && name.toLowerCase() === cat.name.toLowerCase()
-            );
-            if (matchingName) {
-              categoryMap.set(matchingName, cat.id);
-            }
-          });
         }
+      } else {
+        // Just map existing categories
+        const validCategories = Array.from(uniqueCategories).filter(Boolean) as string[];
+        const existingCategories = await this.prismaService.category.findMany({
+          where: { 
+            name: { in: validCategories, mode: 'insensitive' } 
+          },
+        });
+        
+        existingCategories.forEach(cat => {
+          const matchingName = validCategories.find(
+            name => name && name.toLowerCase() === cat.name.toLowerCase()
+          );
+          if (matchingName) {
+            categoryMap.set(matchingName, cat.id);
+          }
+        });
+      }
 
-        // Create missing brands if enabled
-        const brandMap = new Map<string, string>();
-        if (options.createMissingBrands) {
-          for (const brandName of uniqueBrands) {
-            if (!brandName) continue; // Skip undefined/empty brands
-            
-            const existing = await tx.brand.findFirst({
+      // Handle brands
+      if (options.createMissingBrands) {
+        for (const brandName of uniqueBrands) {
+          if (!brandName) continue;
+          
+          try {
+            const existing = await this.prismaService.brand.findFirst({
               where: { name: { equals: brandName, mode: 'insensitive' } },
             });
             
@@ -630,9 +685,9 @@ export class AdminProductsService {
               brandMap.set(brandName, existing.id);
             } else {
               const slug = this.generateSlug(brandName);
-              const uniqueSlug = await this.ensureUniqueBrandSlug(slug, tx);
+              const uniqueSlug = await this.ensureUniqueBrandSlug(slug);
               
-              const newBrand = await tx.brand.create({
+              const newBrand = await this.prismaService.brand.create({
                 data: {
                   name: brandName,
                   slug: uniqueSlug,
@@ -642,31 +697,35 @@ export class AdminProductsService {
               brandMap.set(brandName, newBrand.id);
               results.brandsCreated.push(brandName);
             }
+          } catch (error) {
+            console.warn(`Failed to create brand ${brandName}:`, error.message);
           }
-        } else {
-          // Just map existing brands
-          const validBrands = Array.from(uniqueBrands).filter(Boolean) as string[];
-          const existingBrands = await tx.brand.findMany({
-            where: { 
-              name: { in: validBrands, mode: 'insensitive' } 
-            },
-          });
-          
-          existingBrands.forEach(brand => {
-            const matchingName = validBrands.find(
-              name => name && name.toLowerCase() === brand.name.toLowerCase()
-            );
-            if (matchingName) {
-              brandMap.set(matchingName, brand.id);
-            }
-          });
         }
+      } else {
+        // Just map existing brands
+        const validBrands = Array.from(uniqueBrands).filter(Boolean) as string[];
+        const existingBrands = await this.prismaService.brand.findMany({
+          where: { 
+            name: { in: validBrands, mode: 'insensitive' } 
+          },
+        });
+        
+        existingBrands.forEach(brand => {
+          const matchingName = validBrands.find(
+            name => name && name.toLowerCase() === brand.name.toLowerCase()
+          );
+          if (matchingName) {
+            brandMap.set(matchingName, brand.id);
+          }
+        });
+      }
 
-        // Now import products
-        for (let i = 0; i < products.length; i++) {
-          const product = products[i];
-          
-          try {
+      // Now import products individually (each in its own transaction)
+      for (let i = 0; i < products.length; i++) {
+        const product = products[i];
+        
+        try {
+          await this.prismaService.$transaction(async (tx) => {
             // Check if product already exists by SKU or title
             let existingProduct: any = null;
             if (product.sku) {
@@ -683,12 +742,12 @@ export class AdminProductsService {
 
             if (existingProduct) {
               results.skipped.push(`Row ${i + 2}: Product already exists (SKU: ${product.sku || 'N/A'}, Title: ${product.title})`);
-              continue;
+              return;
             }
 
             // Generate unique slug
             const baseSlug = this.generateSlug(product.title || `product-${i}`);
-            const slug = await this.ensureUniqueSlug(baseSlug);
+            const slug = await this.ensureUniqueSlugWithTx(baseSlug, tx);
 
             // Prepare product data
             const productData: any = {
@@ -701,6 +760,7 @@ export class AdminProductsService {
               compareAtPrice: product.compareAtPrice || null,
               currency: product.currency || 'JOD',
               sku: product.sku || null,
+              barcode: product.barcode || null,
               isActive: product.isActive !== undefined ? product.isActive : true,
               isFeatured: product.isFeatured || false,
               isNew: product.isNew || false,
@@ -708,6 +768,7 @@ export class AdminProductsService {
               activeIngredients: product.activeIngredients || null,
               skinType: product.skinType || null,
               usage: product.usage || null,
+              concerns: product.concerns ? JSON.stringify(product.concerns.split(',').map(s => s.trim())) : null,
               features: product.features ? JSON.stringify(product.features.split(',').map(s => s.trim())) : null,
               ingredients: product.ingredients ? JSON.stringify(product.ingredients.split(',').map(s => s.trim())) : null,
               howToUse: product.howToUse || null,
@@ -716,7 +777,6 @@ export class AdminProductsService {
               howToUseAr: product.howToUseAr || null,
               metaTitle: product.metaTitle || null,
               metaDescription: product.metaDescription || null,
-              concerns: product.concerns ? JSON.stringify(product.concerns.split(',').map(s => s.trim())) : null,
               categoryId: product.categoryName ? categoryMap.get(product.categoryName) || null : null,
               brandId: product.brandName ? brandMap.get(product.brandName) || null : null,
             };
@@ -749,17 +809,71 @@ export class AdminProductsService {
               }
             }
 
+            // Handle product attributes if provided
+            if (product.attributes) {
+              const attributePairs = product.attributes.split(',').map(attr => attr.trim()).filter(attr => attr);
+              
+              for (const attrPair of attributePairs) {
+                const [attrName, attrValue] = attrPair.split(':').map(s => s.trim());
+                if (attrName && attrValue) {
+                  try {
+                    // Find or create attribute
+                    let attribute = await tx.productAttribute.findFirst({
+                      where: { name: { equals: attrName, mode: 'insensitive' } },
+                    });
+                    
+                    if (!attribute) {
+                      const attrSlug = this.generateSlug(attrName);
+                      attribute = await tx.productAttribute.create({
+                        data: {
+                          name: attrName,
+                          slug: attrSlug,
+                        },
+                      });
+                    }
+
+                    // Find or create attribute value
+                    let attributeValue = await tx.productAttributeValue.findFirst({
+                      where: {
+                        attributeId: attribute.id,
+                        value: { equals: attrValue, mode: 'insensitive' },
+                      },
+                    });
+                    
+                    if (!attributeValue) {
+                      const valueSlug = this.generateSlug(attrValue);
+                      attributeValue = await tx.productAttributeValue.create({
+                        data: {
+                          attributeId: attribute.id,
+                          value: attrValue,
+                          slug: valueSlug,
+                        },
+                      });
+                    }
+
+                    // Link product to attribute value
+                    await tx.productAttribute_Product.create({
+                      data: {
+                        productId: createdProduct.id,
+                        productAttributeValueId: attributeValue.id,
+                      },
+                    });
+                  } catch (attrError) {
+                    console.warn(`Failed to add attribute ${attrName}:${attrValue} for product ${createdProduct.id}:`, attrError);
+                  }
+                }
+              }
+            }
+
             results.created.push(`Row ${i + 2}: ${product.title} (ID: ${createdProduct.id})`);
             results.successCount++;
-          } catch (error) {
-            results.failureCount++;
-            results.errors.push(`Row ${i + 2}: ${error.message}`);
-          }
+          });
+        } catch (error) {
+          results.failureCount++;
+          results.errors.push(`Row ${i + 2}: ${error.message}`);
+          console.error(`Failed to import product at row ${i + 2}:`, error);
         }
-      }, {
-        maxWait: 30000, // 30 seconds
-        timeout: 300000, // 5 minutes
-      });
+      }
 
       // Update import log
       await this.prismaService.importLog.update({
@@ -863,6 +977,27 @@ export class AdminProductsService {
     while (true) {
       const existing = await prisma.brand.findFirst({
         where: { slug },
+      });
+
+      if (!existing) {
+        return slug;
+      }
+
+      slug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+  }
+
+  private async ensureUniqueSlugWithTx(baseSlug: string, tx: any, excludeId?: string): Promise<string> {
+    let slug = baseSlug;
+    let counter = 1;
+
+    while (true) {
+      const existing = await tx.product.findFirst({
+        where: {
+          slug,
+          ...(excludeId && { id: { not: excludeId } }),
+        },
       });
 
       if (!existing) {

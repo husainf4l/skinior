@@ -7,11 +7,10 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { useDashboardOverview } from "@/hooks/useDashboard";
 import {
   DashboardSkeleton,
-  StatCardSkeleton,
+  // StatCardSkeleton,  // Unused import
   ErrorState,
   EmptyState,
 } from "@/components/dashboard/DashboardSkeleton";
-import { DashboardApiTest } from "@/components/dashboard/DashboardApiTest";
 
 export default function DashboardPage() {
   const locale = useLocale();
@@ -38,14 +37,14 @@ export default function DashboardPage() {
     });
   };
 
-  // Format time for display
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString(locale === "ar" ? "ar-SA" : "en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  // Format time for display (currently unused)
+  // const formatTime = (dateString: string) => {
+  //   const date = new Date(dateString);
+  //   return date.toLocaleTimeString(locale === "ar" ? "ar-SA" : "en-US", {
+  //     hour: "2-digit",
+  //     minute: "2-digit",
+  //   });
+  // };
 
   if (loading) {
     return (
@@ -99,9 +98,9 @@ export default function DashboardPage() {
     personalStats,
     myActiveTreatments,
     myRecentConsultations,
-    recommendedProductsCount,
-    favoritesCount,
-    myCollectionValue,
+    // recommendedProductsCount,  // Currently unused
+    // favoritesCount,             // Currently unused
+    // myCollectionValue,          // Currently unused
   } = dashboardData;
 
   // Map the API response to the expected structure
@@ -148,27 +147,6 @@ export default function DashboardPage() {
                   {showApiTest ? "Hide API Test" : "Show API Test"}
                 </button>
               </div>
-
-              {showApiTest && (
-                <div className="space-y-4">
-                  <DashboardApiTest />
-
-                  {/* Current Data Preview */}
-                  <div className="bg-white rounded-lg p-4 border">
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">
-                      Current Dashboard Data:
-                    </h4>
-                    <details className="text-xs">
-                      <summary className="cursor-pointer text-gray-600 hover:text-gray-800">
-                        View Raw API Response
-                      </summary>
-                      <pre className="mt-2 p-3 bg-gray-50 rounded border overflow-x-auto text-xs">
-                        {JSON.stringify(dashboardData, null, 2)}
-                      </pre>
-                    </details>
-                  </div>
-                </div>
-              )}
             </div>
           )}
 
@@ -485,7 +463,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="p-6 space-y-4">
                   {recentConsultations && recentConsultations.length > 0 ? (
-                    recentConsultations.map((consultation: any) => (
+                    recentConsultations.map((consultation) => (
                       <div
                         key={consultation.id}
                         className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border border-purple-100"

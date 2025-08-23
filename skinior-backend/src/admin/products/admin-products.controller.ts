@@ -167,6 +167,53 @@ export class AdminProductsController {
     };
   }
 
+  @Delete()
+  @ApiOperation({
+    summary: 'Delete all products or specific products',
+    description: 'Permanently delete ALL products or specific products by IDs and their associated images from AWS S3',
+  })
+  @ApiBody({
+    required: false,
+    schema: {
+      type: 'object',
+      properties: {
+        productIds: {
+          type: 'array',
+          items: { type: 'string', format: 'uuid' },
+          description: 'Optional array of product IDs to delete. If not provided, ALL products will be deleted.',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Products deleted successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Failed to delete products',
+  })
+  async deleteAllProducts(@Body() body?: { productIds?: string[] }) {
+    const productIds = body?.productIds;
+    const result = await this.adminProductsService.deleteAllProducts(productIds);
+    
+    const operation = productIds && productIds.length > 0 
+      ? `${productIds.length} specific products` 
+      : 'all products';
+    
+    return {
+      success: true,
+      data: {
+        deletedProductsCount: result.deletedCount,
+        deletedImagesCount: result.deletedImageCount,
+        operation: productIds && productIds.length > 0 ? 'delete_multiple' : 'delete_all',
+        requestedIds: productIds || null,
+      },
+      message: `${operation} deleted successfully. ${result.deletedCount} products and ${result.deletedImageCount} images removed.`,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
   @Post(':id/images/upload')
   @ApiOperation({
     summary: 'Upload product images',

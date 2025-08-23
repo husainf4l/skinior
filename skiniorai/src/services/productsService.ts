@@ -1,4 +1,4 @@
-import { Product } from '@/types/product';
+import { Product, ProductQueryParams, ProductsApiResponse, ProductsResult } from '@/types/product';
 import { API_CONFIG } from '@/lib/config';
 
 export const productsService = {
@@ -37,46 +37,120 @@ export const productsService = {
 
   async getDiscountedProducts(): Promise<Product[]> {
     try {
-      // For now, fetch all products and filter for discounted ones
-      // Later, the backend can provide a dedicated endpoint
-      const response = await fetch(`${API_CONFIG.API_BASE_URL}/products`);
+      // Use the new filtered API to get products on sale
+      const result = await this.getProducts({
+        onSale: true,
+        isActive: true,
+        limit: 4,
+        sortBy: 'price',
+        sortOrder: 'desc'
+      });
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data: Product[] = await response.json();
-      // Filter products that have compareAtPrice (indicating a discount)
-      const discountedProducts = data.filter(product => 
-        product.compareAtPrice && 
-        product.compareAtPrice > product.price &&
-        product.isActive
-      );
-      
-      // Sort by discount percentage (highest first) and limit to 4
-      return discountedProducts
-        .sort((a, b) => {
-          const discountA = a.compareAtPrice ? ((a.compareAtPrice - a.price) / a.compareAtPrice) * 100 : 0;
-          const discountB = b.compareAtPrice ? ((b.compareAtPrice - b.price) / b.compareAtPrice) * 100 : 0;
-          return discountB - discountA;
-        })
-        .slice(0, 4);
+      return result.products;
     } catch (error) {
       console.error('Error fetching discounted products:', error);
-      throw error;
+      // Fallback to legacy method
+      try {
+        const response = await fetch(`${API_CONFIG.API_BASE_URL}/products`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const responseData = await response.json();
+        let products: Product[] = [];
+        
+        if (responseData.success && Array.isArray(responseData.data)) {
+          products = responseData.data;
+        } else if (Array.isArray(responseData)) {
+          products = responseData;
+        }
+        
+        const discountedProducts = products.filter(product => 
+          product.compareAtPrice && 
+          product.compareAtPrice > product.price &&
+          product.isActive
+        );
+        
+        return discountedProducts
+          .sort((a, b) => {
+            const discountA = a.compareAtPrice ? ((a.compareAtPrice - a.price) / a.compareAtPrice) * 100 : 0;
+            const discountB = b.compareAtPrice ? ((b.compareAtPrice - b.price) / b.compareAtPrice) * 100 : 0;
+            return discountB - discountA;
+          })
+          .slice(0, 4);
+      } catch (fallbackError) {
+        console.error('Fallback method also failed:', fallbackError);
+        return [];
+      }
     }
   },
 
-  async getProducts(): Promise<Product[]> {
+  async getProducts(filters?: ProductQueryParams): Promise<ProductsResult> {
     try {
-      const response = await fetch(`${API_CONFIG.API_BASE_URL}/products`);
+      const params = new URLSearchParams();
+      
+      if (filters) {
+        if (filters.page) params.append('page', filters.page.toString());
+        if (filters.limit) params.append('limit', filters.limit.toString());
+        if (filters.search) params.append('search', filters.search);
+        if (filters.category) params.append('category', filters.category);
+        if (filters.brand) params.append('brand', filters.brand);
+        if (filters.minPrice !== undefined) params.append('minPrice', filters.minPrice.toString());
+        if (filters.maxPrice !== undefined) params.append('maxPrice', filters.maxPrice.toString());
+        if (filters.skinType) params.append('skinType', filters.skinType);
+        if (filters.concernsFilter && filters.concernsFilter.length > 0) params.append('concerns', filters.concernsFilter.join(','));
+        if (filters.isFeatured !== undefined) params.append('isFeatured', filters.isFeatured.toString());
+        if (filters.isNew !== undefined) params.append('isNew', filters.isNew.toString());
+        if (filters.isActive !== undefined) params.append('isActive', filters.isActive.toString());
+        if (filters.onSale !== undefined) params.append('onSale', filters.onSale.toString());
+        if (filters.sortBy) params.append('sortBy', filters.sortBy);
+        if (filters.sortOrder) params.append('sortOrder', filters.sortOrder);
+      }
+      
+      const url = `${API_CONFIG.API_BASE_URL}/products${params.toString() ? `?${params.toString()}` : ''}`;
+      console.log('Fetching products from:', url);
+      
+      const response = await fetch(url);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const data: Product[] = await response.json();
-      return data;
+      const responseData: ProductsApiResponse = await response.json();
+      console.log('Products response:', responseData);
+      
+      if (responseData.success && responseData.data) {
+        return responseData.data;
+      }
+      
+      // Fallback for legacy API format (array of products)
+      if (Array.isArray(responseData)) {
+        const products = responseData as Product[];
+        return {
+          products,
+          pagination: {
+            page: filters?.page || 1,
+            limit: filters?.limit || products.length,
+            total: products.length,
+            pages: 1,
+            hasNext: false,
+            hasPrev: false
+          },
+          filters: {
+            categories: [],
+            brands: [],
+            skinTypes: [],
+            concerns: [],
+            priceRange: {
+              min: 0,
+              max: 1000
+            }
+          }
+        };
+      }
+      
+      throw new Error('Unexpected API response format');
     } catch (error) {
       console.error('Error fetching products:', error);
       throw error;

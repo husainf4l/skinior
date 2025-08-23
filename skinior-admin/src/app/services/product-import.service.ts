@@ -41,13 +41,33 @@ export interface ImportHistoryApiResponse {
   timestamp: string;
 }
 
+export interface ValidationApiResponse {
+  success: boolean;
+  data: {
+    totalRows: number;
+    validRows: number;
+    invalidRows: number;
+    validation: {
+      isValid: boolean;
+      errors: ValidationError[];
+      warnings: string[]; // Raw warning strings from API
+    };
+    preview?: any[];
+  };
+  message: string;
+  timestamp: string;
+}
+
 export interface ValidationResult {
   totalRows: number;
   validRows: number;
   invalidRows: number;
-  errors: ValidationError[];
-  warnings: ValidationWarning[];
-  preview: any[];
+  validation: {
+    isValid: boolean;
+    errors: ValidationError[];
+    warnings: ValidationWarning[];
+  };
+  preview?: any[];
 }
 
 export interface ValidationError {
@@ -120,8 +140,41 @@ export class ProductImportService {
     const formData = new FormData();
     formData.append('file', file);
 
-    return this.http.post<ValidationResponse>(`${this.apiUrl}/validate`, formData)
-      .pipe(map(response => response.data));
+    return this.http.post<ValidationApiResponse>(`${this.apiUrl}/validate`, formData)
+      .pipe(map(response => {
+        const data = response.data;
+        
+        // Transform the validation structure to match expected format
+        return {
+          totalRows: data.totalRows,
+          validRows: data.validRows,
+          invalidRows: data.invalidRows,
+          validation: {
+            isValid: data.validation?.isValid || false,
+            errors: data.validation?.errors || [],
+            warnings: (data.validation?.warnings || []).map((warning: string, index: number) => {
+              // Parse warning string "Row X: message" into structured format
+              const match = warning.match(/^Row (\d+): (.+)$/);
+              if (match) {
+                return {
+                  row: parseInt(match[1]),
+                  field: 'price', // Default field, could be extracted from message if needed
+                  message: match[2],
+                  value: null
+                };
+              } else {
+                return {
+                  row: index + 1,
+                  field: 'unknown',
+                  message: warning,
+                  value: null
+                };
+              }
+            })
+          },
+          preview: data.preview || []
+        };
+      }));
   }
 
   /**

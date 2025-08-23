@@ -63,6 +63,8 @@
     "sale": "خصم",
     "addToCart": "أضف للسلة",
     "adding": "جاري الإضافة...",
+    "added": "تمت الإضافة",
+    "addedSuccessfully": "تمت الإضافة بنجاح",
     "quickView": "عرض سريع",
     "addToWishlist": "أضف لقائمة الأمنيات",
     "removeFromWishlist": "إزالة من قائمة الأمنيات",
@@ -171,7 +173,15 @@
     "continueShopping": "متابعة التسوق",
     "viewOrders": "عرض طلباتي",
     "supportMessage": "تحتاج مساعدة مع طلبك؟",
-    "contactSupport": "تواصل مع الدعم"
+    "contactSupport": "تواصل مع الدعم",
+    "paymentMethod": "طريقة الدفع",
+    "cashOnDelivery": "الدفع عند الاستلام",
+    "creditCard": "بطاقة ائتمانية/مدينة",
+    "paymentMethodRequired": "يرجى اختيار طريقة الدفع",
+    "cardNumber": "رقم البطاقة",
+    "expiryDate": "الشهر/السنة",
+    "cvv": "رمز الحماية",
+    "cardHolderName": "اسم حامل البطاقة"
   },
   "featuredProducts": {
     "title": "المنتجات المميزة",

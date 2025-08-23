@@ -63,6 +63,8 @@
     "sale": "Sale",
     "addToCart": "Add to Cart",
     "adding": "Adding...",
+    "added": "Added",
+    "addedSuccessfully": "Added Successfully",
     "quickView": "Quick View",
     "addToWishlist": "Add to Wishlist",
     "removeFromWishlist": "Remove from Wishlist",
@@ -171,7 +173,15 @@
     "continueShopping": "Continue Shopping",
     "viewOrders": "View My Orders",
     "supportMessage": "Need help with your order?",
-    "contactSupport": "Contact Support"
+    "contactSupport": "Contact Support",
+    "paymentMethod": "Payment Method",
+    "cashOnDelivery": "Cash on Delivery",
+    "creditCard": "Credit/Debit Card",
+    "paymentMethodRequired": "Please select a payment method",
+    "cardNumber": "Card Number",
+    "expiryDate": "MM/YY",
+    "cvv": "CVV",
+    "cardHolderName": "Cardholder Name"
   },
   "featuredProducts": {
     "title": "Featured Products",
