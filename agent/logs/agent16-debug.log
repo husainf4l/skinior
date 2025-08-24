@@ -24360,3 +24360,5 @@ asyncio 2025-08-23 18:31:24,507 - DEBUG - __init__:64 - Using selector: EpollSel
 livekit.agents 2025-08-23 18:31:24,511 - INFO - initialize:184 - process initialized
 asyncio 2025-08-23 18:31:24,511 - DEBUG - __init__:64 - Using selector: EpollSelector
 livekit.agents 2025-08-23 18:31:25,008 - INFO - _handle_register:801 - registered worker
+livekit.agents 2025-08-24 04:41:42,033 - INFO - drain:493 - draining worker
+livekit.agents 2025-08-24 04:41:42,034 - INFO - aclose:576 - shutting down worker
