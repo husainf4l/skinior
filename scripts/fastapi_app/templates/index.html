@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Metadata Helper</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .missing-field {
+        color: #dc3545;
+        font-weight: 500;
+      }
+      .product-card {
+        transition: transform 0.2s;
+      }
+      .product-card:hover {
+        transform: translateY(-2px);
+      }
+      .field-preview {
+        font-size: 0.85em;
+        color: #6c757d;
+      }
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="container py-4">
+      <div class="row">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="text-primary">
+              <i class="fas fa-search me-2"></i>
+              Product Metadata Manager
+            </h1>
+            <div class="d-flex gap-2 align-items-center">
+              <button
+                class="btn btn-success btn-sm"
+                onclick="showBulkOperations()"
+              >
+                <i class="fas fa-rocket me-1"></i>Bulk Operations
+              </button>
+              <div class="badge bg-info fs-6">
+                {{ products|length }} products found
+              </div>
+            </div>
+          </div>
+
+          <!-- Bulk Operations Modal -->
+          <div class="modal fade" id="bulkModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                  <h5 class="modal-title">
+                    <i class="fas fa-rocket me-2"></i>Bulk Operations
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row g-4">
+                    <!-- Bulk Autofill -->
+                    <div class="col-md-6">
+                      <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                          <h6 class="mb-0">
+                            <i class="fas fa-magic me-1"></i>Bulk Auto-Generate
+                          </h6>
+                        </div>
+                        <div class="card-body">
+                          <p class="small">Process multiple products at once</p>
+                          <div class="mb-3">
+                            <label class="form-label"
+                              >Number of Products:</label
+                            >
+                            <input
+                              type="number"
+                              class="form-control"
+                              id="modalBulkLimit"
+                              value="50"
+                              min="1"
+                              max="10000"
+                            />
+                            <div class="form-text">
+                              Recommended: 50-500 for testing, up to 10,000 for
+                              full processing
+                            </div>
+                            <div class="form-text">
+                              Recommended: 100-500 for testing, up to 10,000 for
+                              full processing
+                            </div>
+                          </div>
+                          <button
+                            class="btn btn-primary w-100"
+                            onclick="runBulkProcess()"
+                          >
+                            <i class="fas fa-play me-1"></i>Start Bulk
+                            Processing
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="col-md-6">
+                      <div class="card h-100">
+                        <div class="card-header bg-info text-white">
+                          <h6 class="mb-0">
+                            <i class="fas fa-chart-bar me-1"></i>Database
+                            Statistics
+                          </h6>
+                        </div>
+                        <div class="card-body">
+                          <p class="small">View missing field statistics</p>
+                          <button
+                            class="btn btn-info w-100 mb-2"
+                            onclick="loadStats()"
+                          >
+                            <i class="fas fa-refresh me-1"></i>Load Statistics
+                          </button>
+                          <div id="statsDisplay" class="small"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Progress Display -->
+                  <div
+                    id="progressContainer"
+                    class="mt-4"
+                    style="display: none"
+                  >
+                    <div class="card">
+                      <div class="card-header">
+                        <h6 class="mb-0">
+                          <i class="fas fa-progress-bars me-1"></i>Processing
+                          Progress
+                        </h6>
+                      </div>
+                      <div class="card-body">
+                        <div class="progress mb-2">
+                          <div
+                            id="progressBar"
+                            class="progress-bar"
+                            style="width: 0%"
+                          ></div>
+                        </div>
+                        <div id="progressText">Preparing...</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter Form -->
+          <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">
+                <i class="fas fa-filter me-2"></i>Filter Products
+              </h5>
+            </div>
+            <div class="card-body">
+              <form method="get" action="/" class="row g-3">
+                <div class="col-md-8">
+                  <label for="keys" class="form-label"
+                    >Search for missing fields:</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="keys"
+                    name="keys"
+                    value="{{ keys or '' }}"
+                    placeholder="howToUse, ingredients, title (comma separated)"
+                  />
+                  <div class="form-text">
+                    Common fields: title, howToUse, ingredients, descriptionEn,
+                    descriptionAr, price, skinType
+                  </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                  <button type="submit" class="btn btn-primary me-2">
+                    <i class="fas fa-search me-1"></i>Filter
+                  </button>
+                  <a href="/" class="btn btn-outline-secondary">
+                    <i class="fas fa-refresh me-1"></i>Reset
+                  </a>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Products List -->
+          {% if products %}
+          <div class="row">
+            {% for p in products %}
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="card product-card h-100">
+                <div
+                  class="card-header d-flex justify-content-between align-items-start"
+                >
+                  <h6
+                    class="card-title mb-0 text-truncate"
+                    title="{{ p.title or 'Untitled Product' }}"
+                  >
+                    {{ p.title or 'Untitled Product' }}
+                  </h6>
+                  <span class="badge bg-secondary">{{ p.id[:8] }}...</span>
+                </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <strong class="text-muted">Missing Fields:</strong>
+                    <div class="mt-1">
+                      {% for field, value in p.fields.items() %}
+                      <span class="badge bg-danger me-1 mb-1">{{ field }}</span>
+                      {% endfor %}
+                    </div>
+                  </div>
+
+                  {% if p.fields %}
+                  <div class="field-preview">
+                    <small>
+                      {% for field, value in p.fields.items() %}
+                      <div>
+                        <strong>{{ field }}:</strong>
+                        {% if value %} {{ value|string|truncate(30) }} {% else
+                        %}
+                        <span class="missing-field">Empty</span>
+                        {% endif %}
+                      </div>
+                      {% endfor %}
+                    </small>
+                  </div>
+                  {% endif %}
+                </div>
+                <div class="card-footer">
+                  <a
+                    href="/product/{{ p.id }}"
+                    class="btn btn-primary btn-sm w-100"
+                  >
+                    <i class="fas fa-edit me-1"></i>Edit Product
+                  </a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="text-center py-5">
+            <div class="mb-4">
+              <i class="fas fa-box-open text-muted" style="font-size: 4rem"></i>
+            </div>
+            <h4 class="text-muted">No products found</h4>
+            <p class="text-muted">
+              Try adjusting your filter criteria or check back later.
+            </p>
+            <a href="/" class="btn btn-primary">
+              <i class="fas fa-refresh me-1"></i>View All Products
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      let bulkModal;
+
+      document.addEventListener("DOMContentLoaded", function () {
+        bulkModal = new bootstrap.Modal(document.getElementById("bulkModal"));
+      });
+
+      function showBulkOperations() {
+        bulkModal.show();
+      }
+
+      async function runBulkProcess() {
+        const limit = document.getElementById("modalBulkLimit").value;
+        const progressContainer = document.getElementById("progressContainer");
+        const progressBar = document.getElementById("progressBar");
+        const progressText = document.getElementById("progressText");
+
+        // Show progress
+        progressContainer.style.display = "block";
+        progressBar.style.width = "0%";
+        progressText.textContent = "Starting bulk processing...";
+
+        try {
+          // Start background job
+          const response = await fetch(
+            `/products/bulk-autofill?limit=${limit}&commit=true&background=true`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(result.detail || "Failed to start bulk processing");
+          }
+
+          const jobId = result.job_id;
+          progressText.textContent = `Job started with ID: ${jobId}`;
+
+          // Start listening to progress updates via Server-Sent Events
+          const eventSource = new EventSource(`/progress/${jobId}/stream`);
+
+          eventSource.onmessage = function (event) {
+            const progress = JSON.parse(event.data);
+
+            // Update progress bar
+            const percentage = progress.percentage || 0;
+            progressBar.style.width = `${percentage}%`;
+            progressBar.textContent = `${percentage}%`;
+
+            // Update status text
+            let statusHtml = `
+              <div class="mb-2">
+                <strong>Status:</strong> ${progress.status || "running"}<br>
+                <strong>Progress:</strong> ${progress.current_item || 0} / ${
+              progress.total_items || 0
+            }
+            `;
+
+            if (progress.status_message) {
+              statusHtml += `<br><strong>Current:</strong> ${progress.status_message}`;
+            }
+
+            if (
+              progress.success_count !== undefined ||
+              progress.error_count !== undefined
+            ) {
+              statusHtml += `<br><strong>Success:</strong> ${
+                progress.success_count || 0
+              } | <strong>Errors:</strong> ${progress.error_count || 0}`;
+            }
+
+            if (progress.elapsed_time) {
+              statusHtml += `<br><strong>Elapsed:</strong> ${Math.round(
+                progress.elapsed_time
+              )}s`;
+            }
+
+            if (progress.eta && progress.status === "running") {
+              statusHtml += ` | <strong>ETA:</strong> ${Math.round(
+                progress.eta
+              )}s`;
+            }
+
+            if (progress.rate) {
+              statusHtml += ` | <strong>Rate:</strong> ${progress.rate.toFixed(
+                2
+              )}/s`;
+            }
+
+            statusHtml += "</div>";
+
+            // Show recent processed items
+            if (progress.recent_items && progress.recent_items.length > 0) {
+              statusHtml +=
+                '<div class="small"><strong>Recent items:</strong><ul class="mb-0">';
+              progress.recent_items.slice(0, 5).forEach((item) => {
+                const icon = item.status === "success" ? "✅" : "❌";
+                statusHtml += `<li>${icon} ${item.item_name}: ${
+                  item.details || "Processed"
+                }</li>`;
+              });
+              statusHtml += "</ul></div>";
+            }
+
+            progressText.innerHTML = statusHtml;
+
+            // Handle completion
+            if (progress.status === "completed") {
+              progressBar.classList.add("bg-success");
+              progressText.innerHTML = `
+                <div class="alert alert-success mb-0">
+                  <strong>✅ Bulk Processing Completed!</strong><br>
+                  📦 Total products: ${progress.total_items}<br>
+                  ✅ Processed successfully: ${progress.success_count}<br>
+                  ❌ Errors: ${progress.error_count}<br>
+                  ⏱️ Total time: ${Math.round(progress.elapsed_time)}s
+                </div>
+              `;
+              eventSource.close();
+
+              // Refresh the page after a delay
+              setTimeout(() => {
+                window.location.reload();
+              }, 3000);
+            } else if (progress.status === "failed") {
+              progressBar.classList.add("bg-danger");
+              progressText.innerHTML = `
+                <div class="alert alert-danger mb-0">
+                  <strong>❌ Processing Failed:</strong><br>
+                  ${progress.status_message || "Unknown error occurred"}
+                </div>
+              `;
+              eventSource.close();
+            }
+          };
+
+          eventSource.onerror = function (error) {
+            console.error("SSE Error:", error);
+            progressText.innerHTML = `
+              <div class="alert alert-warning mb-0">
+                <strong>⚠️ Connection Error:</strong> Progress updates interrupted. Job may still be running.
+              </div>
+            `;
+            eventSource.close();
+          };
+        } catch (error) {
+          console.error("Error:", error);
+          progressText.innerHTML = `
+            <div class="alert alert-danger mb-0">
+              <strong>❌ Error:</strong> ${error.message}
+            </div>
+          `;
+        }
+      }
+
+      async function loadStats() {
+        const statsDisplay = document.getElementById("statsDisplay");
+        statsDisplay.innerHTML =
+          '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+
+        try {
+          const response = await fetch("/products/missing-stats");
+          const result = await response.json();
+
+          if (response.ok) {
+            const {
+              total_products_analyzed,
+              summary,
+              most_needed_fields,
+              field_statistics,
+            } = result;
+
+            let html = `
+              <div class="border rounded p-3 bg-light">
+                <h6 class="text-primary mb-2">📊 Database Overview</h6>
+                <ul class="list-unstyled mb-3 small">
+                  <li><strong>Products analyzed:</strong> ${total_products_analyzed}</li>
+                  <li><strong>Fields below 50%:</strong> ${
+                    summary.fields_below_50_percent
+                  }</li>
+                  <li><strong>Fields below 25%:</strong> ${
+                    summary.fields_below_25_percent
+                  }</li>
+                </ul>
+                
+                <h6 class="text-danger mb-2">🎯 Most Needed Fields</h6>
+                <div class="small">
+                  ${most_needed_fields
+                    .slice(0, 8)
+                    .map(
+                      (field) => `
+                    <span class="badge bg-danger me-1 mb-1">${field}</span>
+                  `
+                    )
+                    .join("")}
+                </div>
+              </div>
+            `;
+
+            statsDisplay.innerHTML = html;
+          } else {
+            statsDisplay.innerHTML = `<div class="alert alert-danger small">Error loading stats</div>`;
+          }
+        } catch (error) {
+          statsDisplay.innerHTML = `<div class="alert alert-danger small">Error: ${error.message}</div>`;
+        }
+      }
+    </script>
+  </body>
+</html>

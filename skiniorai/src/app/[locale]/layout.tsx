@@ -8,6 +8,8 @@ import { AuthProvider } from "../../contexts/AuthContext";
 import type { Metadata } from "next";
 import ConditionalNavigation from "../../components/ConditionalNavigation";
 import FloatingChatWidget from "@/components/chat/FloatingChatWidget";
+import GoogleAnalytics from "../../components/analytics/GoogleAnalytics";
+import PerformanceTracker from "../../components/analytics/PerformanceTracker";
 
 export const dynamic = "force-static";
 
@@ -84,6 +86,9 @@ export default async function LocaleLayout({
 
   const messages = await getMessages({ locale });
 
+  // Google Analytics Measurement ID from environment
+  const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX';
+
   return (
     <html
       lang={locale}
@@ -129,6 +134,14 @@ export default async function LocaleLayout({
         className="bg-white antialiased"
         style={{ backgroundColor: "white" }}
       >
+        {/* Google Analytics */}
+        {process.env.NODE_ENV === 'production' && (
+          <GoogleAnalytics measurementId={GA_MEASUREMENT_ID} />
+        )}
+        
+        {/* Performance Tracking */}
+        <PerformanceTracker />
+
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
             <ConditionalNavigation>{children}</ConditionalNavigation>

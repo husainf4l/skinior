@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product: {{ product.title or product.id }}</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .json-preview {
+        font-family: "Monaco", "Courier New", monospace;
+        font-size: 0.9em;
+      }
+      .field-status.empty {
+        color: #dc3545;
+      }
+      .field-status.filled {
+        color: #198754;
+      }
+      .autofill-section {
+        background-color: #f8f9fa;
+        border-left: 4px solid #0d6efd;
+      }
+      .border-warning {
+        border-color: #ffc107 !important;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+      }
+      .suggested-field {
+        position: relative;
+      }
+      .suggested-field::before {
+        content: "✨ AI Suggested";
+        position: absolute;
+        top: -8px;
+        right: 10px;
+        background: #ffc107;
+        color: #000;
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 3px;
+        z-index: 10;
+      }
+      .section-divider {
+        border-top: 2px solid #e9ecef;
+        margin: 2rem 0 1rem 0;
+        padding-top: 1rem;
+      }
+      .form-check-input:checked {
+        background-color: #198754;
+        border-color: #198754;
+      }
+      .character-counter {
+        font-size: 0.8rem;
+        color: #6c757d;
+        float: right;
+      }
+      .character-counter.warning {
+        color: #ffc107;
+      }
+      .character-counter.danger {
+        color: #dc3545;
+      }
+      }
+      .suggested-field::after {
+        content: "✨ AI Suggested";
+        position: absolute;
+        top: -8px;
+        right: 8px;
+        background: #ffc107;
+        color: #000;
+        font-size: 0.7rem;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="container py-4">
+      <!-- Header -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="/"><i class="fas fa-home"></i> Home</a>
+              </li>
+              <li class="breadcrumb-item active">Product Details</li>
+            </ol>
+          </nav>
+
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h1 class="text-primary mb-1">
+                {{ product.title or 'Untitled Product' }}
+              </h1>
+              <p class="text-muted mb-0">
+                <i class="fas fa-tag me-1"></i>ID: {{ product.id }}
+              </p>
+            </div>
+            <div class="text-end">
+              <span class="badge bg-info fs-6">
+                <i class="fas fa-cube me-1"></i>Product
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Main Edit Form -->
+        <div class="col-lg-8">
+          <!-- Alert Messages -->
+          {% if alert_message %}
+          <div
+            class="alert alert-{{ alert_type }} alert-dismissible fade show"
+            role="alert"
+          >
+            {% if alert_type == 'success' %}
+            <i class="fas fa-check-circle me-2"></i>
+            {% elif alert_type == 'danger' %}
+            <i class="fas fa-exclamation-circle me-2"></i>
+            {% else %}
+            <i class="fas fa-info-circle me-2"></i>
+            {% endif %} {{ alert_message }}
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+            ></button>
+          </div>
+          {% endif %}
+
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">
+                <i class="fas fa-edit me-2"></i>Edit Product Information
+              </h5>
+            </div>
+            <div class="card-body">
+              <form
+                method="post"
+                action="/product/{{ product.id }}/patch"
+                id="editForm"
+              >
+                <div class="row g-3">
+                  <!-- Title -->
+                  <div class="col-12">
+                    <label for="title" class="form-label">
+                      <i class="fas fa-heading me-1"></i>Title
+                      <span
+                        class="field-status {{ 'filled' if product.title else 'empty' }}"
+                      >
+                        {{ '✓' if product.title else '✗' }}
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="title"
+                      name="title"
+                      value="{{ product.title or '' }}"
+                      placeholder="Enter product title..."
+                    />
+                  </div>
+
+                  <!-- Title Arabic -->
+                  <div class="col-md-6">
+                    <label for="titleAr" class="form-label">
+                      <i class="fas fa-language me-1"></i>Title (Arabic)
+                      <span
+                        class="field-status {{ 'filled' if product.titleAr else 'empty' }}"
+                      >
+                        {{ '✓' if product.titleAr else '✗' }}
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="titleAr"
+                      name="titleAr"
+                      value="{{ product.titleAr or '' }}"
+                      placeholder="العنوان بالعربية..."
+                    />
+                  </div>
+
+                  <!-- Price -->
+                  <div class="col-md-6">
+                    <label for="price" class="form-label">
+                      <i class="fas fa-dollar-sign me-1"></i>Price
+                      <span
+                        class="field-status {{ 'filled' if product.price else 'empty' }}"
+                      >
+                        {{ '✓' if product.price else '✗' }}
+                      </span>
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      class="form-control"
+                      id="price"
+                      name="price"
+                      value="{{ product.price or '' }}"
+                      placeholder="0.00"
+                    />
+                  </div>
+
+                  <!-- Description English -->
+                  <div
+                    class="col-md-6 {{ 'suggested-field' if suggestions.get('descriptionEn') else '' }}"
+                  >
+                    <label for="descriptionEn" class="form-label">
+                      <i class="fas fa-align-left me-1"></i>Description
+                      (English)
+                      <span
+                        class="field-status {{ 'filled' if product.descriptionEn else 'empty' }}"
+                      >
+                        {{ '✓' if product.descriptionEn else '✗' }}
+                      </span>
+                    </label>
+                    <textarea
+                      class="form-control {{ 'border-warning' if suggestions.get('descriptionEn') else '' }}"
+                      id="descriptionEn"
+                      name="descriptionEn"
+                      rows="4"
+                      placeholder="Product description in English..."
+                    >
+{{ suggestions.get('descriptionEn') or product.descriptionEn or '' }}</textarea
+                    >
+                  </div>
+
+                  <!-- Description Arabic -->
+                  <div class="col-md-6">
+                    <label for="descriptionAr" class="form-label">
+                      <i class="fas fa-align-right me-1"></i>Description
+                      (Arabic)
+                      <span
+                        class="field-status {{ 'filled' if product.descriptionAr else 'empty' }}"
+                      >
+                        {{ '✓' if product.descriptionAr else '✗' }}
+                      </span>
+                    </label>
+                    <textarea
+                      class="form-control"
+                      id="descriptionAr"
+                      name="descriptionAr"
+                      rows="4"
+                      placeholder="وصف المنتج بالعربية..."
+                    >
+{{ product.descriptionAr or '' }}</textarea
+                    >
+                  </div>
+
+                  <!-- How to Use -->
+                  <div
+                    class="col-12 {{ 'suggested-field' if suggestions.get('howToUse') else '' }}"
+                  >
+                    <label for="howToUse" class="form-label">
+                      <i class="fas fa-info-circle me-1"></i>How to Use
+                      <span
+                        class="field-status {{ 'filled' if product.howToUse else 'empty' }}"
+                      >
+                        {{ '✓' if product.howToUse else '✗' }}
+                      </span>
+                    </label>
+                    <textarea
+                      class="form-control {{ 'border-warning' if suggestions.get('howToUse') else '' }}"
+                      id="howToUse"
+                      name="howToUse"
+                      rows="3"
+                      placeholder="Instructions on how to use this product..."
+                    >
+{{ suggestions.get('howToUse') or product.howToUse or '' }}</textarea
+                    >
+                  </div>
+
+                  <!-- Ingredients -->
+                  <div
+                    class="col-12 {{ 'suggested-field' if suggestions.get('ingredients') else '' }}"
+                  >
+                    <label for="ingredients" class="form-label">
+                      <i class="fas fa-list me-1"></i>Ingredients
+                      <span
+                        class="field-status {{ 'filled' if product.ingredients else 'empty' }}"
+                      >
+                        {{ '✓' if product.ingredients else '✗' }}
+                      </span>
+                    </label>
+                    <textarea
+                      class="form-control {{ 'border-warning' if suggestions.get('ingredients') else '' }}"
+                      id="ingredients"
+                      name="ingredients"
+                      rows="3"
+                      placeholder="List of ingredients..."
+                    >
+{{ suggestions.get('ingredients') or product.ingredients or '' }}</textarea
+                    >
+                  </div>
+
+                  <!-- Skin Type & Concerns -->
+                  <div class="col-md-6">
+                    <label for="skinType" class="form-label">
+                      <i class="fas fa-user me-1"></i>Skin Type
+                      <span
+                        class="field-status {{ 'filled' if product.skinType else 'empty' }}"
+                      >
+                        {{ '✓' if product.skinType else '✗' }}
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="skinType"
+                      name="skinType"
+                      value="{{ product.skinType or '' }}"
+                      placeholder="e.g., All skin types, Oily, Dry..."
+                    />
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="concerns" class="form-label">
+                      <i class="fas fa-exclamation-triangle me-1"></i>Concerns
+                      <span
+                        class="field-status {{ 'filled' if product.concerns else 'empty' }}"
+                      >
+                        {{ '✓' if product.concerns else '✗' }}
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="concerns"
+                      name="concerns"
+                      value="{{ product.concerns or '' }}"
+                      placeholder="e.g., Acne, Aging, Dryness..."
+                    />
+                  </div>
+
+                  <!-- Usage -->
+                  <div class="col-md-6">
+                    <label for="usage" class="form-label">
+                      <i class="fas fa-clock me-1"></i>Usage Frequency
+                      <span
+                        class="field-status {{ 'filled' if product.usage else 'empty' }}"
+                      >
+                        {{ '✓' if product.usage else '✗' }}
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="usage"
+                      name="usage"
+                      value="{{ product.usage or '' }}"
+                      placeholder="e.g., Morning and Evening, Daily..."
+                    />
+                  </div>
+
+                  <!-- Active Ingredients -->
+                  <div class="col-12">
+                    <label for="activeIngredients" class="form-label">
+                      <i class="fas fa-flask me-1"></i>Active Ingredients
+                      <span
+                        class="field-status {{ 'filled' if product.activeIngredients else 'empty' }}"
+                      >
+                        {{ '✓' if product.activeIngredients else '✗' }}
+                      </span>
+                    </label>
+                    <textarea
+                      class="form-control {{ 'border-warning' if suggestions.get('activeIngredients') else '' }}"
+                      id="activeIngredients"
+                      name="activeIngredients"
+                      rows="2"
+                      placeholder="Key active ingredients..."
+                    >
+{{ suggestions.get('activeIngredients') or product.activeIngredients or '' }}</textarea
+                    >
+                  </div>
+
+                  <!-- Features -->
+                  <div class="col-md-6">
+                    <label for="features" class="form-label">
+                      <i class="fas fa-star me-1"></i>Features (English)
+                      <span
+                        class="field-status {{ 'filled' if product.features else 'empty' }}"
+                      >
+                        {{ '✓' if product.features else '✗' }}
+                      </span>
+                    </label>
+                    <textarea
+                      class="form-control {{ 'border-warning' if suggestions.get('features') else '' }}"
+                      id="features"
+                      name="features"
+                      rows="3"
+                      placeholder="Product features and benefits..."
+                    >
+{{ suggestions.get('features') or product.features or '' }}</textarea
+                    >
+                  </div>
+
+                  <!-- Features Arabic -->
+                  <div class="col-md-6">
+                    <label for="featuresAr" class="form-label">
+                      <i class="fas fa-star me-1"></i>Features (Arabic)
+                      <span
+                        class="field-status {{ 'filled' if product.featuresAr else 'empty' }}"
+                      >
+                        {{ '✓' if product.featuresAr else '✗' }}
+                      </span>
+                    </label>
+                    <textarea
+                      class="form-control {{ 'border-warning' if suggestions.get('featuresAr') else '' }}"
+                      id="featuresAr"
+                      name="featuresAr"
+                      rows="3"
+                      placeholder="ميزات ومزايا المنتج..."
+                    >
+{{ suggestions.get('featuresAr') or product.featuresAr or '' }}</textarea
+                    >
+                  </div>
+
+                  <!-- Ingredients Arabic -->
+                  <div class="col-md-6">
+                    <label for="ingredientsAr" class="form-label">
+                      <i class="fas fa-list me-1"></i>Ingredients (Arabic)
+                      <span
+                        class="field-status {{ 'filled' if product.ingredientsAr else 'empty' }}"
+                      >
+                        {{ '✓' if product.ingredientsAr else '✗' }}
+                      </span>
+                    </label>
+                    <textarea
+                      class="form-control {{ 'border-warning' if suggestions.get('ingredientsAr') else '' }}"
+                      id="ingredientsAr"
+                      name="ingredientsAr"
+                      rows="3"
+                      placeholder="قائمة المكونات..."
+                    >
+{{ suggestions.get('ingredientsAr') or product.ingredientsAr or '' }}</textarea
+                    >
+                  </div>
+
+                  <!-- How to Use Arabic -->
+                  <div class="col-md-6">
+                    <label for="howToUseAr" class="form-label">
+                      <i class="fas fa-info-circle me-1"></i>How to Use (Arabic)
+                      <span
+                        class="field-status {{ 'filled' if product.howToUseAr else 'empty' }}"
+                      >
+                        {{ '✓' if product.howToUseAr else '✗' }}
+                      </span>
+                    </label>
+                    <textarea
+                      class="form-control {{ 'border-warning' if suggestions.get('howToUseAr') else '' }}"
+                      id="howToUseAr"
+                      name="howToUseAr"
+                      rows="3"
+                      placeholder="تعليمات الاستخدام..."
+                    >
+{{ suggestions.get('howToUseAr') or product.howToUseAr or '' }}</textarea
+                    >
+                  </div>
+                </div>
+
+                <!-- Additional Information Section -->
+                <div class="row g-3 mt-3">
+                  <div class="col-12">
+                    <h6 class="text-primary border-bottom pb-2">
+                      <i class="fas fa-cog me-1"></i>Additional Information
+                    </h6>
+                  </div>
+
+                  <!-- Slug -->
+                  <div class="col-md-6">
+                    <label for="slug" class="form-label">
+                      <i class="fas fa-link me-1"></i>URL Slug
+                      <span
+                        class="field-status {{ 'filled' if product.slug else 'empty' }}"
+                      >
+                        {{ '✓' if product.slug else '✗' }}
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="slug"
+                      name="slug"
+                      value="{{ product.slug or '' }}"
+                      placeholder="product-url-slug"
+                    />
+                  </div>
+
+                  <!-- Compare At Price -->
+                  <div class="col-md-6">
+                    <label for="compareAtPrice" class="form-label">
+                      <i class="fas fa-tag me-1"></i>Compare At Price
+                      <span
+                        class="field-status {{ 'filled' if product.compareAtPrice else 'empty' }}"
+                      >
+                        {{ '✓' if product.compareAtPrice else '✗' }}
+                      </span>
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      class="form-control"
+                      id="compareAtPrice"
+                      name="compareAtPrice"
+                      value="{{ product.compareAtPrice or '' }}"
+                      placeholder="0.00"
+                    />
+                  </div>
+
+                  <!-- Currency -->
+                  <div class="col-md-4">
+                    <label for="currency" class="form-label">
+                      <i class="fas fa-money-bill me-1"></i>Currency
+                      <span
+                        class="field-status {{ 'filled' if product.currency else 'empty' }}"
+                      >
+                        {{ '✓' if product.currency else '✗' }}
+                      </span>
+                    </label>
+                    <select
+                      class="form-select"
+                      id="currency"
+                      name="currency"
+                    >
+                      <option value="JOD" {{ 'selected' if product.currency == 'JOD' else '' }}>JOD</option>
+                      <option value="USD" {{ 'selected' if product.currency == 'USD' else '' }}>USD</option>
+                      <option value="EUR" {{ 'selected' if product.currency == 'EUR' else '' }}>EUR</option>
+                    </select>
+                  </div>
+
+                  <!-- SKU -->
+                  <div class="col-md-4">
+                    <label for="sku" class="form-label">
+                      <i class="fas fa-barcode me-1"></i>SKU
+                      <span
+                        class="field-status {{ 'filled' if product.sku else 'empty' }}"
+                      >
+                        {{ '✓' if product.sku else '✗' }}
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="sku"
+                      name="sku"
+                      value="{{ product.sku or '' }}"
+                      placeholder="Product SKU"
+                    />
+                  </div>
+
+                  <!-- Barcode -->
+                  <div class="col-md-4">
+                    <label for="barcode" class="form-label">
+                      <i class="fas fa-barcode me-1"></i>Barcode
+                      <span
+                        class="field-status {{ 'filled' if product.barcode else 'empty' }}"
+                      >
+                        {{ '✓' if product.barcode else '✗' }}
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="barcode"
+                      name="barcode"
+                      value="{{ product.barcode or '' }}"
+                      placeholder="Product barcode"
+                    />
+                  </div>
+
+                  <!-- Stock Quantity -->
+                  <div class="col-md-4">
+                    <label for="stockQuantity" class="form-label">
+                      <i class="fas fa-boxes me-1"></i>Stock Quantity
+                      <span
+                        class="field-status {{ 'filled' if product.stockQuantity else 'empty' }}"
+                      >
+                        {{ '✓' if product.stockQuantity else '✗' }}
+                      </span>
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="stockQuantity"
+                      name="stockQuantity"
+                      value="{{ product.stockQuantity or '' }}"
+                      placeholder="0"
+                    />
+                  </div>
+
+                  <!-- Category ID -->
+                  <div class="col-md-4">
+                    <label for="categoryId" class="form-label">
+                      <i class="fas fa-folder me-1"></i>Category ID
+                      <span
+                        class="field-status {{ 'filled' if product.categoryId else 'empty' }}"
+                      >
+                        {{ '✓' if product.categoryId else '✗' }}
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="categoryId"
+                      name="categoryId"
+                      value="{{ product.categoryId or '' }}"
+                      placeholder="Category UUID"
+                    />
+                  </div>
+
+                  <!-- Brand ID -->
+                  <div class="col-md-4">
+                    <label for="brandId" class="form-label">
+                      <i class="fas fa-copyright me-1"></i>Brand ID
+                      <span
+                        class="field-status {{ 'filled' if product.brandId else 'empty' }}"
+                      >
+                        {{ '✓' if product.brandId else '✗' }}
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="brandId"
+                      name="brandId"
+                      value="{{ product.brandId or '' }}"
+                      placeholder="Brand UUID"
+                    />
+                  </div>
+                </div>
+
+                <!-- Status & Flags Section -->
+                <div class="row g-3 mt-3">
+                  <div class="col-12">
+                    <h6 class="text-primary border-bottom pb-2">
+                      <i class="fas fa-toggle-on me-1"></i>Status & Flags
+                    </h6>
+                  </div>
+
+                  <!-- Is Active -->
+                  <div class="col-md-3">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="isActive"
+                        name="isActive"
+                        value="true"
+                        {{ 'checked' if product.isActive else '' }}
+                      />
+                      <label class="form-check-label" for="isActive">
+                        <i class="fas fa-eye me-1"></i>Active
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Is Featured -->
+                  <div class="col-md-3">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="isFeatured"
+                        name="isFeatured"
+                        value="true"
+                        {{ 'checked' if product.isFeatured else '' }}
+                      />
+                      <label class="form-check-label" for="isFeatured">
+                        <i class="fas fa-star me-1"></i>Featured
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Is New -->
+                  <div class="col-md-3">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="isNew"
+                        name="isNew"
+                        value="true"
+                        {{ 'checked' if product.isNew else '' }}
+                      />
+                      <label class="form-check-label" for="isNew">
+                        <i class="fas fa-sparkles me-1"></i>New
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Is Today Deal -->
+                  <div class="col-md-3">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="isTodayDeal"
+                        name="isTodayDeal"
+                        value="true"
+                        {{ 'checked' if product.isTodayDeal else '' }}
+                      />
+                      <label class="form-check-label" for="isTodayDeal">
+                        <i class="fas fa-fire me-1"></i>Today's Deal
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SEO Section -->
+                <div class="row g-3 mt-3">
+                  <div class="col-12">
+                    <h6 class="text-primary border-bottom pb-2">
+                      <i class="fas fa-search me-1"></i>SEO Information
+                    </h6>
+                  </div>
+
+                  <!-- Meta Title -->
+                  <div class="col-12">
+                    <label for="metaTitle" class="form-label">
+                      <i class="fas fa-heading me-1"></i>Meta Title
+                      <span
+                        class="field-status {{ 'filled' if product.metaTitle else 'empty' }}"
+                      >
+                        {{ '✓' if product.metaTitle else '✗' }}
+                      </span>
+                      <small class="text-muted">(50-60 characters)</small>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control {{ 'border-warning' if suggestions.get('metaTitle') else '' }}"
+                      id="metaTitle"
+                      name="metaTitle"
+                      value="{{ suggestions.get('metaTitle') or product.metaTitle or '' }}"
+                      placeholder="SEO title for search engines..."
+                      maxlength="60"
+                    />
+                  </div>
+
+                  <!-- Meta Description -->
+                  <div class="col-12">
+                    <label for="metaDescription" class="form-label">
+                      <i class="fas fa-align-left me-1"></i>Meta Description
+                      <span
+                        class="field-status {{ 'filled' if product.metaDescription else 'empty' }}"
+                      >
+                        {{ '✓' if product.metaDescription else '✗' }}
+                      </span>
+                      <small class="text-muted">(150-160 characters)</small>
+                    </label>
+                    <textarea
+                      class="form-control {{ 'border-warning' if suggestions.get('metaDescription') else '' }}"
+                      id="metaDescription"
+                      name="metaDescription"
+                      rows="3"
+                      placeholder="SEO description for search engines..."
+                      maxlength="160"
+                    >
+{{ suggestions.get('metaDescription') or product.metaDescription or '' }}</textarea
+                    >
+                  </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                  <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i>Save Changes
+                  </button>
+                  <a href="/" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to List
+                  </a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+          <!-- Auto-fill Section -->
+          <div class="card autofill-section mb-4">
+            <div class="card-header bg-info text-white">
+              <h6 class="mb-0">
+                <i class="fas fa-magic me-2"></i>AI Auto-fill
+              </h6>
+            </div>
+            <div class="card-body">
+              <form
+                method="post"
+                action="/product/{{ product.id }}/autofill"
+                id="autofillForm"
+              >
+                <div class="mb-3">
+                  <label for="keys" class="form-label">Target Fields:</label>
+                  <input
+                    type="text"
+                    class="form-control form-control-sm"
+                    id="keys"
+                    name="keys"
+                    value="{{ keys or 'descriptionEn,descriptionAr,activeIngredients,skinType,concerns,usage,features,featuresAr,ingredients,ingredientsAr,howToUse,howToUseAr,metaTitle,metaDescription' }}"
+                    placeholder="descriptionEn,ingredients,howToUse..."
+                  />
+                  <div class="form-text">Comma-separated field names</div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="strategy" class="form-label">Strategy:</label>
+                  <select
+                    class="form-select form-select-sm"
+                    id="strategy"
+                    name="strategy"
+                  >
+                    <option value="both">AI + Web Search</option>
+                    <option value="llm">AI Only</option>
+                    <option value="web">Web Search Only</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="commit"
+                      name="commit"
+                      value="1"
+                    />
+                    <label class="form-check-label" for="commit">
+                      Auto-commit suggestions
+                    </label>
+                  </div>
+                  <div class="form-text">
+                    If unchecked, only shows suggestions
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-info btn-sm w-100">
+                  <i class="fas fa-sparkles me-1"></i>Generate Suggestions
+                </button>
+              </form>
+              
+              <!-- Quick Actions -->
+              <div class="mt-3 border-top pt-3">
+                <h6 class="mb-3 text-muted">
+                  <i class="fas fa-magic me-1"></i>Quick Actions
+                </h6>
+                
+                <button 
+                  id="fillAllMissingBtn" 
+                  class="btn btn-warning btn-sm w-100 mb-2"
+                  onclick="fillAllMissing()"
+                >
+                  <i class="fas fa-fill-drip me-1"></i>Fill ALL Missing Fields
+                </button>
+                
+                <button 
+                  id="fillAllCommitBtn" 
+                  class="btn btn-success btn-sm w-100 mb-2"
+                  onclick="fillAllMissing(true)"
+                >
+                  <i class="fas fa-bolt me-1"></i>Fill ALL & Save to DB
+                </button>
+                
+                <small class="text-muted d-block">
+                  These will auto-detect and fill all empty fields for this product
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bulk Operations Card -->
+          <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+              <h6 class="mb-0">
+                <i class="fas fa-layer-group me-2"></i>Bulk Operations
+              </h6>
+            </div>
+            <div class="card-body">
+              <p class="small mb-3">Process multiple products at once</p>
+              
+              <div class="mb-3">
+                <label for="bulkLimit" class="form-label">Number of Products:</label>
+                <input 
+                  type="number" 
+                  class="form-control form-control-sm" 
+                  id="bulkLimit" 
+                  value="50" 
+                  min="1" 
+                  max="10000"
+                  title="Process up to 10,000 products at once"
+                >
+                <div class="form-text">Recommended: 50-500 for testing, up to 10,000 for full processing</div>
+              </div>
+              
+              <button 
+                id="bulkProcessBtn" 
+                class="btn btn-success btn-sm w-100 mb-2"
+                onclick="bulkProcess()"
+              >
+                <i class="fas fa-rocket me-1"></i>Bulk Process Products
+              </button>
+              
+              <button 
+                id="showStatsBtn" 
+                class="btn btn-outline-info btn-sm w-100"
+                onclick="showMissingStats()"
+              >
+                <i class="fas fa-chart-bar me-1"></i>Show Missing Fields Stats
+              </button>
+            </div>
+          </div>
+
+          <!-- Product Metadata -->
+          <div class="card">
+            <div class="card-header">
+              <h6 class="mb-0"><i class="fas fa-code me-2"></i>Raw Metadata</h6>
+            </div>
+            <div class="card-body">
+              <pre class="json-preview small">
+{{ product.metadata | tojson(indent=2) if product.metadata else '{}' }}</pre
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Form validation and UX improvements
+      document
+        .getElementById("editForm")
+        .addEventListener("submit", function (e) {
+          const btn = e.target.querySelector('button[type="submit"]');
+          btn.innerHTML =
+            '<i class="fas fa-spinner fa-spin me-1"></i>Saving...';
+          btn.disabled = true;
+        });
+
+      document
+        .getElementById("autofillForm")
+        .addEventListener("submit", function (e) {
+          const btn = e.target.querySelector('button[type="submit"]');
+          btn.innerHTML =
+            '<i class="fas fa-spinner fa-spin me-1"></i>Processing...';
+          btn.disabled = true;
+        });
+
+      // Character counters for SEO fields
+      function addCharacterCounter(fieldId, maxLength) {
+        const field = document.getElementById(fieldId);
+        const label = field.previousElementSibling;
+        
+        function updateCounter() {
+          const currentLength = field.value.length;
+          let counter = label.querySelector('.character-counter');
+          
+          if (!counter) {
+            counter = document.createElement('span');
+            counter.className = 'character-counter';
+            label.appendChild(counter);
+          }
+          
+          counter.textContent = `${currentLength}/${maxLength}`;
+          
+          // Update counter color based on length
+          counter.classList.remove('warning', 'danger');
+          if (currentLength > maxLength * 0.9) {
+            counter.classList.add('danger');
+          } else if (currentLength > maxLength * 0.8) {
+            counter.classList.add('warning');
+          }
+        }
+        
+        field.addEventListener('input', updateCounter);
+        updateCounter(); // Initial count
+      }
+
+      // Add character counters on page load
+      document.addEventListener('DOMContentLoaded', function() {
+        addCharacterCounter('metaTitle', 60);
+        addCharacterCounter('metaDescription', 160);
+        
+        // Auto-generate slug from title
+        const titleField = document.getElementById('title');
+        const slugField = document.getElementById('slug');
+        
+        titleField.addEventListener('input', function() {
+          if (!slugField.value || slugField.value === slugField.dataset.originalValue) {
+            const slug = this.value
+              .toLowerCase()
+              .replace(/[^a-z0-9\s-]/g, '')
+              .replace(/\s+/g, '-')
+              .replace(/-+/g, '-')
+              .trim();
+            slugField.value = slug;
+          }
+        });
+        
+        // Store original slug value
+        slugField.dataset.originalValue = slugField.value;
+      });
+
+      // Bulk autofill functions
+      async function fillAllMissing(commit = false) {
+        const btn = commit ? document.getElementById('fillAllCommitBtn') : document.getElementById('fillAllMissingBtn');
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processing...';
+        btn.disabled = true;
+        
+        try {
+          const productId = window.location.pathname.split('/')[2];
+          const response = await fetch(`/product/${productId}/autofill/all?commit=${commit}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+          
+          const result = await response.json();
+          
+          if (response.ok) {
+            if (commit) {
+              // Redirect with success message
+              window.location.href = `/product/${productId}?message=bulk_autofill_committed`;
+            } else {
+              // Redirect with suggestions
+              const suggestions = result.suggestion || {};
+              const params = new URLSearchParams();
+              params.append('message', 'bulk_suggestions_generated');
+              
+              for (const [key, value] of Object.entries(suggestions)) {
+                if (value && value !== 'unknown') {
+                  params.append(`suggest_${key}`, value);
+                }
+              }
+              
+              window.location.href = `/product/${productId}?${params.toString()}`;
+            }
+          } else {
+            alert(`Error: ${result.detail || 'Failed to process'}`);
+          }
+        } catch (error) {
+          alert(`Error: ${error.message}`);
+        } finally {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }
+      }
+
+      async function bulkProcess() {
+        const btn = document.getElementById('bulkProcessBtn');
+        const originalText = btn.innerHTML;
+        const limit = document.getElementById('bulkLimit').value;
+        
+        // Show that we're starting
+        btn.innerHTML = '<i class="fas fa-rocket me-1"></i>Starting Job...';
+        btn.disabled = true;
+        
+        try {
+          // Start background job
+          const response = await fetch(`/products/bulk-autofill?limit=${limit}&commit=true&background=true`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+          
+          const result = await response.json();
+          
+          if (!response.ok) {
+            throw new Error(result.detail || 'Failed to start bulk processing');
+          }
+          
+          const jobId = result.job_id;
+          
+          // Update button to show job is running
+          btn.innerHTML = '<i class="fas fa-eye me-1"></i>View Progress';
+          btn.onclick = () => window.open(`/progress/${jobId}/stream`, '_blank');
+          
+          // Show job started notification
+          const notification = document.createElement('div');
+          notification.className = 'alert alert-info alert-dismissible fade show mt-3';
+          notification.innerHTML = `
+            <strong>🚀 Bulk Job Started!</strong><br>
+            Job ID: <code>${jobId}</code><br>
+            Processing ${result.total_products} products with missing fields.<br>
+            <a href="/progress/${jobId}/stream" target="_blank" class="alert-link">
+              <i class="fas fa-external-link-alt me-1"></i>Monitor Progress
+            </a>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          `;
+          
+          // Insert notification after bulk operations card
+          const bulkCard = btn.closest('.card');
+          bulkCard.parentNode.insertBefore(notification, bulkCard.nextSibling);
+          
+          // Start polling for job completion
+          pollJobStatus(jobId, btn, originalText);
+          
+        } catch (error) {
+          alert(`Error: ${error.message}`);
+          btn.innerHTML = originalText;
+          btn.onclick = bulkProcess;
+          btn.disabled = false;
+        }
+      }
+
+      async function pollJobStatus(jobId, btn, originalText) {
+        try {
+          const response = await fetch(`/progress/${jobId}`);
+          const progress = await response.json();
+          
+          if (progress.status === 'completed') {
+            // Job completed successfully
+            btn.innerHTML = '<i class="fas fa-check me-1"></i>Completed';
+            btn.className = 'btn btn-success btn-sm w-100 mb-2';
+            
+            // Show completion notification
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-success alert-dismissible fade show mt-3';
+            notification.innerHTML = `
+              <strong>✅ Bulk Processing Completed!</strong><br>
+              📦 Total products: ${progress.total_items}<br>
+              ✅ Success: ${progress.success_count}<br>
+              ❌ Errors: ${progress.error_count}<br>
+              ⏱️ Duration: ${Math.round(progress.elapsed_time)}s
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            const bulkCard = btn.closest('.card');
+            bulkCard.parentNode.insertBefore(notification, bulkCard.nextSibling);
+            
+            // Reset button after delay
+            setTimeout(() => {
+              btn.innerHTML = originalText;
+              btn.className = 'btn btn-success btn-sm w-100 mb-2';
+              btn.onclick = bulkProcess;
+              btn.disabled = false;
+            }, 5000);
+            
+          } else if (progress.status === 'failed') {
+            // Job failed
+            btn.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>Failed';
+            btn.className = 'btn btn-danger btn-sm w-100 mb-2';
+            
+            alert(`Bulk processing failed: ${progress.status_message || 'Unknown error'}`);
+            
+            // Reset button
+            setTimeout(() => {
+              btn.innerHTML = originalText;
+              btn.className = 'btn btn-success btn-sm w-100 mb-2';
+              btn.onclick = bulkProcess;
+              btn.disabled = false;
+            }, 3000);
+            
+          } else {
+            // Job still running, poll again
+            const percentage = progress.percentage || 0;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin me-1"></i>${percentage}% (${progress.current_item}/${progress.total_items})`;
+            
+            setTimeout(() => pollJobStatus(jobId, btn, originalText), 2000);
+          }
+          
+        } catch (error) {
+          console.error('Error polling job status:', error);
+          // Reset button on error
+          btn.innerHTML = originalText;
+          btn.onclick = bulkProcess;
+          btn.disabled = false;
+        }
+      }
+
+      async function showMissingStats() {
+        const btn = document.getElementById('showStatsBtn');
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Loading...';
+        btn.disabled = true;
+        
+        try {
+          const response = await fetch('/products/missing-stats');
+          const result = await response.json();
+          
+          if (response.ok) {
+            const { total_products_analyzed, summary, most_needed_fields } = result;
+            
+            let message = `📊 Missing Fields Statistics\\n\\n`;
+            message += `Total products analyzed: ${total_products_analyzed}\\n`;
+            message += `Fields below 50% completion: ${summary.fields_below_50_percent}\\n`;
+            message += `Fields below 25% completion: ${summary.fields_below_25_percent}\\n\\n`;
+            message += `Most needed fields:\\n${most_needed_fields.slice(0, 5).join(', ')}`;
+            
+            alert(message);
+          } else {
+            alert(`Error: ${result.detail || 'Failed to load stats'}`);
+          }
+        } catch (error) {
+          alert(`Error: ${error.message}`);
+        } finally {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }
+      }
+    </script>
+  </body>
+</html>

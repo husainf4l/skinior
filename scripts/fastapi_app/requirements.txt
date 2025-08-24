@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+asyncpg
+python-dotenv
+openai
+httpx
+pydantic
+# Lang graph / LLM helpers
+langgraph
+langchain
+# Google Gemini helper (optional) - installs google generative AI client
+google-generativeai
+jinja2
+python-multipart

@@ -22,6 +22,7 @@ import {
   validateBlogContent,
 } from "../../../../utils/contentSanitizer";
 import { commentRateLimiter } from "../../../../utils/contentSanitizer";
+import Breadcrumb from "../../../../components/SEO/Breadcrumb";
 
 export const dynamic = "force-dynamic";
 
@@ -275,6 +276,30 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
       {/* Reading Progress */}
       <ReadingProgress target="article" showPercentage />
       <ReadingStats target="article" locale={locale} />
+      
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        {/* Breadcrumb Navigation */}
+        <Breadcrumb
+          items={[
+            {
+              name: locale === "ar" ? "الرئيسية" : "Home",
+              href: `/${locale}`
+            },
+            {
+              name: locale === "ar" ? "المدونة" : "Blog", 
+              href: `/${locale}/blog`
+            },
+            {
+              name: getText(post.category.name),
+              href: `/${locale}/blog?category=${post.category.id}`
+            },
+            {
+              name: getText(post.title)
+            }
+          ]}
+          className="mb-8"
+        />
+      </div>
 
       <div className="min-h-screen bg-white">
         {/* Breadcrumb */}

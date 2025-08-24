@@ -1,12 +1,100 @@
-import { useTranslations } from "next-intl";
+import { use } from "react";
+import { setRequestLocale } from "next-intl/server";
+import { routing } from "../../../i18n/routing";
+import type { Metadata } from "next";
 
-export default function PrivacyPage() {
-  const t = useTranslations();
+export const dynamic = "force-static";
+
+// Generate static paths for both locales
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+// Generate metadata for privacy page SEO
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const isRTL = locale === "ar";
+  
+  const title = isRTL 
+    ? "سياسة الخصوصية - سكينيور"
+    : "Privacy Policy - Skinior";
+    
+  const description = isRTL
+    ? "اطلع على سياسة الخصوصية الخاصة بسكينيور. كيف نجمع ونستخدم ونحمي بياناتك الشخصية ومعلومات تحليل البشرة بأمان وشفافية"
+    : "Read Skinior's Privacy Policy. Learn how we collect, use, and protect your personal data and skin analysis information with safety and transparency";
+  
+  const keywords = isRTL
+    ? "سياسة الخصوصية, حماية البيانات, الأمان, المعلومات الشخصية, تحليل البشرة, سكينيور"
+    : "privacy policy, data protection, security, personal information, skin analysis, GDPR, user rights, Skinior";
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://skinior.com";
+  const privacyUrl = `${baseUrl}/${locale}/privacy`;
+
+  return {
+    title,
+    description,
+    keywords,
+    authors: [{ name: "Skinior Legal Team" }],
+    creator: "Skinior",
+    publisher: "Skinior",
+    category: "Legal",
+    metadataBase: new URL(baseUrl),
+    
+    openGraph: {
+      title,
+      description,
+      url: privacyUrl,
+      siteName: "Skinior",
+      locale: locale === "ar" ? "ar_SA" : "en_US",
+      type: "article",
+    },
+    
+    twitter: {
+      card: "summary",
+      title,
+      description,
+      site: "@skinior",
+    },
+    
+    alternates: {
+      canonical: privacyUrl,
+      languages: {
+        en: `${baseUrl}/en/privacy`,
+        ar: `${baseUrl}/ar/privacy`,
+      },
+    },
+    
+    robots: {
+      index: true,
+      follow: true,
+      noarchive: false,
+      googleBot: {
+        index: true,
+        follow: true,
+      },
+    },
+  };
+}
+
+interface PrivacyPageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export default function PrivacyPage({ params }: PrivacyPageProps) {
+  const { locale } = use(params);
+  const isRTL = locale === "ar";
+  
+  // Enable static rendering
+  setRequestLocale(locale);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">
-        {t("footer.privacy")}
+      <h1 className={`text-3xl font-bold text-gray-900 mb-8 ${isRTL ? "font-cairo text-right" : "text-left"}`}>
+        {isRTL ? "سياسة الخصوصية" : "Privacy Policy"}
       </h1>
 
       <div className="prose prose-lg max-w-none">

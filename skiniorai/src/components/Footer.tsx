@@ -78,6 +78,14 @@ const Footer = () => {
                   {t("navigation.shop")}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href={`/${locale}/faq`}
+                  className="text-gray-600 hover:text-indigo-600 transition-colors duration-300 hover:translate-x-1 inline-block"
+                >
+                  {locale === "ar" ? "الأسئلة الشائعة" : "FAQ"}
+                </Link>
+              </li>
             </ul>
           </div>
 
