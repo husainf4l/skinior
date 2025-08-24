@@ -37,30 +37,18 @@ const ResourceHints = memo(({ locale }: ResourceHintsProps) => {
 
       {/* Preload hero images - only the primary one used immediately and only on homepage */}
       {preloadHeroImage && (
-        <>
-          <link
-            rel="preload"
-            as="image"
-            href="/hero/hero1.webp"
-            fetchPriority="high"
-            media="(min-width: 640px)"
-          />
-          {/* Prefetch (not preload) the second hero image for smoother carousel */}
-          <link
-            rel="prefetch"
-            as="image"
-            href="/hero/hero2.webp"
-          />
-        </>
+        <link
+          rel="preload"
+          as="image"
+          href="/hero/hero1.webp"
+          fetchPriority="high"
+          media="(min-width: 640px)"
+        />
       )}
 
-      {/* Prefetch likely next page resources - only on homepage */}
-      {isHomePage && (
-        <>
-          <link rel="prefetch" href={`/${locale}/shop`} />
-          <link rel="prefetch" href={`/${locale}/skin-analysis`} />
-        </>
-      )}
+      {/* Prefetch likely next page resources */}
+      <link rel="prefetch" href={`/${locale}/shop`} />
+      <link rel="prefetch" href={`/${locale}/skin-analysis`} />
 
       {/* Early hints for navigation */}
       <meta

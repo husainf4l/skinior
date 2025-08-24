@@ -7,18 +7,12 @@ import { setRequestLocale } from "next-intl/server";
 import { AuthProvider } from "../../contexts/AuthContext";
 import type { Metadata } from "next";
 import ConditionalNavigation from "../../components/ConditionalNavigation";
-import CriticalCSS from "../../components/performance/CriticalCSS";
+import FloatingChatWidget from "@/components/chat/FloatingChatWidget";
+import GoogleAnalytics from "../../components/analytics/GoogleAnalytics";
+import PerformanceTracker from "../../components/analytics/PerformanceTracker";
 import ResourceHints from "../../components/performance/ResourceHints";
 import ErrorBoundary from "../../components/performance/ErrorBoundary";
-import DeferredCSSLoader from "../../components/performance/DeferredCSSLoader";
-import { Suspense, lazy } from "react";
-
-// Lazy load non-critical components to reduce initial bundle size
-const FloatingChatWidget = lazy(() => import("@/components/chat/FloatingChatWidget"));
-const GoogleAnalytics = lazy(() => import("../../components/analytics/GoogleAnalytics"));
-const PerformanceTracker = lazy(() => import("../../components/analytics/PerformanceTracker"));
-const PerformanceMonitor = lazy(() => import("../../components/performance/PerformanceMonitor"));
-const DeferredScriptLoader = lazy(() => import("../../components/performance/DeferredScriptLoader"));
+import PerformanceMonitor from "../../components/performance/PerformanceMonitor";
 
 export const dynamic = "force-static";
 
@@ -126,24 +120,19 @@ export default async function LocaleLayout({
         <ResourceHints locale={locale} />
 
         {/* Critical CSS for LCP optimization */}
-        <CriticalCSS />
-
-        {/* Deferred CSS loader */}
-        <DeferredCSSLoader />
       </head>
       <body
         className="bg-white antialiased"
         style={{ backgroundColor: "white" }}
       >
-        {/* Non-critical components loaded asynchronously */}
-        <Suspense fallback={null}>
-          {process.env.NODE_ENV === "production" && (
-            <GoogleAnalytics measurementId={GA_MEASUREMENT_ID} />
-          )}
-          <PerformanceTracker />
-          <PerformanceMonitor />
-          <DeferredScriptLoader />
-        </Suspense>
+        {/* Google Analytics */}
+        {process.env.NODE_ENV === "production" && (
+          <GoogleAnalytics measurementId={GA_MEASUREMENT_ID} />
+        )}
+
+        {/* Performance Tracking */}
+        <PerformanceTracker />
+        <PerformanceMonitor />
 
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
@@ -155,9 +144,7 @@ export default async function LocaleLayout({
         
         {/* Ensure a body-level container exists so the floating widget cannot be nested in other layout nodes */}
         <div id="skinior-floating-widget" />
-        <Suspense fallback={null}>
-          <FloatingChatWidget />
-        </Suspense>
+        <FloatingChatWidget />
       </body>
     </html>
   );

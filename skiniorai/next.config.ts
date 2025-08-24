@@ -34,14 +34,10 @@ const nextConfig: NextConfig = {
   // PoweredByHeader for security
   poweredByHeader: false,
 
-  // Experimental features for better performance
+  // Experimental features for better performance  
   experimental: {
     optimizePackageImports: ['@heroicons/react', '@floating-ui/react'],
     scrollRestoration: true,
-    // Optimize CSS loading
-    optimizeCss: true,
-    // Enable modern JS features
-    esmExternals: true,
   },
 
 
@@ -50,14 +46,6 @@ const nextConfig: NextConfig = {
     // Enable source maps in production
     if (!dev) {
       config.devtool = 'source-map';
-    }
-
-    // CSS optimization for render blocking
-    if (!dev && !isServer) {
-      // Optimize CSS loading without external plugins
-      config.optimization = config.optimization || {};
-      config.optimization.splitChunks = config.optimization.splitChunks || {};
-      config.optimization.splitChunks.cacheGroups = config.optimization.splitChunks.cacheGroups || {};
     }
 
     // Exclude unnecessary polyfills for modern browsers
@@ -69,12 +57,13 @@ const nextConfig: NextConfig = {
       };
     }
 
-    // Optimize bundle splitting
+    // Simple bundle splitting - don't over-optimize
     if (!dev && !isServer) {
       // Better tree shaking for large libraries
       config.optimization.providedExports = true;
       config.optimization.usedExports = true;
 
+      // Keep original simple splitting
       config.optimization.splitChunks = {
         chunks: 'all',
         minSize: 20000,
@@ -82,35 +71,27 @@ const nextConfig: NextConfig = {
         cacheGroups: {
           default: false,
           vendors: false,
-          // Vendor chunk for large dependencies - exclude heavy libraries
+          // Vendor chunk for large dependencies
           vendor: {
             name: 'vendors',
             chunks: 'all',
-            test: /[\\/]node_modules[\\/](?!(@livekit|livekit-client|isomorphic-dompurify|@floating-ui))/,
+            test: /[\\/]node_modules[\\/](?!(@livekit|livekit-client|isomorphic-dompurify))/,
             priority: 20,
           },
-          // Separate LiveKit into its own async chunk since it's large and not used everywhere
+          // Separate LiveKit into its own chunk since it's large and not used everywhere
           livekit: {
             name: 'livekit',
             chunks: 'async', // Only load when needed
             test: /[\\/]node_modules[\\/](@livekit|livekit-client)/,
-            priority: 40,
+            priority: 30,
             enforce: true,
           },
-          // DOMPurify separate async chunk
+          // DOMPurify separate chunk
           dompurify: {
             name: 'dompurify',
             chunks: 'async',
             test: /[\\/]node_modules[\\/](isomorphic-)?dompurify/,
-            priority: 35,
-            enforce: true,
-          },
-          // Floating UI separate async chunk
-          floatingui: {
-            name: 'floating-ui',
-            chunks: 'async',
-            test: /[\\/]node_modules[\\/]@floating-ui/,
-            priority: 32,
+            priority: 25,
             enforce: true,
           },
           // Common chunk for shared components
@@ -127,7 +108,7 @@ const nextConfig: NextConfig = {
             chunks: 'all',
             name: 'framework',
             test: /(?<!node_modules.*)[\\/]node_modules[\\/](react|react-dom|next)[\\/]/,
-            priority: 50,
+            priority: 40,
             enforce: true,
           },
         },
