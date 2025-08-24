@@ -4,6 +4,8 @@ Allow: /
 # Allow crawling of all pages
 Allow: /en/
 Allow: /ar/
+Allow: /en/about
+Allow: /ar/about
 Allow: /en/products
 Allow: /ar/products
 Allow: /en/shop
@@ -14,12 +16,30 @@ Allow: /en/routines
 Allow: /ar/routines
 Allow: /en/skin-analysis
 Allow: /ar/skin-analysis
+Allow: /en/faq
+Allow: /ar/faq
+Allow: /en/privacy
+Allow: /ar/privacy
+Allow: /en/terms
+Allow: /ar/terms
 
 # Block crawling of API routes
 Disallow: /api/
 
+# Block crawling of user-specific pages
+Disallow: /*/account
+Disallow: /*/login
+Disallow: /*/signup
+Disallow: /*/checkout
+Disallow: /*/dashboard
+Disallow: /*/room
+
 # Block crawling of internal Next.js files
 Disallow: /_next/
+
+# Block crawling of source maps
+Disallow: /*.js.map$
+Disallow: /*.css.map$
 
 # Sitemap location
 Sitemap: https://skinior.com/sitemap.xml

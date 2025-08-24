@@ -195,8 +195,12 @@ const ShopByCategory = memo(() => {
                       alt={isRTL ? category.nameAr : category.name}
                       fill
                       className="object-cover transition-all duration-700 group-hover:scale-105"
-                      priority={index < 3} // Prioritize first 3 images
+                      loading={index < 2 ? "eager" : "lazy"} // Only load first 2 images eagerly
+                      priority={index < 2} // Prioritize first 2 images for LCP
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      quality={75} // Balanced quality vs file size
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5GRlYn7WZmeMOjMstAVdOakOOT8Ls3vf/X/AADF7xkkHPr1n2/Yfz+7X"
                       onError={() => handleImageError(category.id)}
                       onLoad={() =>
                         console.log(

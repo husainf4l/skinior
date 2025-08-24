@@ -51,7 +51,7 @@ const DealsSection = memo(() => {
         {/* Apple-style Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center justify-center mb-6">
-            <span className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-medium tracking-wide">
+            <span className="bg-red-700 text-white px-4 py-2 rounded-full text-sm font-medium tracking-wide">
               {t("dealsForYou.title")}
             </span>
           </div>

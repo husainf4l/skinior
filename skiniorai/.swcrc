@@ -1,0 +1,34 @@
+{
+    "env": {
+        "targets": {
+            "chrome": "95",
+            "firefox": "95",
+            "safari": "15",
+            "edge": "95"
+        },
+        "mode": "entry",
+        "coreJs": "3.26"
+    },
+    "jsc": {
+        "target": "es2022",
+        "parser": {
+            "syntax": "typescript",
+            "tsx": true,
+            "decorators": false,
+            "dynamicImport": true
+        },
+        "transform": {
+            "react": {
+                "runtime": "automatic"
+            }
+        },
+        "externalHelpers": false,
+        "keepClassNames": false,
+        "loose": true
+    },
+    "module": {
+        "type": "es6"
+    },
+    "minify": true,
+    "sourceMaps": true
+}

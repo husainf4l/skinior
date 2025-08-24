@@ -1,10 +1,11 @@
 "use client";
 
+import React from "react";
 import dynamic from "next/dynamic";
 
-// Dynamically import the room page to defer LiveKit loading
+// Create a dynamic wrapper for the entire room page to defer LiveKit loading
 const DynamicRoomPage = dynamic(
-  () => import("./RoomPageContent"),
+  () => import('./RoomPageContent'),
   {
     ssr: false,
     loading: () => (
@@ -26,6 +27,6 @@ interface RoomProps {
   }>;
 }
 
-export default function Room(props: RoomProps) {
-  return <DynamicRoomPage {...props} />;
+export default function Room({ params }: RoomProps) {
+  return <DynamicRoomPage params={params} />;
 }

@@ -9,7 +9,9 @@ const STATIC_ASSETS = [
   '/manifest.json',
   '/robots.txt',
   '/logos/skinior-logo-black.png',
+  '/logos/skinior-logo-black-ar.png',
   '/logos/skinior-logo-white.png',
+  '/logos/skinior-logo-white-ar.png',
   '/hero/hero1.webp',
   '/hero/hero2.webp',
 ];
@@ -32,7 +34,7 @@ const IMAGE_PATTERNS = [
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing...');
-  
+
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -52,16 +54,16 @@ self.addEventListener('install', (event) => {
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activating...');
-  
+
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
         return Promise.all(
           cacheNames
             .filter((cacheName) => {
-              return cacheName !== CACHE_NAME && 
-                     cacheName !== RUNTIME_CACHE && 
-                     cacheName !== IMAGE_CACHE;
+              return cacheName !== CACHE_NAME &&
+                cacheName !== RUNTIME_CACHE &&
+                cacheName !== IMAGE_CACHE;
             })
             .map((cacheName) => {
               console.log('[SW] Deleting old cache:', cacheName);
@@ -126,11 +128,11 @@ async function handleImageRequest(request) {
     }
 
     const networkResponse = await fetch(request);
-    
+
     if (networkResponse.status === 200) {
       cache.put(request, networkResponse.clone());
     }
-    
+
     return networkResponse;
   } catch (error) {
     console.log('[SW] Image request failed:', error);
@@ -146,23 +148,23 @@ async function handleImageRequest(request) {
 async function handleAPIRequest(request) {
   try {
     const networkResponse = await fetch(request);
-    
+
     if (networkResponse.status === 200) {
       const cache = await caches.open(RUNTIME_CACHE);
       cache.put(request, networkResponse.clone());
     }
-    
+
     return networkResponse;
   } catch (error) {
     console.log('[SW] API request failed, trying cache:', error);
-    
+
     const cache = await caches.open(RUNTIME_CACHE);
     const cachedResponse = await cache.match(request);
-    
+
     if (cachedResponse) {
       return cachedResponse;
     }
-    
+
     // Return offline data for blog posts
     if (request.url.includes('/api/blog/posts')) {
       return new Response(
@@ -175,13 +177,13 @@ async function handleAPIRequest(request) {
             popularTags: []
           }
         }),
-        { 
+        {
           headers: { 'Content-Type': 'application/json' },
-          status: 200 
+          status: 200
         }
       );
     }
-    
+
     throw error;
   }
 }
@@ -199,20 +201,20 @@ async function handleNavigationRequest(request) {
     }
 
     const networkResponse = await fetch(request);
-    
+
     if (networkResponse.status === 200) {
       cache.put(request, networkResponse.clone());
     }
-    
+
     return networkResponse;
   } catch (error) {
     console.log('[SW] Navigation request failed:', error);
-    
+
     // Return offline page for blog routes
     if (request.url.includes('/blog')) {
       return createOfflineBlogPage();
     }
-    
+
     // Fallback to cached index
     const cache = await caches.open(CACHE_NAME);
     const fallback = await cache.match('/');
@@ -231,11 +233,11 @@ async function handleStaticRequest(request) {
     }
 
     const networkResponse = await fetch(request);
-    
+
     if (networkResponse.status === 200) {
       cache.put(request, networkResponse.clone());
     }
-    
+
     return networkResponse;
   } catch (error) {
     console.log('[SW] Static request failed:', error);
@@ -338,7 +340,7 @@ function createOfflineBlogPage() {
     </body>
     </html>
   `;
-  
+
   return new Response(html, {
     headers: { 'Content-Type': 'text/html' },
     status: 200
@@ -387,7 +389,7 @@ function createOfflinePage() {
     </body>
     </html>
   `;
-  
+
   return new Response(html, {
     headers: { 'Content-Type': 'text/html' },
     status: 200
@@ -397,7 +399,7 @@ function createOfflinePage() {
 // Handle background sync for comments and likes
 self.addEventListener('sync', (event) => {
   console.log('[SW] Background sync:', event.tag);
-  
+
   if (event.tag === 'background-sync-comments') {
     event.waitUntil(syncComments());
   } else if (event.tag === 'background-sync-likes') {
@@ -430,7 +432,7 @@ async function syncLikes() {
 // Handle push notifications (future enhancement)
 self.addEventListener('push', (event) => {
   console.log('[SW] Push message received');
-  
+
   const options = {
     body: event.data ? event.data.text() : 'New content available!',
     icon: '/logos/skinior-logo-black.png',
@@ -462,7 +464,7 @@ self.addEventListener('push', (event) => {
 // Handle notification clicks
 self.addEventListener('notificationclick', (event) => {
   console.log('[SW] Notification click received');
-  
+
   event.notification.close();
 
   if (event.action === 'explore') {

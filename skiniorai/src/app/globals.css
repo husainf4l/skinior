@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
-/* Critical CSS - Above the fold styles */
+/* Critical CSS - Above the fold styles only */
 /* CSS Custom Properties for System Fonts */
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  
+
   /* Optimized system font stacks - preload system fonts */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 
-               "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-arabic: "Segoe UI", Tahoma, Arial, sans-serif;
 }
 
@@ -24,8 +24,10 @@ html {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeSpeed; /* Prioritize speed over quality */
-  font-display: swap; /* Improve font loading performance */
+  text-rendering: optimizeSpeed;
+  /* Prioritize speed over quality */
+  font-display: swap;
+  /* Improve font loading performance */
 }
 
 body {
@@ -47,6 +49,7 @@ main {
     opacity: 0;
     transform: translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -57,6 +60,7 @@ main {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -81,6 +85,7 @@ main {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -94,36 +99,45 @@ main {
 /* Mobile-first critical styles for Speed Index */
 @media (max-width: 768px) {
   .hero-section {
-    min-height: 90vh; /* Slightly smaller on mobile */
-    padding: 1rem; /* Reduce padding for mobile */
+    min-height: 90vh;
+    /* Slightly smaller on mobile */
+    padding: 1rem;
+    /* Reduce padding for mobile */
   }
-  
+
   /* Faster animations on mobile */
   * {
     animation-duration: 0.3s !important;
     transition-duration: 0.3s !important;
   }
-  
+
   /* Reduce shadow complexity on mobile */
   .shadow-2xl {
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
   }
 }
 
 /* Arabic font optimization */
-[dir="rtl"], [lang="ar"] {
+[dir="rtl"],
+[lang="ar"] {
   font-family: var(--font-arabic);
 }
 
 /* Performance optimizations */
-img, picture, video, canvas, svg {
+img,
+picture,
+video,
+canvas,
+svg {
   display: block;
   max-width: 100%;
   height: auto;
 }
 
 /* Apple-style improved will-change for better performance */
-.apple-card, .apple-button, .hover-lift {
+.apple-card,
+.apple-button,
+.hover-lift {
   will-change: transform;
 }
 
@@ -148,14 +162,24 @@ img, picture, video, canvas, svg {
 }
 
 @keyframes loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Apple-style shimmer animation for cart */
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 /* Modern slide-in animation for cart items */
@@ -164,6 +188,7 @@ img, picture, video, canvas, svg {
     opacity: 0;
     transform: translateY(20px) scale(0.95);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -176,6 +201,7 @@ img, picture, video, canvas, svg {
     opacity: 0;
     transform: scale(0.9);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);
@@ -184,15 +210,24 @@ img, picture, video, canvas, svg {
 
 /* Gentle bounce animation for empty cart icon */
 @keyframes bounce {
-  0%, 20%, 53%, 80%, 100% {
+
+  0%,
+  20%,
+  53%,
+  80%,
+  100% {
     transform: translateY(0);
   }
-  40%, 43% {
+
+  40%,
+  43% {
     transform: translateY(-8px);
   }
+
   70% {
     transform: translateY(-4px);
   }
+
   90% {
     transform: translateY(-2px);
   }
@@ -203,6 +238,7 @@ img, picture, video, canvas, svg {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -210,9 +246,12 @@ img, picture, video, canvas, svg {
 
 /* Floating animation for particles */
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-8px);
   }
@@ -224,6 +263,7 @@ img, picture, video, canvas, svg {
     opacity: 0;
     transform: translateY(20px) scale(0.95);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -281,10 +321,12 @@ img, picture, video, canvas, svg {
     transform: scale(0.95) translateY(10px);
     opacity: 0;
   }
+
   50% {
     transform: scale(1.02) translateY(-5px);
     opacity: 0.8;
   }
+
   100% {
     transform: scale(1) translateY(0);
     opacity: 1;
@@ -313,8 +355,13 @@ img, picture, video, canvas, svg {
 }
 
 @keyframes skeleton-pulse {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Floating Chat Widget - Industry Standard Implementation */
@@ -344,7 +391,7 @@ img, picture, video, canvas, svg {
 }
 
 /* React Portal Floating Widget */
-body > [data-floating-ui-portal] {
+body>[data-floating-ui-portal] {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
@@ -355,7 +402,7 @@ body > [data-floating-ui-portal] {
 }
 
 /* Ensure React Portal widgets are positioned correctly */
-body > div[style*="position: fixed"] {
+body>div[style*="position: fixed"] {
   z-index: 2147483647 !important;
 }
 
@@ -422,6 +469,7 @@ body > div[style*="position: fixed"] {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -457,9 +505,12 @@ body > div[style*="position: fixed"] {
 
 /* Apple-style floating animation */
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-6px);
   }
@@ -475,10 +526,12 @@ body > div[style*="position: fixed"] {
     opacity: 0.6;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.8;
     transform: scale(1.02);
   }
+
   100% {
     opacity: 0.6;
     transform: scale(1);
@@ -495,6 +548,7 @@ body > div[style*="position: fixed"] {
     opacity: 0;
     transform: translateY(50px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -511,6 +565,7 @@ body > div[style*="position: fixed"] {
     opacity: 0;
     transform: scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -609,9 +664,17 @@ html {
 
 /* Blog hero gradient animation */
 @keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .hero-gradient {
@@ -621,12 +684,29 @@ html {
 }
 
 /* Staggered animation for blog cards */
-.blog-card:nth-child(1) { animation-delay: 0.1s; }
-.blog-card:nth-child(2) { animation-delay: 0.2s; }
-.blog-card:nth-child(3) { animation-delay: 0.3s; }
-.blog-card:nth-child(4) { animation-delay: 0.4s; }
-.blog-card:nth-child(5) { animation-delay: 0.5s; }
-.blog-card:nth-child(6) { animation-delay: 0.6s; }
+.blog-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.blog-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.blog-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.blog-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.blog-card:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.blog-card:nth-child(6) {
+  animation-delay: 0.6s;
+}
 
 .animate-fade-in-up {
   animation: fadeInUp 0.6s ease-out forwards;
@@ -638,6 +718,7 @@ html {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -693,8 +774,13 @@ html {
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Apple-style container animations */
@@ -708,6 +794,7 @@ html {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

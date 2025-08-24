@@ -43,19 +43,21 @@
   },
   "browserslist": {
     "production": [
-      "Chrome >= 91",
-      "Firefox >= 90",
+      "Chrome >= 95",
+      "Firefox >= 95",
       "Safari >= 15",
-      "Edge >= 91",
+      "Edge >= 95",
       "iOS >= 15",
-      "ChromeAndroid >= 91",
-      "Samsung >= 14",
-      "> 0.5%",
+      "ChromeAndroid >= 95",
+      "Samsung >= 15",
+      "> 1%",
       "last 2 versions",
       "not dead",
       "not IE 11",
       "not IE_Mob 11",
-      "not op_mini all"
+      "not op_mini all",
+      "not and_qq < 13",
+      "not kaios < 3"
     ],
     "development": [
       "last 1 chrome version",

@@ -6,12 +6,7 @@ import TodaysDeals from "../../components/TodaysDeals";
 import FeaturedProducts from "../../components/FeaturedProducts";
 import ShopByCategory from "../../components/ShopByCategory";
 import DealsSection from "../../components/DealsSection";
-import FAQStructuredData, {
-  skincareFAQs,
-} from "../../components/SEO/FAQStructuredData";
-import FeaturedSnippet, {
-  SkincareSnippets,
-} from "../../components/SEO/FeaturedSnippet";
+
 import LocalSEO, { jordanKeywords } from "../../components/SEO/LocalSEO";
 import type { Metadata } from "next";
 
@@ -230,39 +225,7 @@ export default function HomePage({
       <ShopByCategory />
       <DealsSection />
 
-      {/* FAQ Section for SEO */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2
-            className={`text-3xl font-bold text-center mb-12 ${
-              isRTL ? "font-cairo" : ""
-            }`}
-          >
-            {isRTL ? "الأسئلة الشائعة" : "Frequently Asked Questions"}
-          </h2>
-
-          <div className="space-y-8">
-            {SkincareSnippets[locale as keyof typeof SkincareSnippets]?.map(
-              (snippet, index) => (
-                <FeaturedSnippet
-                  key={index}
-                  question={snippet.question}
-                  answer={snippet.answer}
-                  type={snippet.type}
-                  items={snippet.items}
-                  locale={locale}
-                  className="bg-white rounded-xl p-6 shadow-sm"
-                />
-              )
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Structured Data */}
-      <FAQStructuredData
-        faqs={skincareFAQs[locale as keyof typeof skincareFAQs]}
-      />
+  
 
       {/* Local SEO for Jordan */}
       <LocalSEO locale={locale} />
