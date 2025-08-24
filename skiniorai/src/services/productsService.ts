@@ -27,7 +27,8 @@ export const productsService = {
         return [];
       }
       
-      return products;
+      // Limit to 10 products for the home page
+      return products.slice(0, 10);
     } catch (error) {
       console.error('Error fetching featured products:', error);
       // Return empty array instead of throwing to prevent component crashes

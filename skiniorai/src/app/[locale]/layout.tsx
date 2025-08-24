@@ -10,6 +10,10 @@ import ConditionalNavigation from "../../components/ConditionalNavigation";
 import FloatingChatWidget from "@/components/chat/FloatingChatWidget";
 import GoogleAnalytics from "../../components/analytics/GoogleAnalytics";
 import PerformanceTracker from "../../components/analytics/PerformanceTracker";
+import CriticalCSS from "../../components/performance/CriticalCSS";
+import ResourceHints from "../../components/performance/ResourceHints";
+import ErrorBoundary from "../../components/performance/ErrorBoundary";
+import PerformanceMonitor from "../../components/performance/PerformanceMonitor";
 
 export const dynamic = "force-static";
 
@@ -87,7 +91,8 @@ export default async function LocaleLayout({
   const messages = await getMessages({ locale });
 
   // Google Analytics Measurement ID from environment
-  const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX';
+  const GA_MEASUREMENT_ID =
+    process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-XXXXXXXXXX";
 
   return (
     <html
@@ -112,39 +117,30 @@ export default async function LocaleLayout({
           content="width=device-width, initial-scale=1, viewport-fit=cover"
         />
 
-        {/* Floating Chat Widget - Independent Script */}
-        {/* <script async src="/floating-chat.js"></script> */}
+        {/* Resource hints for performance optimization */}
+        <ResourceHints locale={locale} />
 
-        {/* Critical CSS inline for LCP and mobile Speed Index */}
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-            .hero-section{min-height:85vh;}
-            @media (max-width: 768px) {
-              .hero-section{min-height:90vh;padding:1rem;}
-              *{animation-duration:0.3s!important;transition-duration:0.3s!important;}
-            }
-            .loading-skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:loading 1.5s infinite;}
-            @keyframes loading{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
-          `,
-          }}
-        />
+        {/* Critical CSS for LCP optimization */}
+        <CriticalCSS />
       </head>
       <body
         className="bg-white antialiased"
         style={{ backgroundColor: "white" }}
       >
         {/* Google Analytics */}
-        {process.env.NODE_ENV === 'production' && (
+        {process.env.NODE_ENV === "production" && (
           <GoogleAnalytics measurementId={GA_MEASUREMENT_ID} />
         )}
-        
+
         {/* Performance Tracking */}
         <PerformanceTracker />
+        <PerformanceMonitor />
 
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
-            <ConditionalNavigation>{children}</ConditionalNavigation>
+            <ErrorBoundary>
+              <ConditionalNavigation>{children}</ConditionalNavigation>
+            </ErrorBoundary>
           </AuthProvider>
         </NextIntlClientProvider>
         {/* Ensure a body-level container exists so the floating widget cannot be nested in other layout nodes */}

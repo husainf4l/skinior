@@ -22,13 +22,11 @@ export default function ReviewStructuredData(props: ReviewStructuredDataProps) {
     productName,
     averageRating,
     totalReviews,
-    locale = "en",
   } = props;
-  
+
   if (!reviews || reviews.length === 0) return null;
 
-  // Ensure locale is used for language-specific content
-  const getLocalizedText = (arText: string, enText: string) => locale === "ar" ? arText : enText;
+  // No helper needed in main component
 
   const generateReviewStructuredData = () => {
     return {
@@ -80,8 +78,9 @@ export function ProductReviewSchema({
   locale?: string;
 }) {
   // Ensure locale is used for language-specific content
-  const getLocalizedText = (arText: string, enText: string) => locale === "ar" ? arText : enText;
-  
+  const getLocalizedText = (arText: string, enText: string) =>
+    locale === "ar" ? arText : enText;
+
   // This would be replaced with actual review data from your API
   const mockReviews = [
     {

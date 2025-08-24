@@ -34,9 +34,9 @@ const Footer = () => {
 
           {/* Navigation Links */}
           <div>
-            <h4 className="text-lg font-bold text-gray-900 mb-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-6">
               Quick Links
-            </h4>
+            </h2>
             <ul className="space-y-3">
               <li>
                 <Link
@@ -91,7 +91,7 @@ const Footer = () => {
 
           {/* Legal Links */}
           <div>
-            <h4 className="text-lg font-bold text-gray-900 mb-6">Legal</h4>
+            <h2 className="text-lg font-bold text-gray-900 mb-6">Legal</h2>
             <ul className="space-y-3">
               <li>
                 <Link

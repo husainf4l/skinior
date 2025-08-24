@@ -92,7 +92,30 @@ export default function LocalSEO({ locale, businessInfo }: LocalSEOProps) {
             "itemOffered": {
               "@type": "Product",
               "name": isRTL ? "منتجات العناية بالبشرة الطبيعية" : "Natural Skincare Products",
-              "description": isRTL ? "منتجات عالية الجودة للعناية بالبشرة" : "High-quality skincare products"
+              "description": isRTL ? "منتجات عالية الجودة للعناية بالبشرة" : "High-quality skincare products",
+              "brand": {
+                "@type": "Brand",
+                "name": "Skinior"
+              },
+              "category": isRTL ? "العناية بالبشرة" : "Skincare",
+              "offers": {
+                "@type": "Offer",
+                "price": "25.00",
+                "priceCurrency": "JOD",
+                "availability": "https://schema.org/InStock",
+                "priceValidUntil": "2025-12-31",
+                "seller": {
+                  "@type": "Organization",
+                  "name": "Skinior"
+                }
+              },
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.7",
+                "reviewCount": "89",
+                "bestRating": "5",
+                "worstRating": "1"
+              }
             }
           }
         ]

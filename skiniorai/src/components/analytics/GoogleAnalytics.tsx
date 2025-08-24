@@ -35,12 +35,12 @@ export default function GoogleAnalytics({
   return (
     <>
       <Script
-        strategy="afterInteractive"
+        strategy="worker"
         src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
       />
       <Script
         id="google-analytics"
-        strategy="afterInteractive"
+        strategy="worker"
         dangerouslySetInnerHTML={{
           __html: `
             window.dataLayer = window.dataLayer || [];

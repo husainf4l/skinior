@@ -13,6 +13,53 @@ const nextConfig: NextConfig = {
   // PoweredByHeader for security
   poweredByHeader: false,
   
+  // Experimental features for better performance
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['@heroicons/react', '@floating-ui/react'],
+    scrollRestoration: true,
+  },
+  
+  
+  // Bundle analyzer and webpack optimizations
+  webpack: (config, { dev, isServer }) => {
+    // Optimize bundle splitting
+    if (!dev && !isServer) {
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          default: false,
+          vendors: false,
+          // Vendor chunk for large dependencies
+          vendor: {
+            name: 'vendors',
+            chunks: 'all',
+            test: /node_modules/,
+            priority: 20,
+          },
+          // Common chunk for shared components
+          common: {
+            name: 'common',
+            minChunks: 2,
+            chunks: 'all',
+            priority: 10,
+            reuseExistingChunk: true,
+            enforce: true,
+          },
+          // React and Next.js specific chunk
+          framework: {
+            chunks: 'all',
+            name: 'framework',
+            test: /(?<!node_modules.*)[\\/]node_modules[\\/](react|react-dom|next)[\\/]/,
+            priority: 40,
+            enforce: true,
+          },
+        },
+      };
+    }
+    return config;
+  },
+  
   // Advanced image optimization configuration
   images: {
     // Modern formats for better compression

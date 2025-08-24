@@ -5,17 +5,22 @@
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
+    "build:analyze": "ANALYZE=true next build",
+    "build:profile": "next build --profile",
     "start": "next start",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
     "security": "npm audit",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "performance:audit": "lighthouse http://localhost:3000 --output=html --output-path=./lighthouse-report.html",
+    "clean": "rm -rf .next out node_modules/.cache"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.15",
     "@heroicons/react": "^2.2.0",
     "@livekit/components-react": "^2.9.14",
     "@livekit/components-styles": "^1.1.6",
+    "critters": "^0.0.23",
     "isomorphic-dompurify": "^2.26.0",
     "livekit-client": "^2.15.5",
     "next": "15.4.6",
@@ -38,13 +43,19 @@
   },
   "browserslist": {
     "production": [
-      "Chrome >= 88",
-      "Firefox >= 78",
-      "Safari >= 14",
-      "Edge >= 88",
-      "iOS >= 14",
-      "ChromeAndroid >= 88",
-      "not IE 11"
+      "Chrome >= 91",
+      "Firefox >= 90",
+      "Safari >= 15",
+      "Edge >= 91",
+      "iOS >= 15",
+      "ChromeAndroid >= 91",
+      "Samsung >= 14",
+      "> 0.5%",
+      "last 2 versions",
+      "not dead",
+      "not IE 11",
+      "not IE_Mob 11",
+      "not op_mini all"
     ],
     "development": [
       "last 1 chrome version",

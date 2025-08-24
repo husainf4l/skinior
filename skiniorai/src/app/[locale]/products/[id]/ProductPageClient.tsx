@@ -188,16 +188,16 @@ export default function ProductPageClient({ params }: ProductPageClientProps) {
   // Generate structured data for the product
   const generateProductStructuredData = () => {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://skinior.com";
-    
+
     return {
       "@context": "https://schema.org",
       "@type": "Product",
       name: productName,
       description: productDescription || productName,
-      image: productImages.map(img => img.url).filter(Boolean),
+      image: productImages.map((img) => img.url).filter(Boolean),
       brand: {
         "@type": "Brand",
-        name: brandName || "Skinior"
+        name: brandName || "Skinior",
       },
       category: categoryName,
       sku: product.sku,
@@ -206,25 +206,30 @@ export default function ProductPageClient({ params }: ProductPageClientProps) {
         url: `${baseUrl}/${locale}/products/${product.id}`,
         priceCurrency: "JOD",
         price: product.price || 0,
-        ...(product.compareAtPrice && product.compareAtPrice > product.price && {
-          priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-        }),
-        availability: product.isInStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        ...(product.compareAtPrice &&
+          product.compareAtPrice > product.price && {
+            priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+              .toISOString()
+              .split("T")[0],
+          }),
+        availability: product.isInStock
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
         itemCondition: "https://schema.org/NewCondition",
         seller: {
           "@type": "Organization",
-          name: "Skinior"
-        }
+          name: "Skinior",
+        },
       },
       ...(product.activeIngredients && {
         additionalProperty: [
           {
             "@type": "PropertyValue",
             name: "Active Ingredients",
-            value: product.activeIngredients
-          }
-        ]
-      })
+            value: product.activeIngredients,
+          },
+        ],
+      }),
     };
   };
 
@@ -237,525 +242,532 @@ export default function ProductPageClient({ params }: ProductPageClientProps) {
           __html: JSON.stringify(generateProductStructuredData()),
         }}
       />
-      
+
       <div
         className={`min-h-screen bg-gradient-to-br from-gray-50 to-white ${
           isRTL ? "rtl font-cairo" : "ltr"
         }`}
         dir={isRTL ? "rtl" : "ltr"}
       >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        {/* Breadcrumb Navigation */}
-        <Breadcrumb
-          items={[
-            {
-              name: isRTL ? "الرئيسية" : "Home",
-              href: `/${locale}`
-            },
-            {
-              name: isRTL ? "المنتجات" : "Products", 
-              href: `/${locale}/products`
-            },
-            {
-              name: categoryName || (isRTL ? "منتجات العناية بالبشرة" : "Skincare"),
-              href: `/${locale}/shop${product.category ? `?category=${product.category.id}` : ""}`
-            },
-            {
-              name: productName
-            }
-          ]}
-          className="mb-6"
-        />
-        
-        <div
-          className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 ${
-            isRTL ? "lg:grid-flow-col-dense" : ""
-          }`}
-        >
-          {/* Ultra-Premium Image Gallery */}
-          <div className={`space-y-4 ${isRTL ? "lg:order-2" : ""}`}>
-            <div className="relative aspect-square rounded-2xl overflow-hidden bg-white/60 backdrop-blur-xl border border-white/20 shadow-xl shadow-black/5">
-              <Image
-                src={currentImageSrc}
-                alt={currentImageAlt}
-                fill
-                className="object-cover object-center transition-all duration-700 ease-out"
-                priority
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 40vw"
-              />
-            </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+          {/* Breadcrumb Navigation */}
+          <Breadcrumb
+            items={[
+              {
+                name: isRTL ? "الرئيسية" : "Home",
+                href: `/${locale}`,
+              },
+              {
+                name: isRTL ? "المنتجات" : "Products",
+                href: `/${locale}/products`,
+              },
+              {
+                name:
+                  categoryName ||
+                  (isRTL ? "منتجات العناية بالبشرة" : "Skincare"),
+                href: `/${locale}/shop${
+                  product.category ? `?category=${product.category.id}` : ""
+                }`,
+              },
+              {
+                name: productName,
+              },
+            ]}
+            className="mb-6"
+          />
 
-            <div className="grid grid-cols-4 gap-3">
-              {productImages.length > 1 &&
-                productImages.map((img, index: number) => (
-                  <button
-                    key={index}
-                    className={`aspect-square rounded-xl overflow-hidden transition-all duration-300 ${
-                      selectedImageIndex === index
-                        ? "ring-2 ring-gray-900/30 ring-offset-2 shadow-md"
-                        : "hover:shadow-md opacity-70 hover:opacity-100"
-                    }`}
-                    onClick={() => setSelectedImageIndex(index)}
-                  >
-                    <Image
-                      src={img.url || "/product-holder.webp"}
-                      alt={img.altText || `${productName} ${index + 1}`}
-                      width={120}
-                      height={120}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-            </div>
-          </div>
-
-          {/* Compact Product Details */}
-          <div className={`space-y-6 ${isRTL ? "lg:order-1" : ""}`}>
-            {/* Header */}
-            <div className="space-y-4">
-              <div
-                className={`flex items-center gap-4 text-xs font-medium text-gray-400 tracking-wide ${
-                  isRTL ? "flex-row-reverse justify-start" : "justify-start"
-                }`}
-              >
-                <span className={isRTL ? "font-cairo" : ""}>
-                  {brandName || (isRTL ? "سكينيور" : "Skinior")}
-                </span>
-                <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                <span className={isRTL ? "font-cairo" : ""}>
-                  SKU {product.sku}
-                </span>
+          <div
+            className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 ${
+              isRTL ? "lg:grid-flow-col-dense" : ""
+            }`}
+          >
+            {/* Ultra-Premium Image Gallery */}
+            <div className={`space-y-4 ${isRTL ? "lg:order-2" : ""}`}>
+              <div className="relative aspect-square rounded-2xl overflow-hidden bg-white/60 backdrop-blur-xl border border-white/20 shadow-xl shadow-black/5">
+                <Image
+                  src={currentImageSrc}
+                  alt={currentImageAlt}
+                  fill
+                  className="object-cover object-center transition-all duration-700 ease-out"
+                  priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 40vw"
+                />
               </div>
 
-              <h1
-                className={`text-2xl lg:text-3xl font-light text-gray-900 leading-tight ${
-                  isRTL ? "text-right font-cairo" : "text-left"
-                }`}
-              >
-                {productName}
-              </h1>
+              <div className="grid grid-cols-4 gap-3">
+                {productImages.length > 1 &&
+                  productImages.map((img, index: number) => (
+                    <button
+                      key={index}
+                      className={`aspect-square rounded-xl overflow-hidden transition-all duration-300 ${
+                        selectedImageIndex === index
+                          ? "ring-2 ring-gray-900/30 ring-offset-2 shadow-md"
+                          : "hover:shadow-md opacity-70 hover:opacity-100"
+                      }`}
+                      onClick={() => setSelectedImageIndex(index)}
+                    >
+                      <Image
+                        src={img.url || "/product-holder.webp"}
+                        alt={img.altText || `${productName} ${index + 1}`}
+                        width={120}
+                        height={120}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+              </div>
+            </div>
 
-              {/* Product Badges */}
-              {(product.isNew || product.isFeatured) && (
+            {/* Compact Product Details */}
+            <div className={`space-y-6 ${isRTL ? "lg:order-1" : ""}`}>
+              {/* Header */}
+              <div className="space-y-4">
                 <div
-                  className={`flex gap-2 ${
-                    isRTL ? "justify-end" : "justify-start"
+                  className={`flex items-center gap-4 text-xs font-medium text-gray-400 tracking-wide ${
+                    isRTL ? "flex-row-reverse justify-start" : "justify-start"
                   }`}
                 >
-                  {product.isNew && (
-                    <span className="px-2 py-1 bg-black text-white text-xs font-medium rounded-md">
-                      {isRTL ? "جديد" : "NEW"}
-                    </span>
-                  )}
-                  {product.isFeatured && (
-                    <span className="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-md">
-                      {isRTL ? "مميز" : "FEATURED"}
-                    </span>
-                  )}
+                  <span className={isRTL ? "font-cairo" : ""}>
+                    {brandName || (isRTL ? "سكينيور" : "Skinior")}
+                  </span>
+                  <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                  <span className={isRTL ? "font-cairo" : ""}>
+                    SKU {product.sku}
+                  </span>
                 </div>
-              )}
 
-
-              {/* Compare At Price (if no attributes) */}
-              {product.compareAtPrice &&
-                product.compareAtPrice > product.price &&
-                (!product.attributes ||
-                  Object.keys(product.attributes).length === 0) && (
-                  <div
-                    className={`text-sm text-gray-400 line-through font-light ${
-                      isRTL ? "font-cairo" : ""
-                    }`}
-                  >
-                    {formatPrice(product.compareAtPrice)}
-                  </div>
-                )}
-
-              {/* Current Price */}
-              <div
-                className={`text-2xl lg:text-3xl font-light text-gray-900 ${
-                  isRTL ? "font-cairo" : ""
-                }`}
-              >
-                {formatPrice(product.price)}
-              </div>
-            </div>
-
-            {/* Description */}
-            {productDescription && (
-              <div>
-                <p
-                  className={`text-gray-600 leading-relaxed ${
+                <h1
+                  className={`text-2xl lg:text-3xl font-light text-gray-900 leading-tight ${
                     isRTL ? "text-right font-cairo" : "text-left"
                   }`}
                 >
-                  {productDescription}
-                </p>
-              </div>
-            )}
+                  {productName}
+                </h1>
 
-            {/* Product Attributes Selector */}
-            <ProductAttributeSelector
-              product={product}
-              locale={locale}
-              onSelectionChange={handleAttributeSelectionChange}
-              selectedAttributes={selectedAttributes}
-            />
-
-            {/* Product Details */}
-            <div className="space-y-6">
-              {/* Brand and Category */}
-              <div className="grid grid-cols-2 gap-4">
-                {brandName && (
-                  <div>
-                    <h3
-                      className={`text-sm font-medium text-gray-900 mb-1 ${
-                        isRTL ? "font-cairo text-right" : ""
-                      }`}
-                    >
-                      {isRTL ? "العلامة التجارية" : "Brand"}
-                    </h3>
-                    <p
-                      className={`text-sm text-gray-600 ${
-                        isRTL ? "font-cairo text-right" : ""
-                      }`}
-                    >
-                      {brandName}
-                    </p>
+                {/* Product Badges */}
+                {(product.isNew || product.isFeatured) && (
+                  <div
+                    className={`flex gap-2 ${
+                      isRTL ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    {product.isNew && (
+                      <span className="px-2 py-1 bg-black text-white text-xs font-medium rounded-md">
+                        {isRTL ? "جديد" : "NEW"}
+                      </span>
+                    )}
+                    {product.isFeatured && (
+                      <span className="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-md">
+                        {isRTL ? "مميز" : "FEATURED"}
+                      </span>
+                    )}
                   </div>
                 )}
-                {categoryName && (
-                  <div>
-                    <h3
-                      className={`text-sm font-medium text-gray-900 mb-1 ${
-                        isRTL ? "font-cairo text-right" : ""
+
+                {/* Compare At Price (if no attributes) */}
+                {product.compareAtPrice &&
+                  product.compareAtPrice > product.price &&
+                  (!product.attributes ||
+                    Object.keys(product.attributes).length === 0) && (
+                    <div
+                      className={`text-sm text-gray-400 line-through font-light ${
+                        isRTL ? "font-cairo" : ""
                       }`}
                     >
-                      {isRTL ? "الفئة" : "Category"}
-                    </h3>
-                    <p
-                      className={`text-sm text-gray-600 ${
-                        isRTL ? "font-cairo text-right" : ""
-                      }`}
-                    >
-                      {categoryName}
-                    </p>
-                  </div>
-                )}
+                      {formatPrice(product.compareAtPrice)}
+                    </div>
+                  )}
+
+                {/* Current Price */}
+                <div
+                  className={`text-2xl lg:text-3xl font-light text-gray-900 ${
+                    isRTL ? "font-cairo" : ""
+                  }`}
+                >
+                  {formatPrice(product.price)}
+                </div>
               </div>
 
-              {/* Active Ingredients */}
-              {product.activeIngredients &&
-                product.activeIngredients.trim() && (
+              {/* Description */}
+              {productDescription && (
+                <div>
+                  <p
+                    className={`text-gray-600 leading-relaxed ${
+                      isRTL ? "text-right font-cairo" : "text-left"
+                    }`}
+                  >
+                    {productDescription}
+                  </p>
+                </div>
+              )}
+
+              {/* Product Attributes Selector */}
+              <ProductAttributeSelector
+                product={product}
+                locale={locale}
+                onSelectionChange={handleAttributeSelectionChange}
+                selectedAttributes={selectedAttributes}
+              />
+
+              {/* Product Details */}
+              <div className="space-y-6">
+                {/* Brand and Category */}
+                <div className="grid grid-cols-2 gap-4">
+                  {brandName && (
+                    <div>
+                      <h3
+                        className={`text-sm font-medium text-gray-900 mb-1 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
+                        {isRTL ? "العلامة التجارية" : "Brand"}
+                      </h3>
+                      <p
+                        className={`text-sm text-gray-600 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
+                        {brandName}
+                      </p>
+                    </div>
+                  )}
+                  {categoryName && (
+                    <div>
+                      <h3
+                        className={`text-sm font-medium text-gray-900 mb-1 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
+                        {isRTL ? "الفئة" : "Category"}
+                      </h3>
+                      <p
+                        className={`text-sm text-gray-600 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
+                        {categoryName}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Active Ingredients */}
+                {product.activeIngredients &&
+                  product.activeIngredients.trim() && (
+                    <div>
+                      <h3
+                        className={`text-sm font-medium text-gray-900 mb-2 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
+                        {isRTL ? "المكونات الفعالة" : "Active Ingredients"}
+                      </h3>
+                      <p
+                        className={`text-sm text-gray-600 ${
+                          isRTL ? "font-cairo text-right" : ""
+                        }`}
+                      >
+                        {product.activeIngredients}
+                      </p>
+                    </div>
+                  )}
+
+                {/* Skin Type & Usage */}
+                {(product.skinType || product.usage) && (
+                  <div className="grid grid-cols-2 gap-4">
+                    {product.skinType && product.skinType.trim() && (
+                      <div>
+                        <h3
+                          className={`text-sm font-medium text-gray-900 mb-1 ${
+                            isRTL ? "font-cairo text-right" : ""
+                          }`}
+                        >
+                          {isRTL ? "نوع البشرة" : "Skin Type"}
+                        </h3>
+                        <p
+                          className={`text-sm text-gray-600 ${
+                            isRTL ? "font-cairo text-right" : ""
+                          }`}
+                        >
+                          {product.skinType}
+                        </p>
+                      </div>
+                    )}
+                    {product.usage && product.usage.trim() && (
+                      <div>
+                        <h3
+                          className={`text-sm font-medium text-gray-900 mb-1 ${
+                            isRTL ? "font-cairo text-right" : ""
+                          }`}
+                        >
+                          {isRTL ? "وقت الاستخدام" : "Usage"}
+                        </h3>
+                        <p
+                          className={`text-sm text-gray-600 ${
+                            isRTL ? "font-cairo text-right" : ""
+                          }`}
+                        >
+                          {product.usage}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Concerns */}
+                {product.concerns && product.concerns.length > 0 && (
                   <div>
                     <h3
                       className={`text-sm font-medium text-gray-900 mb-2 ${
                         isRTL ? "font-cairo text-right" : ""
                       }`}
                     >
-                      {isRTL ? "المكونات الفعالة" : "Active Ingredients"}
+                      {isRTL ? "يعالج" : "Addresses"}
                     </h3>
-                    <p
-                      className={`text-sm text-gray-600 ${
+                    <div
+                      className={`flex flex-wrap gap-2 ${
+                        isRTL ? "justify-end" : "justify-start"
+                      }`}
+                    >
+                      {product.concerns.map((concern, index) => (
+                        <span
+                          key={index}
+                          className={`px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full ${
+                            isRTL ? "font-cairo" : ""
+                          }`}
+                        >
+                          {concern}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Features */}
+                {features && features.length > 0 && (
+                  <div>
+                    <h3
+                      className={`text-sm font-medium text-gray-900 mb-3 ${
                         isRTL ? "font-cairo text-right" : ""
                       }`}
                     >
-                      {product.activeIngredients}
+                      {isRTL ? "المميزات" : "Key Features"}
+                    </h3>
+                    <ul
+                      className={`space-y-2 ${
+                        isRTL ? "text-right" : "text-left"
+                      }`}
+                    >
+                      {features.map((feature, index) => (
+                        <li
+                          key={index}
+                          className={`flex items-start gap-2 text-sm text-gray-600 ${
+                            isRTL ? "flex-row-reverse" : ""
+                          }`}
+                        >
+                          <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0" />
+                          <span className={isRTL ? "font-cairo" : ""}>
+                            {feature}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Ingredients */}
+                {ingredients && ingredients.trim() && (
+                  <div>
+                    <h3
+                      className={`text-sm font-medium text-gray-900 mb-2 ${
+                        isRTL ? "font-cairo text-right" : ""
+                      }`}
+                    >
+                      {isRTL ? "المكونات" : "Ingredients"}
+                    </h3>
+                    <p
+                      className={`text-sm text-gray-600 leading-relaxed ${
+                        isRTL ? "font-cairo text-right" : ""
+                      }`}
+                    >
+                      {ingredients}
                     </p>
                   </div>
                 )}
 
-              {/* Skin Type & Usage */}
-              {(product.skinType || product.usage) && (
-                <div className="grid grid-cols-2 gap-4">
-                  {product.skinType && product.skinType.trim() && (
-                    <div>
-                      <h3
-                        className={`text-sm font-medium text-gray-900 mb-1 ${
-                          isRTL ? "font-cairo text-right" : ""
-                        }`}
-                      >
-                        {isRTL ? "نوع البشرة" : "Skin Type"}
-                      </h3>
-                      <p
-                        className={`text-sm text-gray-600 ${
-                          isRTL ? "font-cairo text-right" : ""
-                        }`}
-                      >
-                        {product.skinType}
-                      </p>
-                    </div>
-                  )}
-                  {product.usage && product.usage.trim() && (
-                    <div>
-                      <h3
-                        className={`text-sm font-medium text-gray-900 mb-1 ${
-                          isRTL ? "font-cairo text-right" : ""
-                        }`}
-                      >
-                        {isRTL ? "وقت الاستخدام" : "Usage"}
-                      </h3>
-                      <p
-                        className={`text-sm text-gray-600 ${
-                          isRTL ? "font-cairo text-right" : ""
-                        }`}
-                      >
-                        {product.usage}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
+                {/* How to Use */}
+                {howToUse && howToUse.trim() && (
+                  <div>
+                    <h3
+                      className={`text-sm font-medium text-gray-900 mb-2 ${
+                        isRTL ? "font-cairo text-right" : ""
+                      }`}
+                    >
+                      {isRTL ? "طريقة الاستخدام" : "How to Use"}
+                    </h3>
+                    <p
+                      className={`text-sm text-gray-600 leading-relaxed ${
+                        isRTL ? "font-cairo text-right" : ""
+                      }`}
+                    >
+                      {howToUse}
+                    </p>
+                  </div>
+                )}
 
-              {/* Concerns */}
-              {product.concerns && product.concerns.length > 0 && (
-                <div>
-                  <h3
-                    className={`text-sm font-medium text-gray-900 mb-2 ${
-                      isRTL ? "font-cairo text-right" : ""
-                    }`}
-                  >
-                    {isRTL ? "يعالج" : "Addresses"}
-                  </h3>
-                  <div
-                    className={`flex flex-wrap gap-2 ${
-                      isRTL ? "justify-end" : "justify-start"
-                    }`}
-                  >
-                    {product.concerns.map((concern, index) => (
-                      <span
-                        key={index}
-                        className={`px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full ${
-                          isRTL ? "font-cairo" : ""
-                        }`}
-                      >
-                        {concern}
-                      </span>
-                    ))}
+                {/* Stock Information */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="text-sm">
+                    <span
+                      className={`text-gray-500 ${isRTL ? "font-cairo" : ""}`}
+                    >
+                      {isRTL ? "الكمية المتوفرة:" : "Stock:"}
+                    </span>
+                    <span
+                      className={`ml-2 font-medium text-gray-900 ${
+                        isRTL ? "font-cairo mr-2" : ""
+                      }`}
+                    >
+                      {product.stockQuantity} {isRTL ? "قطعة" : "units"}
+                    </span>
                   </div>
                 </div>
-              )}
-
-              {/* Features */}
-              {features && features.length > 0 && (
-                <div>
-                  <h3
-                    className={`text-sm font-medium text-gray-900 mb-3 ${
-                      isRTL ? "font-cairo text-right" : ""
-                    }`}
-                  >
-                    {isRTL ? "المميزات" : "Key Features"}
-                  </h3>
-                  <ul
-                    className={`space-y-2 ${
-                      isRTL ? "text-right" : "text-left"
-                    }`}
-                  >
-                    {features.map((feature, index) => (
-                      <li
-                        key={index}
-                        className={`flex items-start gap-2 text-sm text-gray-600 ${
-                          isRTL ? "flex-row-reverse" : ""
-                        }`}
-                      >
-                        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0" />
-                        <span className={isRTL ? "font-cairo" : ""}>
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Ingredients */}
-              {ingredients && ingredients.trim() && (
-                <div>
-                  <h3
-                    className={`text-sm font-medium text-gray-900 mb-2 ${
-                      isRTL ? "font-cairo text-right" : ""
-                    }`}
-                  >
-                    {isRTL ? "المكونات" : "Ingredients"}
-                  </h3>
-                  <p
-                    className={`text-sm text-gray-600 leading-relaxed ${
-                      isRTL ? "font-cairo text-right" : ""
-                    }`}
-                  >
-                    {ingredients}
-                  </p>
-                </div>
-              )}
-
-              {/* How to Use */}
-              {howToUse && howToUse.trim() && (
-                <div>
-                  <h3
-                    className={`text-sm font-medium text-gray-900 mb-2 ${
-                      isRTL ? "font-cairo text-right" : ""
-                    }`}
-                  >
-                    {isRTL ? "طريقة الاستخدام" : "How to Use"}
-                  </h3>
-                  <p
-                    className={`text-sm text-gray-600 leading-relaxed ${
-                      isRTL ? "font-cairo text-right" : ""
-                    }`}
-                  >
-                    {howToUse}
-                  </p>
-                </div>
-              )}
-
-              {/* Stock Information */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="text-sm">
-                  <span
-                    className={`text-gray-500 ${isRTL ? "font-cairo" : ""}`}
-                  >
-                    {isRTL ? "الكمية المتوفرة:" : "Stock:"}
-                  </span>
-                  <span
-                    className={`ml-2 font-medium text-gray-900 ${
-                      isRTL ? "font-cairo mr-2" : ""
-                    }`}
-                  >
-                    {product.stockQuantity} {isRTL ? "قطعة" : "units"}
-                  </span>
-                </div>
               </div>
-            </div>
 
-            {/* Purchase Section */}
-            <div className="space-y-6 pt-6 border-t border-gray-100">
-              <div
-                className={`flex items-center justify-between ${
-                  isRTL ? "flex-row-reverse" : ""
-                }`}
-              >
+              {/* Purchase Section */}
+              <div className="space-y-6 pt-6 border-t border-gray-100">
                 <div
-                  className={`flex items-center gap-3 ${
+                  className={`flex items-center justify-between ${
                     isRTL ? "flex-row-reverse" : ""
                   }`}
                 >
                   <div
-                    className={`w-2 h-2 rounded-full ${
-                      product.isInStock ? "bg-green-500" : "bg-red-500"
-                    }`}
-                  />
-                  <span
-                    className={`text-sm text-gray-600 font-medium ${
-                      isRTL ? "font-cairo" : ""
+                    className={`flex items-center gap-3 ${
+                      isRTL ? "flex-row-reverse" : ""
                     }`}
                   >
-                    {product.isInStock
-                      ? isRTL
-                        ? "متوفر"
-                        : "In Stock"
-                      : isRTL
-                      ? "نفد المخزون"
-                      : "Out of Stock"}
-                  </span>
+                    <div
+                      className={`w-2 h-2 rounded-full ${
+                        product.isInStock ? "bg-green-500" : "bg-red-500"
+                      }`}
+                    />
+                    <span
+                      className={`text-sm text-gray-600 font-medium ${
+                        isRTL ? "font-cairo" : ""
+                      }`}
+                    >
+                      {product.isInStock
+                        ? isRTL
+                          ? "متوفر"
+                          : "In Stock"
+                        : isRTL
+                        ? "نفد المخزون"
+                        : "Out of Stock"}
+                    </span>
+                  </div>
+
+                  <div
+                    className={`flex items-center gap-3 ${
+                      isRTL ? "flex-row-reverse" : ""
+                    }`}
+                  >
+                    <span
+                      className={`text-sm text-gray-600 font-medium ${
+                        isRTL ? "font-cairo" : ""
+                      }`}
+                    >
+                      {t("products.quantity")}
+                    </span>
+                    <select
+                      id="quantity"
+                      value={quantity}
+                      onChange={(e) => setQuantity(Number(e.target.value))}
+                      className={`bg-white/80 backdrop-blur-xl border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900/20 ${
+                        isRTL ? "font-cairo text-right" : "text-left"
+                      }`}
+                      dir={isRTL ? "rtl" : "ltr"}
+                    >
+                      {[...Array(10)].map((_, i) => (
+                        <option key={i + 1} value={i + 1}>
+                          {i + 1}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div
-                  className={`flex items-center gap-3 ${
-                    isRTL ? "flex-row-reverse" : ""
-                  }`}
+                  className={`flex gap-4 ${isRTL ? "flex-row-reverse" : ""}`}
                 >
-                  <span
-                    className={`text-sm text-gray-600 font-medium ${
+                  <AddToCartButton
+                    productId={product.id}
+                    quantity={quantity}
+                    disabled={
+                      !product.isInStock || !isValidAttributeSelection()
+                    }
+                    className="flex-1 py-4 text-lg font-medium"
+                    selectedAttributes={selectedAttributes}
+                  />
+
+                  <button
+                    className={`bg-white/80 backdrop-blur-xl border border-gray-200 hover:bg-white hover:border-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 px-6 py-3 rounded-xl font-medium text-gray-900 transition-all duration-300 ${
                       isRTL ? "font-cairo" : ""
                     }`}
+                    aria-label={t("products.buyNow")}
                   >
-                    {t("products.quantity")}
-                  </span>
-                  <select
-                    id="quantity"
-                    value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
-                    className={`bg-white/80 backdrop-blur-xl border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900/20 ${
-                      isRTL ? "font-cairo text-right" : "text-left"
+                    {t("products.buyNow")}
+                  </button>
+
+                  <button
+                    className={`bg-white/80 backdrop-blur-xl border border-gray-200 hover:bg-white hover:border-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900/10 p-3 rounded-xl transition-all duration-300 ${
+                      isWishlisted
+                        ? "text-red-500 border-red-200 bg-red-50/80"
+                        : "text-gray-600"
                     }`}
-                    dir={isRTL ? "rtl" : "ltr"}
+                    onClick={handleWishlistToggle}
+                    title={
+                      isWishlisted
+                        ? t("products.removeFromWishlist")
+                        : t("products.addToWishlist")
+                    }
+                    aria-label={
+                      isWishlisted
+                        ? t("products.removeFromWishlist")
+                        : t("products.addToWishlist")
+                    }
                   >
-                    {[...Array(10)].map((_, i) => (
-                      <option key={i + 1} value={i + 1}>
-                        {i + 1}
-                      </option>
-                    ))}
-                  </select>
+                    <svg
+                      className="w-5 h-5"
+                      fill={isWishlisted ? "currentColor" : "none"}
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                      />
+                    </svg>
+                  </button>
                 </div>
-              </div>
-
-              <div className={`flex gap-4 ${isRTL ? "flex-row-reverse" : ""}`}>
-                <AddToCartButton
-                  productId={product.id}
-                  quantity={quantity}
-                  disabled={!product.isInStock || !isValidAttributeSelection()}
-                  className="flex-1 py-4 text-lg font-medium"
-                  selectedAttributes={selectedAttributes}
-                />
-
-                <button
-                  className={`bg-white/80 backdrop-blur-xl border border-gray-200 hover:bg-white hover:border-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-300 px-6 py-3 rounded-xl font-medium text-gray-900 transition-all duration-300 ${
-                    isRTL ? "font-cairo" : ""
-                  }`}
-                  aria-label={t("products.buyNow")}
-                >
-                  {t("products.buyNow")}
-                </button>
-
-                <button
-                  className={`bg-white/80 backdrop-blur-xl border border-gray-200 hover:bg-white hover:border-gray-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900/10 p-3 rounded-xl transition-all duration-300 ${
-                    isWishlisted
-                      ? "text-red-500 border-red-200 bg-red-50/80"
-                      : "text-gray-600"
-                  }`}
-                  onClick={handleWishlistToggle}
-                  title={
-                    isWishlisted
-                      ? t("products.removeFromWishlist")
-                      : t("products.addToWishlist")
-                  }
-                  aria-label={
-                    isWishlisted
-                      ? t("products.removeFromWishlist")
-                      : t("products.addToWishlist")
-                  }
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill={isWishlisted ? "currentColor" : "none"}
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                    />
-                  </svg>
-                </button>
               </div>
             </div>
           </div>
+
+          {/* Reviews Section */}
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <ReviewSystem
+              averageRating={0}
+              totalReviews={0}
+              reviews={[]}
+              onSubmitReview={async (review) => {
+                // TODO: Implement API call to submit review
+                console.log("Submitting review:", review);
+              }}
+            />
+          </div>
         </div>
-        
-        {/* Reviews Section */}
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <ReviewSystem
-            averageRating={0}
-            totalReviews={0}
-            reviews={[]}
-            onSubmitReview={async (review) => {
-              // TODO: Implement API call to submit review
-              console.log('Submitting review:', review);
-            }}
-          />
-        </div>
-      </div>
       </div>
     </>
   );
