@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+pydantic
+python-dotenv
+langchain-core
+langchain-openai
+langgraph
+langgraph-checkpoint>=2.1.1
+psycopg[binary]
+aiohttp
+asyncpg
+requests
+pytest
+pytest-asyncio
+PyJWT

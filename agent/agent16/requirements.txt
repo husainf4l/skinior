@@ -1,0 +1,13 @@
+livekit-agents[openai]
+python-dotenv
+livekit-plugins-noise-cancellation~=0.2
+livekit-plugins-elevenlabs
+livekit-plugins-silero
+livekit-plugins-google
+boto3
+psycopg2-binary
+aiohttp
+# Enhanced dependencies for advanced skin analysis
+requests>=2.31.0
+Pillow>=10.0.0
+numpy>=1.24.0

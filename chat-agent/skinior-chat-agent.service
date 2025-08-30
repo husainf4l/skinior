@@ -1,0 +1,26 @@
+[Unit]
+Description=Skinior Chat Agent FastAPI Service
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/home/husain/skinior/chat-agent
+Environment=PATH=/home/husain/skinior/chat-agent/.venv/bin
+ExecStart=/home/husain/skinior/chat-agent/.venv/bin/python deploy.py
+Restart=always
+RestartSec=10
+
+# Environment file
+EnvironmentFile=/home/husain/skinior/chat-agent/.env.production
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/home/husain/skinior/chat-agent
+
+[Install]
+WantedBy=multi-user.target

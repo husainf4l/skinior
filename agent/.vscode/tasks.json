@@ -1,0 +1,263 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Setup Agent16 Virtual Environment",
+      "type": "shell",
+      "command": "python3",
+      "args": ["-m", "venv", "agent16/venv"],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Install Agent16 Requirements",
+      "type": "shell",
+      "command": "agent16/venv/bin/pip",
+      "args": ["install", "-r", "agent16/requirements.txt"],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "dependsOn": "Setup Agent16 Virtual Environment",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Setup Complete Agent16 Environment",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Setup Agent16 Virtual Environment",
+        "Install Agent16 Requirements"
+      ],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Agent16 with Virtual Environment (Dev)",
+      "type": "shell",
+      "command": "agent16/venv/bin/python",
+      "args": ["agent16/main.py", "dev"],
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "dependsOn": "Setup Complete Agent16 Environment",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Run Agent16 with Virtual Environment (Production)",
+      "type": "shell",
+      "command": "agent16/venv/bin/python",
+      "args": ["agent16/main.py", "start"],
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "dependsOn": "Setup Complete Agent16 Environment",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Start Agent16 with PM2 (Dev)",
+      "type": "shell",
+      "command": "pm2",
+      "args": [
+        "start",
+        "pm2.config.js",
+        "--only",
+        "agent16-dev"
+      ],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Start Agent16 with PM2 (Production)",
+      "type": "shell",
+      "command": "pm2",
+      "args": [
+        "start",
+        "pm2.config.js",
+        "--only",
+        "agent16-prod"
+      ],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Stop Agent16 PM2 (Dev)",
+      "type": "shell",
+      "command": "pm2",
+      "args": ["stop", "agent16-dev"],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Stop Agent16 PM2 (Production)",
+      "type": "shell",
+      "command": "pm2",
+      "args": ["stop", "agent16-prod"],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Restart Agent16 PM2 (Dev)",
+      "type": "shell",
+      "command": "pm2",
+      "args": ["restart", "agent16-dev"],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Restart Agent16 PM2 (Production)",
+      "type": "shell",
+      "command": "pm2",
+      "args": ["restart", "agent16-prod"],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "View Agent16 PM2 Logs (Dev)",
+      "type": "shell",
+      "command": "pm2",
+      "args": ["logs", "agent16-dev"],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "View Agent16 PM2 Logs (Production)",
+      "type": "shell",
+      "command": "pm2",
+      "args": ["logs", "agent16-prod"],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "PM2 Status",
+      "type": "shell",
+      "command": "pm2",
+      "args": ["status"],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    }
+  ]
+}
