@@ -40,8 +40,8 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
 
     const sizeStyles = {
       sm: "px-4 py-2 text-xs",
-      md: "px-6 py-2.5 text-xs",
-      lg: "px-8 py-3 text-sm",
+      md: "px-6 py-2.5 text-xs sm:text-sm",
+      lg: "px-6 py-3 text-sm sm:px-8 sm:py-3 sm:text-base",
     };
 
     const variantStyles = {
@@ -129,12 +129,10 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
 
     if (isModalOpen) {
       document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden"; // Prevent background scrolling
     }
 
     return () => {
       document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "unset";
     };
   }, [isModalOpen]);
 
@@ -151,7 +149,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       {/* Modal */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6"
           onClick={(e) => {
             // Only close if clicking the backdrop (not the modal content)
             if (e.target === e.currentTarget) {
@@ -160,7 +158,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
           }}
         >
           <div
-            className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8 relative transform transition-all duration-300 ease-out scale-100 opacity-100"
+            className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8 relative transform transition-all duration-300 ease-out scale-100 opacity-100"
             style={{
               maxHeight: "90vh",
               overflowY: "auto",
@@ -190,10 +188,10 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
             </button>
 
             {/* Header */}
-            <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-gradient-to-r from-black to-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center mb-6 sm:mb-8">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-black to-gray-800 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
                 <svg
-                  className="w-8 h-8 text-white"
+                  className="w-6 h-6 sm:w-8 sm:h-8 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -206,19 +204,20 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
                   />
                 </svg>
               </div>
-              <h2 className="text-3xl font-serif font-light text-gray-900 mb-3">
+              <h2 className="text-2xl sm:text-3xl font-serif font-light text-gray-900 mb-2 sm:mb-3">
                 Join the Waitlist
               </h2>
-              <p className="text-gray-600 text-base leading-relaxed">
+              <p className="text-gray-600 text-sm sm:text-base leading-relaxed px-2">
                 Be among the first to experience the future of skincare.
-                <br />
+                <br className="hidden sm:block" />
+                <span className="sm:hidden"> </span>
                 We&apos;ll notify you when Skinior is ready.
               </p>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <input
                     type="text"
@@ -226,7 +225,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
                     placeholder="First name"
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    className="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-300 text-base bg-white text-gray-900 placeholder-gray-500"
+                    className="w-full px-4 py-3 sm:px-5 sm:py-4 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-300 text-sm sm:text-base bg-white text-gray-900 placeholder-gray-500"
                   />
                 </div>
                 <div>
@@ -236,7 +235,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
                     placeholder="Last name"
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    className="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-300 text-base bg-white text-gray-900 placeholder-gray-500"
+                    className="w-full px-4 py-3 sm:px-5 sm:py-4 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-300 text-sm sm:text-base bg-white text-gray-900 placeholder-gray-500"
                   />
                 </div>
               </div>
@@ -249,7 +248,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-300 text-base bg-white text-gray-900 placeholder-gray-500"
+                  className="w-full px-4 py-3 sm:px-5 sm:py-4 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-300 text-sm sm:text-base bg-white text-gray-900 placeholder-gray-500"
                 />
               </div>
 
@@ -268,7 +267,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
               <button
                 type="submit"
                 disabled={isLoading || isSuccess}
-                className="w-full bg-gradient-to-r from-black to-gray-800 text-white font-semibold py-4 px-6 rounded-2xl hover:from-gray-800 hover:to-black transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] transform-gpu disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 active:scale-95 text-base"
+                className="w-full bg-gradient-to-r from-black to-gray-800 text-white font-semibold py-3 px-6 sm:py-4 sm:px-6 rounded-2xl hover:from-gray-800 hover:to-black transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] transform-gpu disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 active:scale-95 text-sm sm:text-base"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
@@ -283,7 +282,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
               </button>
             </form>
 
-            <p className="text-sm text-gray-500 text-center mt-6">
+            <p className="text-xs sm:text-sm text-gray-500 text-center mt-4 sm:mt-6 px-2">
               We&apos;ll never spam you. Unsubscribe at any time.
             </p>
           </div>

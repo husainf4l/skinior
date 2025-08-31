@@ -1,0 +1,59 @@
+{
+  "hero": {
+    "subtitle": "The World's First Agentic Skincare",
+    "title": "Your Evolving Routine.",
+    "description": "Learns your skin, your routine, and your lifestyle then tracks your results and adapts your plan over time.",
+    "joinWaitlist": "Join our waitlist",
+    "videoAlt": "Skinior hero video showcasing skincare journey"
+  },
+  "navbar": {
+    "home": "Home",
+    "features": "Features",
+    "howItWorks": "How It Works",
+    "news": "News",
+    "login": "Login",
+    "dashboard": "Dashboard",
+    "language": "العربية"
+  },
+  "features": {
+    "title": "Intelligent Features",
+    "subtitle": "Advanced AI Technology",
+    "adaptiveRoutines": "Adaptive Routines",
+    "skinAnalysis": "Skin Analysis",
+    "personalizedRecommendations": "Personalized Recommendations"
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "subtitle": "Your Journey to Perfect Skin",
+    "step1": "Analyze",
+    "step2": "Adapt", 
+    "step3": "Achieve"
+  },
+  "footer": {
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "cookiePolicy": "Cookie Policy",
+    "gdpr": "GDPR",
+    "copyright": "© 2025 Skinior. All rights reserved.",
+    "company": "Roxate Ltd"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "metadata": {
+    "title": "Skinior - The World's First Agentic Skincare Platform",
+    "description": "Experience intelligent skincare that learns, adapts, and evolves with you. Skinior's AI-powered platform creates personalized routines that improve over time.",
+    "keywords": "skincare, AI skincare, personalized skincare, agentic skincare, intelligent beauty, adaptive routine, skin analysis",
+    "ogTitle": "Skinior - The World's First Agentic Skincare Platform",
+    "ogDescription": "Experience intelligent skincare that learns, adapts, and evolves with you. Skinior's AI-powered platform creates personalized routines that improve over time.",
+    "twitterTitle": "Skinior - The World's First Agentic Skincare Platform",
+    "twitterDescription": "Experience intelligent skincare that learns, adapts, and evolves with you."
+  }
+}

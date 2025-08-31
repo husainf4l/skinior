@@ -1,54 +1,34 @@
 import { MetadataRoute } from 'next'
+import { routing } from '../i18n/routing'
  
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    {
-      url: 'https://skinior.com',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 1,
-    },
-    {
-      url: 'https://skinior.com/login',
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-    {
-      url: 'https://skinior.com/dashboard',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: 'https://skinior.com/news',
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://skinior.com/privacy-policy',
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.5,
-    },
-    {
-      url: 'https://skinior.com/terms-of-service',
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.5,
-    },
-    {
-      url: 'https://skinior.com/cookie-policy',
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.5,
-    },
-    {
-      url: 'https://skinior.com/gdpr',
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.5,
-    },
-  ]
+  const baseUrls = [
+    '',
+    '/login',
+    '/dashboard',
+    '/news',
+    '/privacy-policy',
+    '/terms-of-service',
+    '/cookie-policy',
+    '/gdpr',
+  ];
+
+  const sitemapEntries: MetadataRoute.Sitemap = [];
+
+  routing.locales.forEach(locale => {
+    baseUrls.forEach(url => {
+      const fullUrl = locale === routing.defaultLocale 
+        ? `https://skinior.com${url}`
+        : `https://skinior.com/${locale}${url}`;
+      
+      sitemapEntries.push({
+        url: fullUrl,
+        lastModified: new Date(),
+        changeFrequency: url === '' ? 'monthly' : url === '/news' ? 'weekly' : 'yearly',
+        priority: url === '' ? 1 : url === '/dashboard' ? 0.7 : url === '/news' ? 0.8 : 0.5,
+      });
+    });
+  });
+
+  return sitemapEntries;
 }
