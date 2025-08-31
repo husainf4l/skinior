@@ -24,6 +24,7 @@ model User {
   // Authentication fields
   password     String? // Optional for OAuth users
   googleId     String? @unique
+  appleId      String? @unique
   refreshToken String?
 
   // Timestamps

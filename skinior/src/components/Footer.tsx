@@ -12,7 +12,7 @@ const Footer = () => {
   const locale = useLocale();
 
   const handleNavigation = (path: string) => {
-    router.push(path);
+    router.push(`/${locale}${path}`);
   };
 
   return (

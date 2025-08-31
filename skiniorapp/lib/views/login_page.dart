@@ -46,9 +46,10 @@ class _LoginPageState extends State<LoginPage>
         child: SafeArea(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height - 
-                        MediaQuery.of(context).padding.top - 
-                        MediaQuery.of(context).padding.bottom,
+              minHeight:
+                  MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top -
+                  MediaQuery.of(context).padding.bottom,
             ),
             child: SingleChildScrollView(
               child: Padding(
@@ -126,7 +127,9 @@ class _LoginPageState extends State<LoginPage>
                         ),
                         indicatorSize: TabBarIndicatorSize.tab,
                         splashFactory: NoSplash.splashFactory,
-                        overlayColor: WidgetStateProperty.all(Colors.transparent),
+                        overlayColor: WidgetStateProperty.all(
+                          Colors.transparent,
+                        ),
                         labelColor: themeController.isDarkMode.value
                             ? Colors.black
                             : Colors.white,
@@ -134,14 +137,8 @@ class _LoginPageState extends State<LoginPage>
                             ? Colors.white70
                             : Colors.black54,
                         tabs: const [
-                          Tab(
-                            height: 48,
-                            text: 'Login',
-                          ),
-                          Tab(
-                            height: 48,
-                            text: 'Register',
-                          ),
+                          Tab(height: 48, text: 'Login'),
+                          Tab(height: 48, text: 'Register'),
                         ],
                       ),
                     ),
@@ -358,9 +355,9 @@ class _LoginPageState extends State<LoginPage>
               ),
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Divider
           Row(
             children: [
@@ -406,10 +403,7 @@ class _LoginPageState extends State<LoginPage>
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
-                      side: BorderSide(
-                        color: Colors.grey[300]!,
-                        width: 1,
-                      ),
+                      side: BorderSide(color: Colors.grey[300]!, width: 1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -455,10 +449,7 @@ class _LoginPageState extends State<LoginPage>
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.apple,
-                          size: 20,
-                        ),
+                        Icon(Icons.apple, size: 20),
                         SizedBox(width: 8),
                         Text(
                           'Apple',
@@ -570,9 +561,9 @@ class _LoginPageState extends State<LoginPage>
                     ),
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Divider
           Row(
             children: [
@@ -618,10 +609,7 @@ class _LoginPageState extends State<LoginPage>
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
-                      side: BorderSide(
-                        color: Colors.grey[300]!,
-                        width: 1,
-                      ),
+                      side: BorderSide(color: Colors.grey[300]!, width: 1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -667,10 +655,7 @@ class _LoginPageState extends State<LoginPage>
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.apple,
-                          size: 20,
-                        ),
+                        Icon(Icons.apple, size: 20),
                         SizedBox(width: 8),
                         Text(
                           'Apple',

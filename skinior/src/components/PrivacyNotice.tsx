@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 
 const PrivacyNotice = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
+  const locale = useLocale();
 
   useEffect(() => {
     setMounted(true);
@@ -50,7 +52,7 @@ const PrivacyNotice = () => {
   };
 
   const handleLearnMore = (path: string) => {
-    router.push(path);
+    router.push(`/${locale}${path}`);
     setIsVisible(false);
   };
 

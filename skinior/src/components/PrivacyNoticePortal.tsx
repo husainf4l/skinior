@@ -4,15 +4,16 @@ import CookieConsent from "react-cookie-consent";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useLocale } from "next-intl";
 
 export default function PrivacyNoticePortal() {
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
+  const locale = useLocale();
 
   useEffect(() => {
     setMounted(true);
   }, []);
-  const router = useRouter();
-
   const handleAcceptAll = () => {
     // Store comprehensive consent in localStorage
     const consentData = {
@@ -40,7 +41,7 @@ export default function PrivacyNoticePortal() {
   };
 
   const handleLearnMore = (path: string) => {
-    router.push(path);
+    router.push(`/${locale}${path}`);
   };
 
   if (!mounted) return null;

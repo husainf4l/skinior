@@ -47,6 +47,66 @@
     "edit": "Edit",
     "delete": "Delete"
   },
+  "auth": {
+    "signInWithGoogle": "Sign in with Google",
+    "signUpWithGoogle": "Sign up with Google",
+    "orContinueWith": "Or continue with",
+    "completingAuth": "Completing Authentication...",
+    "authSetup": "Please wait while we set up your account.",
+    "authSuccess": "Authentication Successful!",
+    "welcomeBack": "Welcome back",
+    "redirectingDashboard": "Redirecting you to the dashboard...",
+    "authFailed": "Authentication Failed",
+    "authFailedMessage": "Authentication failed. Please try again.",
+    "invalidResponse": "Invalid authentication response.",
+    "authError": "Failed to complete authentication. Please try again.",
+    "redirectingLogin": "Redirecting to login page...",
+    "header": {
+      "welcomeBack": "Welcome Back",
+      "joinSkinior": "Join Skinior"
+    },
+    "subheader": {
+      "signInToYourAccount": "Sign in to your account",
+      "createYourPersonalizedSkincareJourney": "Create your personalized skincare journey"
+    },
+    "toggle": {
+      "signIn": "Sign In",
+      "signUp": "Sign Up"
+    },
+    "form": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "emailAddress": "Email Address",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "placeholders": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "email": "Enter your email",
+        "password": "Enter your password",
+        "confirmPassword": "Confirm your password"
+      }
+    },
+    "button": {
+      "signIn": "Sign In",
+      "createAccount": "Create Account",
+      "signingIn": "Signing In...",
+      "creatingAccount": "Creating Account..."
+    },
+    "error": {
+      "passwordsDontMatch": "Passwords don't match",
+      "fillAllFields": "Please fill in all fields",
+      "generic": "An error occurred"
+    },
+    "footer": {
+      "dontHaveAnAccount": "Don't have an account?",
+      "alreadyHaveAnAccount": "Already have an account?",
+      "signUp": "Sign up",
+      "signIn": "Sign in"
+    }
+  },
   "metadata": {
     "title": "Skinior - The World's First Agentic Skincare Platform",
     "description": "Experience intelligent skincare that learns, adapts, and evolves with you. Skinior's AI-powered platform creates personalized routines that improve over time.",

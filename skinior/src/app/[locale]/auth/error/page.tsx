@@ -1,19 +1,21 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 export default function AuthError() {
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
 
   useEffect(() => {
     // Auto redirect to login after 5 seconds
     const timer = setTimeout(() => {
-      router.push("/login");
+      router.push(`/${locale}/login`);
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [router]);
+  }, [router, locale]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center px-4">
@@ -51,7 +53,7 @@ export default function AuthError() {
               You&apos;ll be redirected to the login page in a few seconds, or
               you can{" "}
               <button
-                onClick={() => router.push("/login")}
+                onClick={() => router.push(`/${locale}/login`)}
                 className="text-black font-medium hover:text-gray-800 underline"
               >
                 go back now
