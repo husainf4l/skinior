@@ -60,6 +60,12 @@ export class UserService {
     });
   }
 
+  async findUserByAppleId(appleId: string) {
+    return this.prisma.user.findUnique({
+      where: { appleId },
+    });
+  }
+
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
     const user = await this.prisma.user.findUnique({
       where: { id },
@@ -97,7 +103,7 @@ export class UserService {
   }
 
   private formatUserResponse(user: any): UserResponseDto {
-    const { password, refreshToken, googleId, ...userResponse } = user;
+    const { password, refreshToken, googleId, appleId, ...userResponse } = user;
     return userResponse;
   }
 
@@ -129,6 +135,35 @@ export class UserService {
         firstName,
         lastName,
         avatar,
+      },
+    });
+  }
+
+  async createAppleUser(appleProfile: any): Promise<any> {
+    const { sub: appleId, email, given_name, family_name } = appleProfile;
+    const firstName = given_name;
+    const lastName = family_name;
+
+    // Check if user already exists with this email
+    const existingUser = await this.findUserByEmail(email);
+    if (existingUser) {
+      // Update with Apple ID if not already set
+      if (!existingUser.appleId) {
+        return this.prisma.user.update({
+          where: { email },
+          data: { appleId },
+        });
+      }
+      return existingUser;
+    }
+
+    // Create new user
+    return this.prisma.user.create({
+      data: {
+        email,
+        appleId,
+        firstName,
+        lastName,
       },
     });
   }

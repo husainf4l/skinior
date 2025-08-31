@@ -143,6 +143,16 @@ class AuthService {
     window.location.href = `${API_BASE_URL}/auth/google`;
   }
 
+  async googleAuthWithToken(token: string): Promise<AuthResponse> {
+    const response = await this.request<AuthResponse>('/auth/google/token', {
+      method: 'POST',
+      body: JSON.stringify({ token }),
+    });
+
+    this.saveTokens(response.tokens);
+    return response;
+  }
+
   async refreshTokens(): Promise<AuthTokens> {
     if (!this.refreshToken) {
       throw new Error('No refresh token available');

@@ -47,6 +47,66 @@
     "edit": "تعديل",
     "delete": "حذف"
   },
+  "auth": {
+    "signInWithGoogle": "تسجيل الدخول باستخدام Google",
+    "signUpWithGoogle": "إنشاء حساب باستخدام Google",
+    "orContinueWith": "أو المتابعة باستخدام",
+    "completingAuth": "إكمال المصادقة...",
+    "authSetup": "يرجى الانتظار حتى نقوم بإعداد حسابك.",
+    "authSuccess": "تمت المصادقة بنجاح!",
+    "welcomeBack": "مرحباً بعودتك",
+    "redirectingDashboard": "جاري توجيهك إلى لوحة التحكم...",
+    "authFailed": "فشلت المصادقة",
+    "authFailedMessage": "فشلت المصادقة. يرجى المحاولة مرة أخرى.",
+    "invalidResponse": "استجابة مصادقة غير صالحة.",
+    "authError": "فشل في إكمال المصادقة. يرجى المحاولة مرة أخرى.",
+    "redirectingLogin": "جاري التوجيه إلى صفحة تسجيل الدخول...",
+    "header": {
+      "welcomeBack": "مرحباً بعودتك",
+      "joinSkinior": "انضم إلى سكينيور"
+    },
+    "subheader": {
+      "signInToYourAccount": "سجل الدخول إلى حسابك",
+      "createYourPersonalizedSkincareJourney": "أنشئ رحلتك المخصصة للعناية بالبشرة"
+    },
+    "toggle": {
+      "signIn": "تسجيل الدخول",
+      "signUp": "إنشاء حساب"
+    },
+    "form": {
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "emailAddress": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "rememberMe": "تذكرني",
+      "forgotPassword": "نسيت كلمة المرور؟",
+      "placeholders": {
+        "firstName": "الاسم الأول",
+        "lastName": "اسم العائلة",
+        "email": "أدخل بريدك الإلكتروني",
+        "password": "أدخل كلمة المرور",
+        "confirmPassword": "أكد كلمة المرور"
+      }
+    },
+    "button": {
+      "signIn": "تسجيل الدخول",
+      "createAccount": "إنشاء حساب",
+      "signingIn": "جاري تسجيل الدخول...",
+      "creatingAccount": "جاري إنشاء الحساب..."
+    },
+    "error": {
+      "passwordsDontMatch": "كلمات المرور غير متطابقة",
+      "fillAllFields": "يرجى ملء جميع الحقول",
+      "generic": "حدث خطأ"
+    },
+    "footer": {
+      "dontHaveAnAccount": "ليس لديك حساب؟",
+      "alreadyHaveAnAccount": "لديك حساب بالفعل؟",
+      "signUp": "إنشاء حساب",
+      "signIn": "تسجيل الدخول"
+    }
+  },
   "metadata": {
     "title": "سكينيور - منصة العناية بالبشرة الوكيلة الأولى عالمياً",
     "description": "استمتع بعناية ذكية بالبشرة تتعلم وتتكيف وتتطور معك. منصة سكينيور المعتمدة على الذكاء الاصطناعي تخلق روتينات مخصصة تتحسن مع مرور الوقت.",

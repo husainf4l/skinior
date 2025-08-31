@@ -16,16 +16,16 @@ const Navbar = () => {
   const handleUserClick = () => {
     if (isAuthenticated) {
       // Could show a dropdown menu here
-      router.push("/dashboard");
+      router.push(`/${locale}/dashboard`);
       return;
     }
-    router.push("/login");
+    router.push(`/${locale}/login`);
   };
 
   const handleLogout = async () => {
     try {
       await logout();
-      router.push("/");
+      router.push(`/${locale}`);
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -33,14 +33,14 @@ const Navbar = () => {
 
   const handleLogoClick = () => {
     if (isAuthenticated) {
-      router.push("/dashboard");
+      router.push(`/${locale}/dashboard`);
     } else {
-      router.push("/");
+      router.push(`/${locale}`);
     }
   };
 
   const handleNewsClick = () => {
-    router.push("/news");
+    router.push(`/${locale}/news`);
   };
 
   const toggleLanguage = () => {

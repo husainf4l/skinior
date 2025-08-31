@@ -55,6 +55,24 @@ export class AuthController {
     }
   }
 
+  @Post('google/token')
+  async googleTokenAuth(@Body() body: { token: string }): Promise<AuthResponse> {
+    if (!body.token) {
+      throw new UnauthorizedException('Google token is required');
+    }
+    
+    return this.authService.verifyGoogleToken(body.token);
+  }
+
+  @Post('apple/token')
+  async appleTokenAuth(@Body() body: { token: string }): Promise<AuthResponse> {
+    if (!body.token) {
+      throw new UnauthorizedException('Apple token is required');
+    }
+    
+    return this.authService.verifyAppleToken(body.token);
+  }
+
   @Post('refresh')
   async refreshTokens(@Body() body: { refreshToken: string }) {
     if (!body.refreshToken) {

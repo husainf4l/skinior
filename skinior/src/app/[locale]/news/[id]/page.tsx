@@ -1,15 +1,17 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 const NewsArticlePage = () => {
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
 
   React.useEffect(() => {
     // Since we don't have any news articles yet, redirect to the main news page
-    router.push("/news");
-  }, [router]);
+    router.push(`/${locale}/news`);
+  }, [router, locale]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 pt-20">

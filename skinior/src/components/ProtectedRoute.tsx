@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface ProtectedRouteProps {
@@ -15,12 +15,17 @@ export default function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.push(redirectTo);
+      const fullRedirectPath = redirectTo.startsWith("/")
+        ? `/${locale}${redirectTo}`
+        : `/${locale}/${redirectTo}`;
+      router.push(fullRedirectPath);
     }
-  }, [isAuthenticated, isLoading, router, redirectTo]);
+  }, [isAuthenticated, isLoading, router, redirectTo, locale]);
 
   // Show loading spinner while checking authentication
   if (isLoading) {

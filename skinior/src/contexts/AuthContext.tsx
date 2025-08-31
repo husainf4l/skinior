@@ -16,6 +16,7 @@ interface AuthContextType {
   }) => Promise<void>;
   logout: () => Promise<void>;
   googleAuth: () => void;
+  googleAuthWithToken: (token: string) => Promise<void>;
   refreshUser: () => Promise<void>;
 }
 
@@ -69,6 +70,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     authService.googleAuth();
   };
 
+  const googleAuthWithToken = async (token: string) => {
+    const response = await authService.googleAuthWithToken(token);
+    setUser(response.user);
+  };
+
   const refreshUser = async () => {
     if (authService.isAuthenticated()) {
       const userData = await authService.getProfile();
@@ -84,6 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     register,
     logout,
     googleAuth,
+    googleAuthWithToken,
     refreshUser,
   };
 
