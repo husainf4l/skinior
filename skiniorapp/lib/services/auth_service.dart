@@ -17,27 +17,35 @@ class AuthService {
         body: jsonEncode({'email': email, 'password': password}),
       );
 
-      if (response.statusCode == 200) {
+      print('Login Response Status: ${response.statusCode}');
+      print('Login Response Body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        if (data['success'] == true) {
-          // Store token
+        print('Login Parsed Data: $data');
+        
+        // Check if response has the expected structure
+        if (data['user'] != null && data['tokens'] != null) {
+          // Store tokens
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('token', data['token']);
+          await prefs.setString('accessToken', data['tokens']['accessToken']);
+          await prefs.setString('refreshToken', data['tokens']['refreshToken']);
           await prefs.setString('user', jsonEncode(data['user']));
           return {'success': true, 'message': 'Login successful'};
         } else {
           return {
             'success': false,
-            'message': data['message'] ?? 'Login failed',
+            'message': data['message'] ?? 'Login failed - Invalid response format',
           };
         }
       } else {
         return {
           'success': false,
-          'message': 'Server error: ${response.statusCode}',
+          'message': 'Server error: ${response.statusCode} - ${response.body}',
         };
       }
     } catch (e) {
+      print('Login Error: $e');
       return {'success': false, 'message': 'Network error: $e'};
     }
   }
@@ -55,10 +63,16 @@ class AuthService {
         body: jsonEncode({'name': name, 'email': email, 'password': password}),
       );
 
+      print('Register Response Status: ${response.statusCode}');
+      print('Register Response Body: ${response.body}');
+
       if (response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        if (data['success'] == true) {
-          return {'success': true, 'message': 'Registration successful'};
+        print('Register Parsed Data: $data');
+        
+        // Check if response has the expected structure (successful registration)
+        if (data['user'] != null) {
+          return {'success': true, 'message': 'Registration successful! Please login.'};
         } else {
           return {
             'success': false,
@@ -68,10 +82,11 @@ class AuthService {
       } else {
         return {
           'success': false,
-          'message': 'Server error: ${response.statusCode}',
+          'message': 'Server error: ${response.statusCode} - ${response.body}',
         };
       }
     } catch (e) {
+      print('Register Error: $e');
       return {'success': false, 'message': 'Network error: $e'};
     }
   }
@@ -91,12 +106,13 @@ class AuthService {
         }),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        if (data['success'] == true) {
-          // Store token
+        if (data['user'] != null && data['tokens'] != null) {
+          // Store tokens
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('token', data['token']);
+          await prefs.setString('accessToken', data['tokens']['accessToken']);
+          await prefs.setString('refreshToken', data['tokens']['refreshToken']);
           await prefs.setString('user', jsonEncode(data['user']));
           return {'success': true, 'message': 'Social login successful'};
         } else {
@@ -119,14 +135,26 @@ class AuthService {
   // Logout method
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
+    await prefs.remove('accessToken');
+    await prefs.remove('refreshToken');
     await prefs.remove('user');
   }
 
-  // Get stored token
-  Future<String?> getToken() async {
+  // Get stored access token
+  Future<String?> getAccessToken() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
+    return prefs.getString('accessToken');
+  }
+
+  // Get stored refresh token
+  Future<String?> getRefreshToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('refreshToken');
+  }
+
+  // Get stored token (backward compatibility)
+  Future<String?> getToken() async {
+    return getAccessToken();
   }
 
   // Get stored user data

@@ -19,7 +19,15 @@ class AuthController extends GetxController {
   }
 
   Future<void> checkLoginStatus() async {
-    isLoggedIn.value = await _authService.isLoggedIn();
+    isLoading.value = true;
+    try {
+      isLoggedIn.value = await _authService.isLoggedIn();
+    } catch (e) {
+      isLoggedIn.value = false;
+      errorMessage.value = 'Failed to check authentication status';
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> login(String email, String password) async {
