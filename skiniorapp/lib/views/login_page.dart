@@ -40,135 +40,123 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: themeController.isDarkMode.value
-                ? [const Color(0xFF1E1E1E), const Color(0xFF121212)]
-                : [const Color(0xFFE8F5E8), const Color(0xFFF1F8E9)],
-          ),
-        ),
+        color: themeController.isDarkMode.value
+            ? const Color(0xFF121212)
+            : Colors.white,
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 60),
-                  // Logo and Title
-                  Icon(
-                    Icons.spa,
-                    size: 80,
-                    color: themeController.isDarkMode.value
-                        ? const Color(0xFF81C784)
-                        : const Color(0xFF4CAF50),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Skinior',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: themeController.isDarkMode.value
-                          ? Colors.white
-                          : Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Your skin care companion',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: themeController.isDarkMode.value
-                          ? Colors.white70
-                          : Colors.black54,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-
-                  // Tab Bar
-                  Container(
-                    decoration: BoxDecoration(
-                      color: themeController.isDarkMode.value
-                          ? const Color(0xFF2A2A2A)
-                          : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height - 
+                        MediaQuery.of(context).padding.top - 
+                        MediaQuery.of(context).padding.bottom,
+            ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32.0,
+                  vertical: 24.0,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    // Logo and Title
+                    Row(
+                      children: [
+                        Image.asset(
+                          themeController.isDarkMode.value
+                              ? 'assets/logo/skinior-logo-white.png'
+                              : 'assets/logo/skinior-logo-black.png',
+                          height: 24,
                         ),
                       ],
                     ),
-                    child: TabBar(
-                      controller: _tabController,
-                      indicator: BoxDecoration(
+                    const SizedBox(height: 24),
+                    Text(
+                      'Your Evolving Routine',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w300,
                         color: themeController.isDarkMode.value
-                            ? const Color(0xFF81C784)
-                            : const Color(0xFF4CAF50),
-                        borderRadius: BorderRadius.circular(12),
+                            ? Colors.white
+                            : Colors.black,
+                        letterSpacing: -0.5,
+                        height: 1.2,
                       ),
-                      labelColor: themeController.isDarkMode.value
-                          ? Colors.black
-                          : Colors.white,
-                      unselectedLabelColor: themeController.isDarkMode.value
-                          ? Colors.white70
-                          : Colors.black54,
-                      tabs: const [
-                        Tab(text: 'Login'),
-                        Tab(text: 'Register'),
-                      ],
+                      textAlign: TextAlign.left,
                     ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Tab Bar View
-                  SizedBox(
-                    height: 400,
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [_buildLoginForm(), _buildRegisterForm()],
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Theme Toggle
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        themeController.isDarkMode.value
-                            ? Icons.dark_mode
-                            : Icons.light_mode,
+                    const SizedBox(height: 6),
+                    Text(
+                      'The world\'s first agentic skincare platform',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
                         color: themeController.isDarkMode.value
+                            ? Colors.white60
+                            : Colors.black54,
+                        height: 1.4,
+                        letterSpacing: 0.1,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Tab Bar
+                    Container(
+                      decoration: BoxDecoration(
+                        color: themeController.isDarkMode.value
+                            ? const Color(0xFF1E1E1E)
+                            : Colors.grey[50],
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.03),
+                            blurRadius: 8,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      child: TabBar(
+                        controller: _tabController,
+                        indicator: BoxDecoration(
+                          color: themeController.isDarkMode.value
+                              ? Colors.white
+                              : Colors.black,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        splashFactory: NoSplash.splashFactory,
+                        overlayColor: WidgetStateProperty.all(Colors.transparent),
+                        labelColor: themeController.isDarkMode.value
+                            ? Colors.black
+                            : Colors.white,
+                        unselectedLabelColor: themeController.isDarkMode.value
                             ? Colors.white70
                             : Colors.black54,
+                        tabs: const [
+                          Tab(
+                            height: 48,
+                            text: 'Login',
+                          ),
+                          Tab(
+                            height: 48,
+                            text: 'Register',
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        themeController.isDarkMode.value
-                            ? 'Dark Mode'
-                            : 'Light Mode',
-                        style: TextStyle(
-                          color: themeController.isDarkMode.value
-                              ? Colors.white70
-                              : Colors.black54,
-                        ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Tab Bar View
+                    Flexible(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [_buildLoginForm(), _buildRegisterForm()],
                       ),
-                      const SizedBox(width: 8),
-                      Switch(
-                        value: themeController.isDarkMode.value,
-                        onChanged: (value) => themeController.toggleTheme(),
-                        activeThumbColor: themeController.isDarkMode.value
-                            ? const Color(0xFF81C784)
-                            : const Color(0xFF4CAF50),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             ),
           ),
@@ -183,23 +171,123 @@ class _LoginPageState extends State<LoginPage>
         children: [
           TextField(
             controller: emailController,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: themeController.isDarkMode.value
+                  ? Colors.white
+                  : Colors.black,
+            ),
             decoration: InputDecoration(
               labelText: 'Email',
-              prefixIcon: const Icon(Icons.email),
+              labelStyle: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: themeController.isDarkMode.value
+                    ? Colors.white60
+                    : Colors.black54,
+              ),
+              prefixIcon: Icon(
+                Icons.email_outlined,
+                size: 20,
+                color: themeController.isDarkMode.value
+                    ? Colors.white60
+                    : Colors.black54,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: themeController.isDarkMode.value
+                      ? Colors.white12
+                      : Colors.black12,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: themeController.isDarkMode.value
+                      ? Colors.white12
+                      : Colors.black12,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: themeController.isDarkMode.value
+                      ? Colors.white
+                      : Colors.black,
+                  width: 1.5,
+                ),
+              ),
+              filled: true,
+              fillColor: themeController.isDarkMode.value
+                  ? const Color(0xFF1C1C1C)
+                  : const Color(0xFFF8F8F8),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
               ),
             ),
             keyboardType: TextInputType.emailAddress,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           TextField(
             controller: passwordController,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: themeController.isDarkMode.value
+                  ? Colors.white
+                  : Colors.black,
+            ),
             decoration: InputDecoration(
               labelText: 'Password',
-              prefixIcon: const Icon(Icons.lock),
+              labelStyle: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: themeController.isDarkMode.value
+                    ? Colors.white60
+                    : Colors.black54,
+              ),
+              prefixIcon: Icon(
+                Icons.lock_outline,
+                size: 20,
+                color: themeController.isDarkMode.value
+                    ? Colors.white60
+                    : Colors.black54,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: themeController.isDarkMode.value
+                      ? Colors.white12
+                      : Colors.black12,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: themeController.isDarkMode.value
+                      ? Colors.white12
+                      : Colors.black12,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: themeController.isDarkMode.value
+                      ? Colors.white
+                      : Colors.black,
+                  width: 1.5,
+                ),
+              ),
+              filled: true,
+              fillColor: themeController.isDarkMode.value
+                  ? const Color(0xFF1C1C1C)
+                  : const Color(0xFFF8F8F8),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
               ),
             ),
             obscureText: true,
@@ -220,7 +308,7 @@ class _LoginPageState extends State<LoginPage>
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            height: 50,
+            height: 56,
             child: ElevatedButton(
               onPressed: authController.isLoading.value
                   ? null
@@ -229,13 +317,31 @@ class _LoginPageState extends State<LoginPage>
                       passwordController.text,
                     ),
               style: ElevatedButton.styleFrom(
+                backgroundColor: themeController.isDarkMode.value
+                    ? Colors.white
+                    : Colors.black,
+                foregroundColor: themeController.isDarkMode.value
+                    ? Colors.black
+                    : Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
+                elevation: 0,
+                shadowColor: Colors.transparent,
               ),
               child: authController.isLoading.value
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text('Login', style: TextStyle(fontSize: 16)),
+                  ? CircularProgressIndicator(
+                      color: themeController.isDarkMode.value
+                          ? Colors.black
+                          : Colors.white,
+                    )
+                  : const Text(
+                      'Sign In',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
             ),
           ),
           const SizedBox(height: 16),
@@ -247,10 +353,126 @@ class _LoginPageState extends State<LoginPage>
               'Forgot Password?',
               style: TextStyle(
                 color: themeController.isDarkMode.value
-                    ? const Color(0xFF81C784)
-                    : const Color(0xFF4CAF50),
+                    ? Colors.white70
+                    : Colors.black54,
               ),
             ),
+          ),
+          
+          const SizedBox(height: 24),
+          
+          // Divider
+          Row(
+            children: [
+              Expanded(
+                child: Divider(
+                  color: themeController.isDarkMode.value
+                      ? Colors.white24
+                      : Colors.black26,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'or continue with',
+                  style: TextStyle(
+                    color: themeController.isDarkMode.value
+                        ? Colors.white54
+                        : Colors.black54,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Divider(
+                  color: themeController.isDarkMode.value
+                      ? Colors.white24
+                      : Colors.black26,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+
+          // Social Login Buttons
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: authController.isLoading.value
+                        ? null
+                        : () => authController.signInWithGoogle(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      side: BorderSide(
+                        color: Colors.grey[300]!,
+                        width: 1,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.network(
+                          'https://developers.google.com/identity/images/g-logo.png',
+                          height: 20,
+                          width: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Google',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: SizedBox(
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: authController.isLoading.value
+                        ? null
+                        : () => authController.signInWithApple(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.apple,
+                          size: 20,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          'Apple',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -311,7 +533,7 @@ class _LoginPageState extends State<LoginPage>
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            height: 50,
+            height: 56,
             child: ElevatedButton(
               onPressed: authController.isLoading.value
                   ? null
@@ -321,14 +543,148 @@ class _LoginPageState extends State<LoginPage>
                       passwordController.text,
                     ),
               style: ElevatedButton.styleFrom(
+                backgroundColor: themeController.isDarkMode.value
+                    ? Colors.white
+                    : Colors.black,
+                foregroundColor: themeController.isDarkMode.value
+                    ? Colors.black
+                    : Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
+                elevation: 0,
+                shadowColor: Colors.transparent,
               ),
               child: authController.isLoading.value
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text('Register', style: TextStyle(fontSize: 16)),
+                  ? CircularProgressIndicator(
+                      color: themeController.isDarkMode.value
+                          ? Colors.black
+                          : Colors.white,
+                    )
+                  : const Text(
+                      'Create Account',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
             ),
+          ),
+          
+          const SizedBox(height: 24),
+          
+          // Divider
+          Row(
+            children: [
+              Expanded(
+                child: Divider(
+                  color: themeController.isDarkMode.value
+                      ? Colors.white24
+                      : Colors.black26,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'or continue with',
+                  style: TextStyle(
+                    color: themeController.isDarkMode.value
+                        ? Colors.white54
+                        : Colors.black54,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Divider(
+                  color: themeController.isDarkMode.value
+                      ? Colors.white24
+                      : Colors.black26,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+
+          // Social Login Buttons
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: authController.isLoading.value
+                        ? null
+                        : () => authController.signInWithGoogle(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      side: BorderSide(
+                        color: Colors.grey[300]!,
+                        width: 1,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.network(
+                          'https://developers.google.com/identity/images/g-logo.png',
+                          height: 20,
+                          width: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Google',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: SizedBox(
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: authController.isLoading.value
+                        ? null
+                        : () => authController.signInWithApple(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.apple,
+                          size: 20,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          'Apple',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

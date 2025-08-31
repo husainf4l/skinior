@@ -6,6 +6,7 @@ class AuthService {
   static const String baseUrl = 'https://skinior.com/api';
   static const String loginEndpoint = '/auth/login';
   static const String registerEndpoint = '/auth/register';
+  static const String socialLoginEndpoint = '/auth/social-login';
 
   // Login method
   Future<Map<String, dynamic>> login(String email, String password) async {
@@ -62,6 +63,46 @@ class AuthService {
           return {
             'success': false,
             'message': data['message'] ?? 'Registration failed',
+          };
+        }
+      } else {
+        return {
+          'success': false,
+          'message': 'Server error: ${response.statusCode}',
+        };
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error: $e'};
+    }
+  }
+
+  // Social Login method (Google/Apple)
+  Future<Map<String, dynamic>> socialLogin(
+    String provider,
+    Map<String, dynamic> tokens,
+  ) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl$socialLoginEndpoint'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'provider': provider,
+          ...tokens,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success'] == true) {
+          // Store token
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', data['token']);
+          await prefs.setString('user', jsonEncode(data['user']));
+          return {'success': true, 'message': 'Social login successful'};
+        } else {
+          return {
+            'success': false,
+            'message': data['message'] ?? 'Social login failed',
           };
         }
       } else {

@@ -1,66 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'controllers/theme_controller.dart';
-import 'controllers/auth_controller.dart';
 import 'views/login_page.dart';
 import 'views/home_page.dart';
-import 'themes/app_themes.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize controllers
-  final themeController = ThemeController();
-  final authController = AuthController();
-
-  // Load theme preference
-  themeController.onInit();
-  authController.onInit();
-
-  runApp(MyApp());
+void main() {
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final ThemeController themeController = Get.put(ThemeController());
-  final AuthController authController = Get.put(AuthController());
-
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => GetMaterialApp(
-        title: 'Skinior',
-        theme: themeController.currentTheme,
-        darkTheme: AppThemes.darkTheme,
-        themeMode: themeController.isDarkMode.value
-            ? ThemeMode.dark
-            : ThemeMode.light,
-        initialRoute: '/',
-        getPages: [
-          GetPage(name: '/', page: () => AuthWrapper()),
-          GetPage(name: '/login', page: () => LoginPage()),
-          GetPage(name: '/home', page: () => HomePage()),
-        ],
-        debugShowCheckedModeBanner: false,
+    return GetMaterialApp(
+      title: 'Skinior',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      initialRoute: '/',
+      getPages: [
+        GetPage(name: '/', page: () => const AuthWrapper()),
+        GetPage(name: '/login', page: () => const LoginPage()),
+        GetPage(name: '/home', page: () => const HomePage()),
+      ],
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class AuthWrapper extends StatelessWidget {
-  final AuthController authController = Get.find();
-
-  AuthWrapper({super.key});
+  const AuthWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      if (authController.isLoggedIn.value) {
-        return HomePage();
-      } else {
-        return LoginPage();
-      }
-    });
+    // For now, always show login page
+    return const LoginPage();
   }
 }

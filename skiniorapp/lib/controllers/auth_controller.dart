@@ -1,9 +1,12 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../services/auth_service.dart';
 
 class AuthController extends GetxController {
   final AuthService _authService = AuthService();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   RxBool isLoading = false.obs;
   RxString errorMessage = ''.obs;
@@ -71,8 +74,84 @@ class AuthController extends GetxController {
     }
   }
 
+  Future<void> signInWithGoogle() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        isLoading.value = false;
+        return; // User canceled the sign-in
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final String? accessToken = googleAuth.accessToken;
+      final String? idToken = googleAuth.idToken;
+
+      if (accessToken != null && idToken != null) {
+        // Send tokens to your backend to get NestJS token
+        final result = await _authService.socialLogin('google', {
+          'accessToken': accessToken,
+          'idToken': idToken,
+        });
+
+        isLoading.value = false;
+
+        if (result['success']) {
+          isLoggedIn.value = true;
+          Get.offAllNamed('/home');
+        } else {
+          errorMessage.value = result['message'];
+        }
+      } else {
+        isLoading.value = false;
+        errorMessage.value = 'Google sign-in failed';
+      }
+    } catch (error) {
+      isLoading.value = false;
+      errorMessage.value = 'Google sign-in error: $error';
+    }
+  }
+
+  Future<void> signInWithApple() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      // Send Apple credential to your backend to get NestJS token
+      final result = await _authService.socialLogin('apple', {
+        'identityToken': credential.identityToken,
+        'authorizationCode': credential.authorizationCode,
+        'email': credential.email,
+        'givenName': credential.givenName,
+        'familyName': credential.familyName,
+      });
+
+      isLoading.value = false;
+
+      if (result['success']) {
+        isLoggedIn.value = true;
+        Get.offAllNamed('/home');
+      } else {
+        errorMessage.value = result['message'];
+      }
+    } catch (error) {
+      isLoading.value = false;
+      errorMessage.value = 'Apple sign-in error: $error';
+    }
+  }
+
   Future<void> logout() async {
     await _authService.logout();
+    await _googleSignIn.signOut(); // Sign out from Google as well
     isLoggedIn.value = false;
     Get.offAllNamed('/login');
   }
