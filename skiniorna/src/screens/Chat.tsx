@@ -1,8 +1,8 @@
-import React, { 
-  useState, 
-  useRef, 
-  useEffect, 
-  useCallback, 
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
   useMemo,
   memo,
 } from 'react';
@@ -19,7 +19,6 @@ import {
   ActivityIndicator,
   Animated,
   Easing,
-  InteractionManager,
   LayoutAnimation,
 } from 'react-native';
 // Note: For haptics, would need react-native-haptic-feedback or expo-haptics
@@ -80,303 +79,309 @@ interface ChatState {
 }
 
 // Memoized Message Bubble Component for Performance
-const MessageBubble = memo<MessageBubbleProps>(({ 
-  message, 
-  isExpanded, 
-  onToggleThoughts, 
-  colors, 
-  styles, 
-  scaleAnim 
-}) => {
-  const handleToggleThoughts = useCallback(() => {
-    // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    onToggleThoughts(message.id);
-  }, [message.id, onToggleThoughts]);
+const MessageBubble = memo<MessageBubbleProps>(
+  ({ message, isExpanded, onToggleThoughts, colors, styles, scaleAnim }) => {
+    const handleToggleThoughts = useCallback(() => {
+      // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      onToggleThoughts(message.id);
+    }, [message.id, onToggleThoughts]);
 
-  const timestampText = useMemo(() => 
-    message.timestamp.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    }), [message.timestamp]
-  );
+    const timestampText = useMemo(
+      () =>
+        message.timestamp.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      [message.timestamp],
+    );
 
-  return (
-    <View
-      style={[
-        styles.messageContainer,
-        message.isUser ? styles.userMessage : styles.assistantMessage,
-      ]}
-      accessibilityRole="text"
-      accessibilityLabel={`${message.isUser ? 'Your message' : 'AI response'}: ${message.content}`}
-    >
-      {!message.isUser &&
-        (message.hasThoughts ||
-          message.hasActions ||
-          message.hasObservations) && (
-          <View style={styles.thinkingContainer}>
-            <TouchableOpacity
-              style={styles.thinkingHeader}
-              onPress={handleToggleThoughts}
-              activeOpacity={0.7}
-              accessibilityRole="button"
-              accessibilityLabel={isExpanded ? 'Hide AI reasoning' : 'Show AI reasoning'}
-              accessibilityHint="Double tap to toggle AI thinking process"
-            >
-              <View
-                style={[
-                  styles.thinkingIndicator,
-                  !message.isThinkingComplete &&
-                    styles.thinkingIndicatorActive,
-                ]}
+    return (
+      <View
+        style={[
+          styles.messageContainer,
+          message.isUser ? styles.userMessage : styles.assistantMessage,
+        ]}
+        accessibilityRole="text"
+        accessibilityLabel={`${
+          message.isUser ? 'Your message' : 'AI response'
+        }: ${message.content}`}
+      >
+        {!message.isUser &&
+          (message.hasThoughts ||
+            message.hasActions ||
+            message.hasObservations) && (
+            <View style={styles.thinkingContainer}>
+              <TouchableOpacity
+                style={styles.thinkingHeader}
+                onPress={handleToggleThoughts}
+                activeOpacity={0.7}
+                accessibilityRole="button"
+                accessibilityLabel={
+                  isExpanded ? 'Hide AI reasoning' : 'Show AI reasoning'
+                }
+                accessibilityHint="Double tap to toggle AI thinking process"
               >
-                {!message.isThinkingComplete ? (
-                  <ActivityIndicator size="small" color={colors.accent} />
-                ) : (
+                <View
+                  style={[
+                    styles.thinkingIndicator,
+                    !message.isThinkingComplete &&
+                      styles.thinkingIndicatorActive,
+                  ]}
+                >
+                  {!message.isThinkingComplete ? (
+                    <ActivityIndicator size="small" color={colors.accent} />
+                  ) : (
+                    <SFSymbol
+                      name="brain.head.profile"
+                      size={12}
+                      color={colors.accent}
+                      weight="medium"
+                    />
+                  )}
+                </View>
+                <Text style={styles.thinkingLabel}>
+                  {message.isThinkingComplete
+                    ? 'AI Analysis Complete'
+                    : 'AI working...'}
+                </Text>
+                <View style={styles.thinkingControls}>
+                  {!message.isThinkingComplete && (
+                    <View style={styles.streamingDots}>
+                      <View style={[styles.dot, styles.dot1]} />
+                      <View style={[styles.dot, styles.dot2]} />
+                      <View style={[styles.dot, styles.dot3]} />
+                    </View>
+                  )}
                   <SFSymbol
-                    name="brain.head.profile"
+                    name={isExpanded ? 'chevron.up' : 'chevron.down'}
                     size={12}
-                    color={colors.accent}
+                    color={colors.textTertiary}
                     weight="medium"
                   />
-                )}
-              </View>
-              <Text style={styles.thinkingLabel}>
-                {message.isThinkingComplete
-                  ? 'AI Analysis Complete'
-                  : 'AI working...'}
-              </Text>
-              <View style={styles.thinkingControls}>
-                {!message.isThinkingComplete && (
-                  <View style={styles.streamingDots}>
-                    <View style={[styles.dot, styles.dot1]} />
-                    <View style={[styles.dot, styles.dot2]} />
-                    <View style={[styles.dot, styles.dot3]} />
-                  </View>
-                )}
-                <SFSymbol
-                  name={isExpanded ? 'chevron.up' : 'chevron.down'}
-                  size={12}
-                  color={colors.textTertiary}
-                  weight="medium"
-                />
-              </View>
-            </TouchableOpacity>
-
-            {isExpanded && (
-              <View style={styles.thinkingContent}>
-                <View style={styles.thinkingProgress}>
-                  <View
-                    style={[
-                      styles.progressBar,
-                      { width: message.isThinkingComplete ? '100%' : '60%' },
-                    ]}
-                  />
                 </View>
+              </TouchableOpacity>
 
-                {/* Thoughts Section */}
-                {message.thoughts && (
-                  <View style={styles.agenticSection}>
-                    <View style={styles.agenticSectionHeader}>
-                      <SFSymbol
-                        name="brain"
-                        size={12}
-                        color={colors.accent}
-                        weight="medium"
-                      />
-                      <Text style={styles.agenticSectionTitle}>Thinking</Text>
-                    </View>
-                    <Text style={styles.agenticSectionText}>
-                      {message.thoughts}
-                    </Text>
+              {isExpanded && (
+                <View style={styles.thinkingContent}>
+                  <View style={styles.thinkingProgress}>
+                    <View
+                      style={[
+                        styles.progressBar,
+                        { width: message.isThinkingComplete ? '100%' : '60%' },
+                      ]}
+                    />
                   </View>
-                )}
 
-                {/* Actions Section */}
-                {message.actions && (
-                  <View style={styles.agenticSection}>
-                    <View style={styles.agenticSectionHeader}>
-                      <SFSymbol
-                        name="bolt.fill"
-                        size={12}
-                        color={colors.warning}
-                        weight="medium"
-                      />
-                      <Text
-                        style={[
-                          styles.agenticSectionTitle,
-                          { color: colors.warning },
-                        ]}
-                      >
-                        Actions
+                  {/* Thoughts Section */}
+                  {message.thoughts && (
+                    <View style={styles.agenticSection}>
+                      <View style={styles.agenticSectionHeader}>
+                        <SFSymbol
+                          name="brain"
+                          size={12}
+                          color={colors.accent}
+                          weight="medium"
+                        />
+                        <Text style={styles.agenticSectionTitle}>Thinking</Text>
+                      </View>
+                      <Text style={styles.agenticSectionText}>
+                        {message.thoughts}
                       </Text>
                     </View>
-                    <Text style={styles.agenticSectionText}>
-                      {message.actions}
-                    </Text>
-                  </View>
-                )}
+                  )}
 
-                {/* Observations Section */}
-                {message.observations && (
-                  <View style={styles.agenticSection}>
-                    <View style={styles.agenticSectionHeader}>
-                      <SFSymbol
-                        name="eye.fill"
-                        size={12}
-                        color={colors.primary}
-                        weight="medium"
-                      />
-                      <Text
-                        style={[
-                          styles.agenticSectionTitle,
-                          { color: colors.primary },
-                        ]}
-                      >
-                        Observations
+                  {/* Actions Section */}
+                  {message.actions && (
+                    <View style={styles.agenticSection}>
+                      <View style={styles.agenticSectionHeader}>
+                        <SFSymbol
+                          name="bolt.fill"
+                          size={12}
+                          color={colors.warning}
+                          weight="medium"
+                        />
+                        <Text
+                          style={[
+                            styles.agenticSectionTitle,
+                            { color: colors.warning },
+                          ]}
+                        >
+                          Actions
+                        </Text>
+                      </View>
+                      <Text style={styles.agenticSectionText}>
+                        {message.actions}
                       </Text>
                     </View>
-                    <Text style={styles.agenticSectionText}>
-                      {message.observations}
+                  )}
+
+                  {/* Observations Section */}
+                  {message.observations && (
+                    <View style={styles.agenticSection}>
+                      <View style={styles.agenticSectionHeader}>
+                        <SFSymbol
+                          name="eye.fill"
+                          size={12}
+                          color={colors.primary}
+                          weight="medium"
+                        />
+                        <Text
+                          style={[
+                            styles.agenticSectionTitle,
+                            { color: colors.primary },
+                          ]}
+                        >
+                          Observations
+                        </Text>
+                      </View>
+                      <Text style={styles.agenticSectionText}>
+                        {message.observations}
+                      </Text>
+                    </View>
+                  )}
+
+                  {!message.isThinkingComplete && (
+                    <Text style={styles.streamingHint}>
+                      ● Streaming AI reasoning...
                     </Text>
-                  </View>
-                )}
+                  )}
+                </View>
+              )}
+            </View>
+          )}
 
-                {!message.isThinkingComplete && (
-                  <Text style={styles.streamingHint}>
-                    ● Streaming AI reasoning...
-                  </Text>
-                )}
-              </View>
-            )}
-          </View>
-        )}
-
-      <Animated.View
-        style={[
-          styles.messageBubble,
-          message.isUser ? styles.userBubble : styles.assistantBubble,
-          !message.isUser &&
-            message.hasThoughts &&
-            styles.assistantBubbleWithThoughts,
-          {
-            transform: [{ scale: scaleAnim }],
-          },
-        ]}
-      >
-        {!message.isUser && message.hasThoughts && (
-          <View style={styles.finalAnswerHeader}>
-            <SFSymbol
-              name="checkmark.seal.fill"
-              size={14}
-              color={colors.success}
-              weight="medium"
-            />
-            <Text style={styles.finalAnswerLabel}>Final Answer</Text>
-            {message.isThinkingComplete && (
-              <View style={styles.completeBadge}>
-                <Text style={styles.completeBadgeText}>✓</Text>
-              </View>
-            )}
-          </View>
-        )}
-
-        <Text
+        <Animated.View
           style={[
-            styles.messageText,
-            message.isUser ? styles.userText : styles.assistantText,
+            styles.messageBubble,
+            message.isUser ? styles.userBubble : styles.assistantBubble,
+            !message.isUser &&
+              message.hasThoughts &&
+              styles.assistantBubbleWithThoughts,
+            {
+              transform: [{ scale: scaleAnim }],
+            },
           ]}
-          selectable
         >
-          {message.content}
+          {!message.isUser && message.hasThoughts && (
+            <View style={styles.finalAnswerHeader}>
+              <SFSymbol
+                name="checkmark.seal.fill"
+                size={14}
+                color={colors.success}
+                weight="medium"
+              />
+              <Text style={styles.finalAnswerLabel}>Final Answer</Text>
+              {message.isThinkingComplete && (
+                <View style={styles.completeBadge}>
+                  <Text style={styles.completeBadgeText}>✓</Text>
+                </View>
+              )}
+            </View>
+          )}
+
+          <Text
+            style={[
+              styles.messageText,
+              message.isUser ? styles.userText : styles.assistantText,
+            ]}
+            selectable
+          >
+            {message.content}
+          </Text>
+
+          {message.isStreaming && (
+            <View style={styles.streamingIndicator}>
+              <ActivityIndicator size="small" color={colors.accent} />
+              <Text style={styles.streamingText}>
+                {message.hasThoughts && !message.isThinkingComplete
+                  ? 'Thinking...'
+                  : 'Responding...'}
+              </Text>
+            </View>
+          )}
+        </Animated.View>
+
+        <Text style={styles.timestamp} accessible={false}>
+          {timestampText}
         </Text>
-
-        {message.isStreaming && (
-          <View style={styles.streamingIndicator}>
-            <ActivityIndicator size="small" color={colors.accent} />
-            <Text style={styles.streamingText}>
-              {message.hasThoughts && !message.isThinkingComplete
-                ? 'Thinking...'
-                : 'Responding...'}
-            </Text>
-          </View>
-        )}
-      </Animated.View>
-
-      <Text style={styles.timestamp} accessible={false}>
-        {timestampText}
-      </Text>
-    </View>
-  );
-});
+      </View>
+    );
+  },
+);
 
 // Memoized Header Component
-const ChatHeader = memo<HeaderProps>(({ navigation, onClearChat, colors, styles }) => {
-  const handleBackPress = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    navigation.goBack();
-  }, [navigation]);
+const ChatHeader = memo<HeaderProps>(
+  ({ navigation, onClearChat, colors, styles }) => {
+    const handleBackPress = useCallback(() => {
+      // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      navigation.goBack();
+    }, [navigation]);
 
-  const handleClearPress = useCallback(() => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-    onClearChat();
-  }, [onClearChat]);
+    const handleClearPress = useCallback(() => {
+      // Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      onClearChat();
+    }, [onClearChat]);
 
-  return (
-    <View style={styles.modernHeader}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={handleBackPress}
-        activeOpacity={0.7}
-        accessibilityRole="button"
-        accessibilityLabel="Go back"
-        accessibilityHint="Navigate to previous screen"
-      >
-        <View style={styles.iconContainer}>
-          <SFSymbol
-            name="chevron.left"
-            size={20}
-            color={colors.text}
-            weight="semibold"
-          />
+    return (
+      <View style={styles.modernHeader}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={handleBackPress}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+          accessibilityHint="Navigate to previous screen"
+        >
+          <View style={styles.iconContainer}>
+            <SFSymbol
+              name="chevron.left"
+              size={20}
+              color={colors.text}
+              weight="semibold"
+            />
+          </View>
+        </TouchableOpacity>
+
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerTitle} accessibilityRole="header">
+            AI Chat
+          </Text>
+          <View style={styles.statusBadge}>
+            <View style={styles.statusDot} />
+            <Text style={styles.statusLabel}>Online</Text>
+          </View>
         </View>
-      </TouchableOpacity>
-      
-      <View style={styles.headerCenter}>
-        <Text style={styles.headerTitle} accessibilityRole="header">
-          AI Chat
-        </Text>
-        <View style={styles.statusBadge}>
-          <View style={styles.statusDot} />
-          <Text style={styles.statusLabel}>Online</Text>
-        </View>
+
+        <TouchableOpacity
+          style={styles.menuButton}
+          onPress={handleClearPress}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel="Clear chat"
+          accessibilityHint="Delete all messages in this conversation"
+        >
+          <View style={styles.iconContainer}>
+            <SFSymbol
+              name="trash.circle"
+              size={24}
+              color={colors.error}
+              weight="medium"
+            />
+          </View>
+        </TouchableOpacity>
       </View>
-      
-      <TouchableOpacity
-        style={styles.menuButton}
-        onPress={handleClearPress}
-        activeOpacity={0.7}
-        accessibilityRole="button"
-        accessibilityLabel="Clear chat"
-        accessibilityHint="Delete all messages in this conversation"
-      >
-        <View style={styles.iconContainer}>
-          <SFSymbol
-            name="trash.circle"
-            size={24}
-            color={colors.error}
-            weight="medium"
-          />
-        </View>
-      </TouchableOpacity>
-    </View>
-  );
-});
+    );
+  },
+);
 
 const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
-  const styles = useMemo(() => getStyles(colors, isDark, insets), [colors, isDark, insets]);
+  const styles = useMemo(
+    () => getStyles(colors, isDark, insets),
+    [colors, isDark, insets],
+  );
 
   // Optimized state management
   const [chatState, setChatState] = useState<ChatState>({
@@ -387,7 +392,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
     useStreaming: true,
     expandedThoughts: new Set(),
   });
-  
+
   const scrollViewRef = useRef<ScrollView>(null);
   const inputRef = useRef<TextInput>(null);
 
@@ -401,10 +406,11 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
   useEffect(() => {
     setChatState(prev => ({
       ...prev,
-      threadId: ChatServiceClass.generateThreadId()
+      threadId: ChatServiceClass.generateThreadId(),
     }));
 
-    InteractionManager.runAfterInteractions(() => {
+    // Optimized entrance animations
+    requestAnimationFrame(() => {
       Animated.parallel([
         Animated.spring(fadeAnim, {
           toValue: 1,
@@ -442,28 +448,28 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
           useNativeDriver: true,
         }),
       ]),
-      { iterations: -1 }
+      { iterations: -1 },
     );
     pulseLoop.start();
 
     return () => {
       fadeAnim.stopAnimation();
-      slideAnim.stopAnimation(); 
+      slideAnim.stopAnimation();
       scaleAnim.stopAnimation();
       pulseAnim.stopAnimation();
     };
   }, []);
 
   const scrollToBottom = useCallback(() => {
-    InteractionManager.runAfterInteractions(() => {
+    requestAnimationFrame(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
     });
   }, []);
 
   const clearChat = useCallback(() => {
     Alert.alert(
-      'Clear Chat', 
-      'Are you sure you want to clear all messages?', 
+      'Clear Chat',
+      'Are you sure you want to clear all messages?',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -480,7 +486,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
           },
         },
       ],
-      { cancelable: true }
+      { cancelable: true },
     );
   }, []);
 
@@ -497,9 +503,14 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
   }, []);
 
   const sendMessage = useCallback(async () => {
-    if (!chatState.inputText.trim() || chatState.isLoading || !chatState.threadId) return;
+    if (
+      !chatState.inputText.trim() ||
+      chatState.isLoading ||
+      !chatState.threadId
+    )
+      return;
 
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     const userMessage: Message = {
       id: `user_${Date.now()}`,
@@ -556,7 +567,10 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
                     }
                   : msg,
               ),
-              expandedThoughts: new Set([...prev.expandedThoughts, assistantMessageId]),
+              expandedThoughts: new Set([
+                ...prev.expandedThoughts,
+                assistantMessageId,
+              ]),
             }));
             scrollToBottom();
           },
@@ -573,7 +587,10 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
                     }
                   : msg,
               ),
-              expandedThoughts: new Set([...prev.expandedThoughts, assistantMessageId]),
+              expandedThoughts: new Set([
+                ...prev.expandedThoughts,
+                assistantMessageId,
+              ]),
             }));
             scrollToBottom();
           },
@@ -590,7 +607,10 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
                     }
                   : msg,
               ),
-              expandedThoughts: new Set([...prev.expandedThoughts, assistantMessageId]),
+              expandedThoughts: new Set([
+                ...prev.expandedThoughts,
+                assistantMessageId,
+              ]),
             }));
             scrollToBottom();
           },
@@ -618,7 +638,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
                   : msg,
               ),
             }));
-            
+
             // Auto-minimize thoughts after completion
             setTimeout(() => {
               setChatState(prev => {
@@ -628,22 +648,22 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
               });
             }, 2000);
 
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            // Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           },
         );
       }
     } catch (error) {
       console.error('Error sending message:', error);
-      
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      
+
+      // Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+
       Alert.alert(
         'Connection Error',
         error instanceof Error
           ? error.message
           : 'Failed to connect to the chat service.',
         [{ text: 'OK', style: 'default' }],
-        { cancelable: true }
+        { cancelable: true },
       );
 
       setChatState(prev => ({
@@ -653,30 +673,39 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
     } finally {
       setChatState(prev => ({ ...prev, isLoading: false }));
     }
-  }, [chatState.inputText, chatState.isLoading, chatState.threadId, chatState.useStreaming, scrollToBottom]);
+  }, [
+    chatState.inputText,
+    chatState.isLoading,
+    chatState.threadId,
+    chatState.useStreaming,
+    scrollToBottom,
+  ]);
 
   const handleInputChange = useCallback((text: string) => {
     setChatState(prev => ({ ...prev, inputText: text }));
   }, []);
 
-  const renderMessage = useCallback((message: Message) => {
-    const isExpanded = chatState.expandedThoughts.has(message.id);
-    return (
-      <MessageBubble
-        key={message.id}
-        message={message}
-        isExpanded={isExpanded}
-        onToggleThoughts={toggleThoughts}
-        colors={colors}
-        styles={styles}
-        scaleAnim={scaleAnim}
-      />
-    );
-  }, [chatState.expandedThoughts, toggleThoughts, colors, styles, scaleAnim]);
+  const renderMessage = useCallback(
+    (message: Message) => {
+      const isExpanded = chatState.expandedThoughts.has(message.id);
+      return (
+        <MessageBubble
+          key={message.id}
+          message={message}
+          isExpanded={isExpanded}
+          onToggleThoughts={toggleThoughts}
+          colors={colors}
+          styles={styles}
+          scaleAnim={scaleAnim}
+        />
+      );
+    },
+    [chatState.expandedThoughts, toggleThoughts, colors, styles, scaleAnim],
+  );
 
-  const memoizedMessages = useMemo(() => 
-    chatState.messages.map(renderMessage), 
-    [chatState.messages, renderMessage]
+  const memoizedMessages = useMemo(
+    () => chatState.messages.map(renderMessage),
+    [chatState.messages, renderMessage],
   );
 
   return (
@@ -727,9 +756,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
                     weight="ultralight"
                   />
                 </Animated.View>
-                <Text style={styles.emptyStateText}>
-                  Start a conversation
-                </Text>
+                <Text style={styles.emptyStateText}>Start a conversation</Text>
                 <Text style={styles.emptyStateSubtext}>
                   Ask questions, get help, or explore ideas with AI
                 </Text>
@@ -765,7 +792,8 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
               <TouchableOpacity
                 style={[
                   styles.sendButton,
-                  (!chatState.inputText.trim() || chatState.isLoading) && styles.sendButtonDisabled,
+                  (!chatState.inputText.trim() || chatState.isLoading) &&
+                    styles.sendButtonDisabled,
                 ]}
                 onPress={sendMessage}
                 disabled={!chatState.inputText.trim() || chatState.isLoading}
@@ -813,7 +841,7 @@ const getStyles = (colors: any, isDark: boolean, insets: any) =>
       paddingTop: insets.top + 12,
       paddingBottom: 16,
       paddingHorizontal: 20,
-      backgroundColor: isDark 
+      backgroundColor: isDark
         ? 'rgba(28, 28, 30, 0.98)'
         : 'rgba(255, 255, 255, 0.98)',
       shadowColor: '#000000',
@@ -822,7 +850,7 @@ const getStyles = (colors: any, isDark: boolean, insets: any) =>
       shadowRadius: 4,
       elevation: 0,
       borderBottomWidth: 0.33,
-      borderBottomColor: isDark 
+      borderBottomColor: isDark
         ? 'rgba(84, 84, 88, 0.6)'
         : 'rgba(60, 60, 67, 0.12)',
     },
@@ -836,7 +864,7 @@ const getStyles = (colors: any, isDark: boolean, insets: any) =>
       width: 32,
       height: 32,
       borderRadius: 16,
-      backgroundColor: isDark 
+      backgroundColor: isDark
         ? 'rgba(255, 255, 255, 0.06)'
         : 'rgba(0, 0, 0, 0.04)',
       justifyContent: 'center',
@@ -856,7 +884,7 @@ const getStyles = (colors: any, isDark: boolean, insets: any) =>
     statusBadge: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: isDark 
+      backgroundColor: isDark
         ? 'rgba(48, 209, 88, 0.15)'
         : 'rgba(48, 209, 88, 0.1)',
       paddingHorizontal: 6,
@@ -939,7 +967,7 @@ const getStyles = (colors: any, isDark: boolean, insets: any) =>
       borderBottomRightRadius: 6,
     },
     assistantBubble: {
-      backgroundColor: isDark 
+      backgroundColor: isDark
         ? 'rgba(44, 44, 46, 1)'
         : 'rgba(255, 255, 255, 1)',
       borderBottomLeftRadius: 6,
@@ -948,7 +976,7 @@ const getStyles = (colors: any, isDark: boolean, insets: any) =>
     },
     assistantBubbleWithThoughts: {
       borderTopWidth: 1,
-      borderTopColor: isDark 
+      borderTopColor: isDark
         ? 'rgba(48, 209, 88, 0.4)'
         : 'rgba(48, 209, 88, 0.3)',
     },
@@ -977,7 +1005,7 @@ const getStyles = (colors: any, isDark: boolean, insets: any) =>
       letterSpacing: -0.08,
     },
     thinkingContainer: {
-      backgroundColor: isDark 
+      backgroundColor: isDark
         ? 'rgba(28, 28, 30, 0.98)'
         : 'rgba(246, 246, 246, 0.98)',
       borderRadius: 16,
@@ -996,11 +1024,11 @@ const getStyles = (colors: any, isDark: boolean, insets: any) =>
       alignItems: 'center',
       paddingHorizontal: 16,
       paddingVertical: 12,
-      backgroundColor: isDark 
+      backgroundColor: isDark
         ? 'rgba(44, 44, 46, 0.9)'
         : 'rgba(255, 255, 255, 0.9)',
       borderBottomWidth: 0.5,
-      borderBottomColor: isDark 
+      borderBottomColor: isDark
         ? 'rgba(84, 84, 88, 0.4)'
         : 'rgba(60, 60, 67, 0.08)',
     },
@@ -1048,7 +1076,7 @@ const getStyles = (colors: any, isDark: boolean, insets: any) =>
     dot3: { opacity: 0.8 },
     thinkingProgress: {
       height: 2,
-      backgroundColor: isDark 
+      backgroundColor: isDark
         ? 'rgba(84, 84, 88, 0.4)'
         : 'rgba(60, 60, 67, 0.12)',
       borderRadius: 1,
@@ -1069,7 +1097,7 @@ const getStyles = (colors: any, isDark: boolean, insets: any) =>
       marginBottom: 16,
       paddingBottom: 16,
       borderBottomWidth: 0.5,
-      borderBottomColor: isDark 
+      borderBottomColor: isDark
         ? 'rgba(84, 84, 88, 0.3)'
         : 'rgba(60, 60, 67, 0.08)',
     },
@@ -1107,7 +1135,7 @@ const getStyles = (colors: any, isDark: boolean, insets: any) =>
       marginBottom: 12,
       paddingBottom: 8,
       borderBottomWidth: 0.5,
-      borderBottomColor: isDark 
+      borderBottomColor: isDark
         ? 'rgba(48, 209, 88, 0.4)'
         : 'rgba(48, 209, 88, 0.3)',
     },
@@ -1141,11 +1169,11 @@ const getStyles = (colors: any, isDark: boolean, insets: any) =>
       letterSpacing: -0.08,
     },
     inputContainer: {
-      backgroundColor: isDark 
+      backgroundColor: isDark
         ? 'rgba(28, 28, 30, 0.98)'
         : 'rgba(255, 255, 255, 0.98)',
       borderTopWidth: 0.5,
-      borderTopColor: isDark 
+      borderTopColor: isDark
         ? 'rgba(84, 84, 88, 0.6)'
         : 'rgba(60, 60, 67, 0.12)',
       paddingHorizontal: 16,
@@ -1160,7 +1188,7 @@ const getStyles = (colors: any, isDark: boolean, insets: any) =>
     inputWrapper: {
       flexDirection: 'row',
       alignItems: 'flex-end',
-      backgroundColor: isDark 
+      backgroundColor: isDark
         ? 'rgba(44, 44, 46, 1)'
         : 'rgba(242, 242, 247, 1)',
       borderRadius: 20,

@@ -54,13 +54,37 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     score: 85,
     concerns: ['Hydration', 'Fine Lines', 'Sun Protection'],
     skinType: 'Combination',
-    lastUpdated: 'Today'
+    lastUpdated: 'Today',
   });
   const [todayRoutine, setTodayRoutine] = useState<RoutineStep[]>([
-    { id: '1', name: 'Gentle Cleanser', timeOfDay: 'morning', completed: true, product: 'CeraVe Foaming Cleanser' },
-    { id: '2', name: 'Vitamin C Serum', timeOfDay: 'morning', completed: true, product: 'Skinceuticals CE Ferulic' },
-    { id: '3', name: 'Moisturizer', timeOfDay: 'morning', completed: false, product: 'Neutrogena Hydra Boost' },
-    { id: '4', name: 'SPF Protection', timeOfDay: 'morning', completed: false, product: 'EltaMD UV Clear' },
+    {
+      id: '1',
+      name: 'Gentle Cleanser',
+      timeOfDay: 'morning',
+      completed: true,
+      product: 'CeraVe Foaming Cleanser',
+    },
+    {
+      id: '2',
+      name: 'Vitamin C Serum',
+      timeOfDay: 'morning',
+      completed: true,
+      product: 'Skinceuticals CE Ferulic',
+    },
+    {
+      id: '3',
+      name: 'Moisturizer',
+      timeOfDay: 'morning',
+      completed: false,
+      product: 'Neutrogena Hydra Boost',
+    },
+    {
+      id: '4',
+      name: 'SPF Protection',
+      timeOfDay: 'morning',
+      completed: false,
+      product: 'EltaMD UV Clear',
+    },
   ]);
 
   useEffect(() => {
@@ -92,26 +116,39 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
 
   if (loading) {
     return (
-      <MainLayout title="Skinior" navigation={navigation} currentRoute="Dashboard">
+      <MainLayout
+        title="Skinior"
+        navigation={navigation}
+        currentRoute="Dashboard"
+      >
         <View style={[styles.container, styles.centered]}>
           <ActivityIndicator size="large" color={colors.accent} />
-          <Text style={[styles.loadingText, { marginTop: 10 }]}>Loading your skincare journey...</Text>
+          <Text style={[styles.loadingText, { marginTop: 10 }]}>
+            Loading your skincare journey...
+          </Text>
         </View>
       </MainLayout>
     );
   }
 
-  const displayName = user?.firstName || user?.name?.split(' ')[0] || 'Beautiful';
+  const displayName =
+    user?.firstName || user?.name?.split(' ')[0] || 'Beautiful';
 
   return (
-    <MainLayout title="Skinior" navigation={navigation} currentRoute="Dashboard">
+    <MainLayout
+      title="Skinior"
+      navigation={navigation}
+      currentRoute="Dashboard"
+    >
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* Header Section */}
         <View style={styles.header}>
           <View style={styles.headerContent}>
             <Text style={styles.greeting}>Good Morning,</Text>
             <Text style={styles.userName}>{displayName}! ✨</Text>
-            <Text style={styles.subtitle}>Your skin is evolving beautifully</Text>
+            <Text style={styles.subtitle}>
+              Your skin is evolving beautifully
+            </Text>
           </View>
           <TouchableOpacity style={styles.profileButton} onPress={() => {}}>
             <View style={styles.avatarContainer}>
@@ -141,15 +178,19 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               <Text style={styles.updateButtonText}>Update</Text>
             </TouchableOpacity>
           </View>
-          
+
           <View style={styles.scoreContainer}>
             <View style={styles.scoreCircle}>
               <Text style={styles.scoreText}>{skinAnalysis.score}</Text>
               <Text style={styles.scoreSubtext}>Skin Score</Text>
             </View>
             <View style={styles.scoreDetails}>
-              <Text style={styles.skinType}>Skin Type: {skinAnalysis.skinType}</Text>
-              <Text style={styles.lastUpdated}>Last updated: {skinAnalysis.lastUpdated}</Text>
+              <Text style={styles.skinType}>
+                Skin Type: {skinAnalysis.skinType}
+              </Text>
+              <Text style={styles.lastUpdated}>
+                Last updated: {skinAnalysis.lastUpdated}
+              </Text>
               <View style={styles.concernsContainer}>
                 {skinAnalysis.concerns.map((concern, index) => (
                   <View key={index} style={styles.concernChip}>
@@ -173,26 +214,40 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               />
               <Text style={styles.cardTitle}>Today's Routine</Text>
             </View>
-            <Text style={styles.progressText}>{completedSteps}/{totalSteps}</Text>
+            <Text style={styles.progressText}>
+              {completedSteps}/{totalSteps}
+            </Text>
           </View>
-          
+
           <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${progressPercentage}%` }]} />
+            <View
+              style={[styles.progressFill, { width: `${progressPercentage}%` }]}
+            />
           </View>
-          
+
           <View style={styles.routineSteps}>
-            {todayRoutine.map((step) => (
+            {todayRoutine.map(step => (
               <TouchableOpacity
                 key={step.id}
-                style={[styles.routineStep, step.completed && styles.routineStepCompleted]}
+                style={[
+                  styles.routineStep,
+                  step.completed && styles.routineStepCompleted,
+                ]}
                 onPress={() => {
-                  setTodayRoutine(prev => 
-                    prev.map(s => s.id === step.id ? { ...s, completed: !s.completed } : s)
+                  setTodayRoutine(prev =>
+                    prev.map(s =>
+                      s.id === step.id ? { ...s, completed: !s.completed } : s,
+                    ),
                   );
                 }}
               >
                 <View style={styles.stepLeft}>
-                  <View style={[styles.stepCheckbox, step.completed && styles.stepCheckboxCompleted]}>
+                  <View
+                    style={[
+                      styles.stepCheckbox,
+                      step.completed && styles.stepCheckboxCompleted,
+                    ]}
+                  >
                     {step.completed && (
                       <SFSymbol
                         name="checkmark"
@@ -203,16 +258,25 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                     )}
                   </View>
                   <View style={styles.stepInfo}>
-                    <Text style={[styles.stepName, step.completed && styles.stepNameCompleted]}>
+                    <Text
+                      style={[
+                        styles.stepName,
+                        step.completed && styles.stepNameCompleted,
+                      ]}
+                    >
                       {step.name}
                     </Text>
                     <Text style={styles.stepProduct}>{step.product}</Text>
                   </View>
                 </View>
                 <SFSymbol
-                  name={step.timeOfDay === 'morning' ? "sun.max" : "moon"}
+                  name={step.timeOfDay === 'morning' ? 'sun.max' : 'moon'}
                   size={16}
-                  color={step.timeOfDay === 'morning' ? colors.warning : colors.primary}
+                  color={
+                    step.timeOfDay === 'morning'
+                      ? colors.warning
+                      : colors.primary
+                  }
                   weight="medium"
                 />
               </TouchableOpacity>
@@ -224,8 +288,16 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         <View style={styles.actionsContainer}>
           <Text style={styles.sectionTitle}>Intelligent Features</Text>
           <View style={styles.actionsGrid}>
-            <TouchableOpacity style={styles.actionCard} onPress={() => navigation.navigate('Chat')}>
-              <View style={[styles.actionIcon, { backgroundColor: colors.accent + '20' }]}>
+            <TouchableOpacity
+              style={styles.actionCard}
+              onPress={() => navigation.navigate('Chat')}
+            >
+              <View
+                style={[
+                  styles.actionIcon,
+                  { backgroundColor: colors.accent + '20' },
+                ]}
+              >
                 <SFSymbol
                   name="brain.head.profile"
                   size={24}
@@ -237,8 +309,16 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
               <Text style={styles.actionSubtitle}>Get personalized advice</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.actionCard}>
-              <View style={[styles.actionIcon, { backgroundColor: colors.success + '20' }]}>
+            <TouchableOpacity
+              style={styles.actionCard}
+              onPress={() => navigation.navigate('SkinScan')}
+            >
+              <View
+                style={[
+                  styles.actionIcon,
+                  { backgroundColor: colors.success + '20' },
+                ]}
+              >
                 <SFSymbol
                   name="camera.viewfinder"
                   size={24}
@@ -251,7 +331,12 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.actionCard}>
-              <View style={[styles.actionIcon, { backgroundColor: colors.warning + '20' }]}>
+              <View
+                style={[
+                  styles.actionIcon,
+                  { backgroundColor: colors.warning + '20' },
+                ]}
+              >
                 <SFSymbol
                   name="chart.line.uptrend.xyaxis"
                   size={24}
@@ -264,7 +349,12 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.actionCard}>
-              <View style={[styles.actionIcon, { backgroundColor: colors.primary + '20' }]}>
+              <View
+                style={[
+                  styles.actionIcon,
+                  { backgroundColor: colors.primary + '20' },
+                ]}
+              >
                 <SFSymbol
                   name="sparkles"
                   size={24}
@@ -290,7 +380,8 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             <View style={styles.bannerText}>
               <Text style={styles.bannerTitle}>Adaptive AI Learning</Text>
               <Text style={styles.bannerSubtitle}>
-                Your routine evolves as we learn more about your skin's unique needs
+                Your routine evolves as we learn more about your skin's unique
+                needs
               </Text>
             </View>
           </View>

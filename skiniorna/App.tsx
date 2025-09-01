@@ -14,6 +14,7 @@ import NetworkLogger from './src/services/NetworkLogger';
 import LoginScreen from './src/screens/Login';
 import DashboardScreen from './src/screens/Dashboard';
 import ChatScreen from './src/screens/Chat';
+import SkinScanScreen from './src/screens/SkinScan';
 
 // Enable network logging in development
 if (__DEV__) {
@@ -70,6 +71,11 @@ function App() {
               <Stack.Screen
                 name="Chat"
                 component={ChatScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="SkinScan"
+                component={SkinScanScreen}
                 options={{ headerShown: false }}
               />
             </Stack.Navigator>
