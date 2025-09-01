@@ -89,7 +89,7 @@ const MessageBubble = memo<MessageBubbleProps>(({
   scaleAnim 
 }) => {
   const handleToggleThoughts = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     onToggleThoughts(message.id);
   }, [message.id, onToggleThoughts]);
@@ -470,7 +470,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
           text: 'Clear',
           style: 'destructive',
           onPress: () => {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            // Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             setChatState(prev => ({
               ...prev,
               messages: [],
