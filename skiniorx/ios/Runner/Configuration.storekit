@@ -1,0 +1,179 @@
+{
+  "identifier" : "DC8F7E1A",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6446123456",
+    "_developerTeamID" : "YOUR_TEAM_ID",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 704059200.47700798,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21515023",
+      "localizations" : [
+
+      ],
+      "name" : "SkiniorX Premium Subscriptions",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "9.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6446123457",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlimited skin analysis and personalized recommendations",
+              "displayName" : "Premium Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.roxate.skiniorx.premium.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Premium Monthly",
+          "subscriptionGroupID" : "21515023",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "99.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "6446123458",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlimited skin analysis and personalized recommendations - Save with yearly billing",
+              "displayName" : "Premium Yearly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.roxate.skiniorx.premium.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Premium Yearly",
+          "subscriptionGroupID" : "21515023",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "19.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "6446123459",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Advanced skin analysis with AI chat and priority support",
+              "displayName" : "Professional Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.roxate.skiniorx.professional.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Professional Monthly",
+          "subscriptionGroupID" : "21515023",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "199.99",
+          "familyShareable" : false,
+          "groupNumber" : 4,
+          "internalID" : "6446123460",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Advanced skin analysis with AI chat and priority support - Save with yearly billing",
+              "displayName" : "Professional Yearly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.roxate.skiniorx.professional.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Professional Yearly",
+          "subscriptionGroupID" : "21515023",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

@@ -45,6 +45,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>PKPaymentNetworks</key>
+	<array>
+		<string>PKPaymentNetworkVisa</string>
+		<string>PKPaymentNetworkMasterCard</string>
+		<string>PKPaymentNetworkAmex</string>
+		<string>PKPaymentNetworkDiscover</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
