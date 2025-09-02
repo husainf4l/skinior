@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsString, IsBoolean, MinLength } from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
@@ -49,6 +49,20 @@ export class UserResponseDto {
   updatedAt: Date;
 }
 
+export class DeleteAccountDto {
+  @IsString()
+  @MinLength(3, { message: 'Confirmation text must be at least 3 characters long' })
+  confirmationText: string;
+
+  @IsOptional()
+  @IsString()
+  reason?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  deleteData?: boolean; // Option to delete all user data vs anonymize
+}
+
 export class LoginDto {
   @IsEmail()
   email: string;
@@ -71,4 +85,65 @@ export class RegisterDto {
   @IsOptional()
   @IsString()
   lastName?: string;
+}
+
+export class ForgotPasswordDto {
+  @IsEmail()
+  email: string;
+}
+
+export class ResetPasswordDto {
+  @IsString()
+  token: string;
+
+  @IsString()
+  newPassword: string;
+}
+
+// Mobile Google Sign-In DTO
+export class GoogleMobileAuthDto {
+  @IsString()
+  idToken: string;
+
+  @IsOptional()
+  @IsString()
+  serverAuthCode?: string;
+
+  @IsOptional()
+  user?: {
+    email: string;
+    name: string;
+    picture?: string;
+    id: string;
+  };
+}
+
+// Mobile Apple Sign-In DTO
+export class AppleMobileAuthDto {
+  @IsString()
+  identityToken: string;
+
+  @IsString()
+  authorizationCode: string;
+
+  @IsOptional()
+  @IsString()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  firstName?: string;
+
+  @IsOptional()
+  @IsString()
+  lastName?: string;
+
+  @IsOptional()
+  user?: {
+    email?: string;
+    name?: {
+      firstName: string;
+      lastName: string;
+    };
+  };
 }

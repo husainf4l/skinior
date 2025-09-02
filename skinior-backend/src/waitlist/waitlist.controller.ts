@@ -1,9 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Post, Body, ValidationPipe } from '@nestjs/common';
 import { WaitlistService } from './waitlist.service';
 import { JoinWaitlistDto, WaitlistResponseDto } from './waitlist.dto';
 

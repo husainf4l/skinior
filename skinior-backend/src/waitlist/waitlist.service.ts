@@ -6,7 +6,9 @@ import { JoinWaitlistDto, WaitlistResponseDto } from './waitlist.dto';
 export class WaitlistService {
   constructor(private prisma: PrismaService) {}
 
-  async joinWaitlist(joinWaitlistDto: JoinWaitlistDto): Promise<WaitlistResponseDto> {
+  async joinWaitlist(
+    joinWaitlistDto: JoinWaitlistDto,
+  ): Promise<WaitlistResponseDto> {
     const { email, firstName, lastName } = joinWaitlistDto;
 
     // Check if email already exists in waitlist
@@ -31,6 +33,10 @@ export class WaitlistService {
   }
 
   private formatWaitlistResponse(waitlist: any): WaitlistResponseDto {
+    if (!waitlist || typeof waitlist !== 'object') {
+      throw new Error('Invalid waitlist entry');
+    }
+
     return {
       id: waitlist.id,
       email: waitlist.email,

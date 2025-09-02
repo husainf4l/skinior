@@ -9,7 +9,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID || '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3000/auth/google/callback',
+      callbackURL:
+        process.env.GOOGLE_CALLBACK_URL ||
+        'http://localhost:3000/auth/google/callback',
       scope: ['email', 'profile'],
     });
   }
@@ -22,17 +24,23 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   ): Promise<any> {
     try {
       // First try to find user by Google ID
-      let user = await this.userService.findUserByGoogleId(profile.id);
-      
+      const profileId = profile?.id;
+      if (!profileId) {
+        done(new Error('Invalid profile'), false);
+        return;
+      }
+
+      let user = await this.userService.findUserByGoogleId(profileId);
+
       if (!user) {
         // Create new user with Google profile
         user = await this.userService.createGoogleUser(profile);
       }
-      
+
       // Ensure we return the user object, not null
       done(null, user || false);
-    } catch (error) {
-      done(error, false);
+    } catch {
+      done(new Error('Authentication failed'), false);
     }
   }
 }
