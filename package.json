@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@invertase/react-native-apple-authentication": "^2.4.1"
+  }
+}

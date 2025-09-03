@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "648525943119",
+    "project_id": "skinior",
+    "storage_bucket": "skinior.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:648525943119:android:77cd7c881e209b9619353a",
+        "android_client_info": {
+          "package_name": "com.skinior.skiniorna"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "648525943119-4hnshon7rt3hm9qkf2or13jslqsaqgvv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtnwnVFTv4yEl3F2v1OvCc_L-EfTLNhB0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "648525943119-4hnshon7rt3hm9qkf2or13jslqsaqgvv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "648525943119-g32q59jkiv5cpn8egov15snaflium0ue.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.skinior.skiniorna"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

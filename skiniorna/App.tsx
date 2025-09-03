@@ -15,6 +15,10 @@ import LoginScreen from './src/screens/Login';
 import DashboardScreen from './src/screens/Dashboard';
 import ChatScreen from './src/screens/Chat';
 import SkinScanScreen from './src/screens/SkinScan';
+import NotificationsScreen from './src/screens/Notifications';
+
+// Import notification service
+import NotificationService from './src/services/NotificationService';
 
 // Enable network logging in development
 if (__DEV__) {
@@ -34,6 +38,18 @@ function App() {
       setIsLoggedIn(!!token);
     };
     checkLoginStatus();
+
+    // Initialize notifications
+    const initNotifications = async () => {
+      try {
+        const notificationService = NotificationService.getInstance();
+        await notificationService.initialize();
+        console.log('Notifications initialized successfully');
+      } catch (error) {
+        console.error('Failed to initialize notifications:', error);
+      }
+    };
+    initNotifications();
   }, []);
 
   if (isLoggedIn === null) {
@@ -76,6 +92,11 @@ function App() {
               <Stack.Screen
                 name="SkinScan"
                 component={SkinScanScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Notifications"
+                component={NotificationsScreen}
                 options={{ headerShown: false }}
               />
             </Stack.Navigator>

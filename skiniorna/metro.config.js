@@ -17,6 +17,24 @@ const config = {
   serializer: {
     ...defaultConfig.serializer,
   },
+  server: {
+    ...defaultConfig.server,
+    // Allow connections from any device for debugging
+    enhanceMiddleware: (middleware) => {
+      return (req, res, next) => {
+        // Add CORS headers to allow connections
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        return middleware(req, res, next);
+      };
+    },
+  },
+  resolver: {
+    ...defaultConfig.resolver,
+    // Add platform-specific extensions
+    platforms: ['ios', 'android'],
+  },
 };
 
 module.exports = mergeConfig(defaultConfig, config);
