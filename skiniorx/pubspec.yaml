@@ -46,6 +46,14 @@ dependencies:
   # HTTP client for API calls
   http: ^1.2.2
 
+  # Camera and permissions for skin scanning
+  camera: ^0.11.0+2
+  permission_handler: ^12.0.1
+  image: ^4.1.7
+
+  # Face detection for skin scanning
+  google_mlkit_face_detection: ^0.13.1
+
   # Firebase (Latest stable versions as of September 2025)
   firebase_core: ^4.1.0
   firebase_auth: ^6.0.2

@@ -63,5 +63,9 @@
 			</array>
 		</dict>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to the camera to perform skin analysis and scanning.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to photo library to save and process skin scan images.</string>
 </dict>
 </plist>
